@@ -58,7 +58,6 @@
     <Compile Include="CoorSystemPara.cs" />
     <Compile Include="DoubleHelper.cs" />
     <Compile Include="Ellipsoid.cs" />
-    <Compile Include="Encrypt\EncryptHelper.cs" />
     <Compile Include="enumAngleFormat.cs" />
     <Compile Include="enumFourMode.cs" />
     <Compile Include="FileAttr.cs" />

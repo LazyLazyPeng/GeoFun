@@ -14,7 +14,6 @@ namespace GeoFun
         /// </summary>
         public static double MAXWHILELOOP = 100;
 
-        private double l0 = 0;
         /// <summary>
         /// 长半径(m)
         /// </summary>
@@ -26,7 +25,7 @@ namespace GeoFun
         /// <summary>
         /// 中央子午线(弧度) 
         /// </summary>
-        public double L0 { get { return l0; } set { l0 = value; } }
+        public double L0 { get; set; } = 0;
         private double h0 = 0d;
         /// <summary>
         /// 投影抬高(m)
@@ -176,12 +175,12 @@ namespace GeoFun
                 return;
 
             L0 = l1;
-            DH = -h1;
+            h0 = h1;
 
             Inverse(ref x, ref y);
 
             L0 = l2;
-            DH = h2;
+            h0 = h2;
 
             Proj(ref x, ref y);
         }

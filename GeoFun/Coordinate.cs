@@ -8,6 +8,74 @@ namespace GeoFun
     public class Coordinate
     {
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="B">纬度(弧度)</param>
+        /// <param name="L">经度(弧度)</param>
+        /// <param name="H">大地高(m)</param>
+        /// <param name="X"></param>
+        /// <param name="Y"></param>
+        /// <param name="Z"></param>
+        /// <param name="a">椭球长半轴(m)</param>
+        /// <param name="f">扁率倒数</param>
+        public static void BLH2XYZ(double B, double L, double H, out double X, out double Y, out double Z, double a, double f)
+        {
+            Ellipsoid ell = new Ellipsoid(a = a, f = f);
+            BLH2XYZ(B, L, H, out X, out Y, out Z, ell);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="B">纬度(弧度)</param>
+        /// <param name="L">经度(弧度)</param>
+        /// <param name="H">大地高(m)</param>
+        /// <param name="X"></param>
+        /// <param name="Y"></param>
+        /// <param name="Z"></param>
+        /// <param name="a">椭球长半轴(m)</param>
+        /// <param name="f">扁率倒数</param>
+        public static void BLH2XYZ(List<double> B, List<double> L, List<double> H, out List<double> X, out List<double> Y, out List<double> Z, double a, double f)
+        {
+            Ellipsoid ell = new Ellipsoid(a = a, f = f);
+            BLH2XYZ(B, L, H, out X, out Y, out Z, ell);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="B">纬度(弧度)</param>
+        /// <param name="L">经度(弧度)</param>
+        /// <param name="H">大地高(m)</param>
+        /// <param name="X"></param>
+        /// <param name="Y"></param>
+        /// <param name="Z"></param>
+        /// <param name="a">椭球长半轴(m)</param>
+        /// <param name="f">扁率倒数</param>
+        public static void XYZ2BLH(double X, double Y, double Z, out double B, out double L, out double H, double a, double f)
+        {
+            Ellipsoid ell = new Ellipsoid(a = a, f = f);
+            XYZ2BLH(X, Y, Z, out B, out L, out H, ell);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="B">纬度(弧度)</param>
+        /// <param name="L">经度(弧度)</param>
+        /// <param name="H">大地高(m)</param>
+        /// <param name="X"></param>
+        /// <param name="Y"></param>
+        /// <param name="Z"></param>
+        /// <param name="a">椭球长半轴(m)</param>
+        /// <param name="f">扁率倒数</param>
+        public static void XYZ2BLH(List<double> X, List<double> Y, List<double> Z, out List<double> B, out List<double> L, out List<double> H,double a, double f) 
+        {
+            Ellipsoid ell = new Ellipsoid(a = a, f = f);
+            XYZ2BLH(X, Y, Z, out B, out L, out H, ell);
+        }
+
+        /// <summary>
         /// 大地坐标转空间直角坐标
         /// </summary>
         /// <param name="B">弧度</param>
