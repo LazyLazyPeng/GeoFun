@@ -21,9 +21,30 @@ namespace GeoFun.Inter
         /// <param name="rt">右上角</param>
         /// <param name="lt">左上角</param>
         /// <returns></returns>
-        internal static double Bilinear(double b, double l,
+        public static double Bilinear(double b, double l,
             double minb, double maxb, double minl, double maxl,
             double lb, double rb, double rt, double lt)
+        {
+            return (double)Bilinear(b, l, minb, maxb, minl, maxl, lb, rb, rt, lt);
+        }
+
+        /// <summary>
+        /// 双线性插值
+        /// </summary>
+        /// <param name="b"></param>
+        /// <param name="l"></param>
+        /// <param name="minb"></param>
+        /// <param name="maxb"></param>
+        /// <param name="minl"></param>
+        /// <param name="maxl"></param>
+        /// <param name="lb">左下角</param>
+        /// <param name="rb">右下角</param>
+        /// <param name="rt">右上角</param>
+        /// <param name="lt">左上角</param>
+        /// <returns></returns>
+        public static decimal Bilinear(decimal b, decimal l,
+            decimal minb, decimal maxb, decimal minl, decimal maxl,
+            decimal lb, decimal rb, decimal rt, decimal lt)
         {
             #region 点是否落在角点上
             if (b == minb)

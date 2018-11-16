@@ -5,16 +5,19 @@ namespace GeoFun
     public class Angle
     {
         public static double PI = 3.1415926535897932;
+        public static decimal PIM = 3.1415926535897932m;
 
         /// <summary>
         /// 弧度转度
         /// </summary>
         public static double R2D = 180d / PI;
+        public static decimal R2DM = 180m / PIM;
 
         /// <summary>
         /// 度转弧度
         /// </summary>
         public static double D2R = PI / 180d;
+        public static decimal D2RM = PIM / 180m;
 
         /// <summary>
         /// 秒转弧度
