@@ -8,6 +8,11 @@ namespace GeoFun.Inter
     public class Interpolation
     {
         /// <summary>
+        /// 无效值
+        /// </summary>
+        public static decimal NoData = 9999;
+
+        /// <summary>
         /// 双线性插值
         /// </summary>
         /// <param name="b"></param>
@@ -74,24 +79,31 @@ namespace GeoFun.Inter
             #endregion
 
             //点落在左边界或者右边界
-            if (l == minl)
+            if (l.ToString("f10") == minl.ToString("f10"))
             {
+                if (lb > 9998 || lt > 9998) return NoData;
                 return lt * (b - minb) / (maxb - minb) + lb * (maxb - b) / (maxb - minb);
             }
-            else if (l == maxl)
+            else if (l.ToString("f10") == maxl.ToString("f10"))
             {
+                if (rb > 9998 || rt > 9998) return NoData;
+
                 return rt * (b - minb) / (maxb - minb) + rb * (maxb - b) / (maxb - minb);
             }
 
             //点落在上边界或者下边界
-            if (b == minb)
+            if (b.ToString("f10") == minb.ToString("f10"))
             {
+                if (lb > 9998 || rb > 9998) return NoData;
                 return rb * (l - minl) / (maxl - minl) + lb * (maxl - l) / (maxl - minl);
             }
-            else if (b == maxb)
+            else if (b.ToString("f10") == maxb.ToString("f10"))
             {
+                if (lt > 9998 || rt > 9998) return NoData;
                 return rt * (l - minl) / (maxl - minl) + lt * (maxl - l) / (maxl - minl);
             }
+
+            if (lb > 9998 || rb > 9998 || lt > 9998 || rt > 9998) return NoData;
 
             return (lb * (maxb - b) * (maxl - l) + rb * (maxb - b) * (l - minl) +
                     lt * (b - minb) * (maxl - l) + rt * (b - minb) * (l - minl))

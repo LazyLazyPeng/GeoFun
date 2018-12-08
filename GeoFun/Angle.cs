@@ -31,13 +31,17 @@ namespace GeoFun
         /// <returns>例如20.30</returns>
         public static double DD2DMS(double dd)
         {
-            if (dd == 0d)
+            return (double)DD2DMS((decimal)dd);
+        }
+        public static decimal DD2DMS(decimal dd)
+        {
+            if (dd == 0)
             {
-                return 0d;
+                return 0;
             }
 
             // 取绝对值
-            decimal ddd = (decimal)Math.Abs(dd);
+            decimal ddd = Math.Abs(dd);
 
             // 计算出度分秒
             decimal d = Math.Floor(ddd);
@@ -49,12 +53,13 @@ namespace GeoFun
             decimal dms = d + m / 100m + s / 10000m;
 
             // 注意符号
-            if (dd < 0d)
+            if (dd < 0)
             {
                 dms = -dms;
             }
 
-            return (double)dms;
+            return dms;
+
         }
 
         /// <summary>
@@ -64,9 +69,13 @@ namespace GeoFun
         /// <returns>例如20.5</returns>
         public static double DMS2DD(double dms)
         {
+            return (double)DMS2DD((decimal)dms);
+        }
+        public static decimal DMS2DD(decimal dms)
+        {
             try
             {
-                if (dms == 0d)
+                if (dms == 0)
                 {
                     return dms;
                 }
@@ -100,27 +109,36 @@ namespace GeoFun
                 decimal dd = d + m / 60m + s / 3600m;
 
                 // 注意符号
-                if (dms < 0d)
+                if (dms < 0)
                 {
                     dd = -dd;
                 }
 
-                return (double)dd;
+                return dd;
             }
             catch (Exception ex)
             {
                 return dms;
             }
+
         }
 
         public static double Arc2DD(double arc)
         {
             return arc * 180d / PI;
         }
+        public static decimal Arc2DD(decimal arc)
+        {
+            return arc * 180m / PIM;
+        }
 
         public static double DD2Arc(double dd)
         {
             return dd * D2R;
+        }
+        public static decimal DD2Arc(decimal dd)
+        {
+            return dd * D2RM;
         }
 
         public static double Arc2DMS(double arc)
