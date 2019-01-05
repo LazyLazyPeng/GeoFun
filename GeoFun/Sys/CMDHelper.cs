@@ -40,14 +40,14 @@ namespace GeoFun.Sys
                     proc.OutputDataReceived += Proc_OutputDataReceived;
                     proc.ErrorDataReceived += Proc_ErrorDataReceived;
 
-                    //proc.StandardInput.WriteLine("@echo off");
-                    //proc.StandardInput.Write("chcp 936");
-                    proc.StandardInput.WriteLine(cmd);
-                    //proc.StandardInput.WriteLine("@echo on");
-
                     //// 异步获取命令行内容
                     proc.BeginOutputReadLine();
                     proc.BeginErrorReadLine();
+
+                    proc.StandardInput.WriteLine("@echo off");
+                    //proc.StandardInput.Write("chcp 936");
+                    proc.StandardInput.WriteLine(cmd);
+                    proc.StandardInput.WriteLine("@echo on");
 
                     //// 没过1秒查询程序是否退出
                     while (!proc.HasExited)

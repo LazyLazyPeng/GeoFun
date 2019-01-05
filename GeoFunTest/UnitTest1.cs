@@ -2,6 +2,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using GeoFun;
+using GeoFun.IO;
+using System.Collections.Generic;
 
 namespace GeoFunTest
 {
@@ -62,6 +64,34 @@ namespace GeoFunTest
             Assert.IsTrue(Math.Abs(x33 - x44)<1e-5,"反向:两个模型Y方向转换结果不一致");
             Assert.IsTrue(Math.Abs(y33 - y44)<1e-5,"反向:两个模型Y方向转换结果不一致");
 
+        }
+
+        [TestMethod]
+        public void DD2DMS()
+        {
+        }
+
+        [TestMethod]
+        public void TestFourPara3()
+        {
+            List<double> x1 = new List<double>();
+            List<double> y1 = new List<double>();
+            List<double> x2 = new List<double>();
+            List<double> y2 = new List<double>();
+            var lines = FileHelper.ReadThenSplitLine(@"C:\Users\niuni\Desktop\33.txt",' ');
+            for(int i = 0; i < lines.Count; i++)
+            {
+                x1.Add(double.Parse(lines[i][1]));
+                y1.Add(double.Parse(lines[i][2]));
+                x2.Add(double.Parse(lines[i][3]));
+                y2.Add(double.Parse(lines[i][4]));
+            }
+
+            FourPara four = FourPara.CalPara(x1, y1, x2, y2);
+            Assert.IsTrue(Math.Abs(four.DX - (-80.4478)) < 1e-14,"dx计算错误");
+            Assert.IsTrue(Math.Abs(four.DY - 65.5176) < 1e-14,"dy计算错误");
+            Assert.IsTrue(Math.Abs(four.R - Angle.DMS2Arc(0.00012209)) < 1e-14,"rot计算错误");
+            Assert.IsTrue(Math.Abs(four.S -   8.18633274) < 1e-14,"scale计算错误");
         }
 
         private void FourTrans(FourPara four, double inX, double inY, ref double outX, ref double outY)

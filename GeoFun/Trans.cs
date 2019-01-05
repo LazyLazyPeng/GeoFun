@@ -188,5 +188,14 @@ namespace GeoFun
                 L2.Add(B1[i] + dL);
             }
         }
+
+        public void Four(double x1,double y1,out double x2,out double y2,
+            double dx,double dy,double r,double s)
+        {
+            double cos = Math.Cos(r);
+            double sin = Math.Sin(r);
+            x2 = (1 + s / 1e6) * ( cos*(x1+dx)+sin*(y1+dy));
+            y2 = (1 + s / 1e6) * (-sin*(x1+dx)+cos*(y1+dy));
+        }
     }
 }

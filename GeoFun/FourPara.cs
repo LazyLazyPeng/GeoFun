@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Double;
 
 namespace GeoFun
 {
@@ -209,6 +211,42 @@ namespace GeoFun
         }
 
         /// <summary>
+        /// 交换x和y方向的参数
+        /// </summary>
+        /// <param name="dx1">平移量(m)</param>
+        /// <param name="dy1">平移量(m)</param>
+        /// <param name="r1">旋转</param>
+        /// <param name="s1">尺度(ppm)</param>
+        /// <param name="dx2"></param>
+        /// <param name="dy2"></param>
+        /// <param name="r2"></param>
+        /// <param name="s2"></param>
+        public static void SwapXY(double dx1,double dy1, double r1,double s1,
+            out double dx2,out double dy2,out double r2,out double s2)
+        {
+            dx2 = dy1;
+            dy2 = dx1;
+            r2 = -r1;
+            s2 = s1;
+        }
+        
+        /// <summary>
+        /// 交换x和y方向的参数
+        /// </summary>
+        /// <param name="dx"></param>
+        /// <param name="dy"></param>
+        /// <param name="r"></param>
+        /// <param name="s"></param>
+        public static void SwapXY(ref double dx, ref double dy, ref double r,ref double s)
+        {
+            double temp = dx;
+            dx = dy;
+            dy = temp;
+            r = -r;
+            s = s;
+        }
+
+        /// <summary>
         /// 根据正算的四参数 计算 反算的四参数
         /// </summary>
         /// <param name="mode">四参数模型</param>
@@ -270,6 +308,68 @@ namespace GeoFun
             };
 
             return outFour;
+        }
+
+        /// <summary>
+        /// 计算四参数
+        /// </summary>
+        /// <param name="x1"></param>
+        /// <param name="y1"></param>
+        /// <param name="x2"></param>
+        /// <param name="y2"></param>
+        /// <returns></returns>
+        public static FourPara CalPara(List<double> x1, List<double> y1,
+            List<double> x2, List<double> y2)
+        {
+            if (x1 == null || y1 == null || x2 == null || y2 == null)
+            {
+                return null;
+            }
+
+            int minCnt = Min(Min(x1.Count, y1.Count), Min(x2.Count, y2.Count));
+
+            if (minCnt < 2) return null;
+
+            Matrix<double> B = new DenseMatrix(minCnt * 2, 4);
+            Vector<double> L = new DenseVector(minCnt * 2);
+
+            for (int i = 0; i < minCnt; i++)
+            {
+                B[i * 2, 0] = y1[i];
+                B[i * 2, 1] = x1[i];
+                B[i * 2, 2] = 1;
+                B[i * 2, 3] = 0;
+
+                B[i * 2 + 1, 0] = -x1[i];
+                B[i * 2 + 1, 1] = y1[i];
+                B[i * 2 + 1, 2] = 0;
+                B[i * 2 + 1, 3] = 1;
+
+                L[i * 2] = x2[i];
+                L[i * 2 + 1] = y2[i];
+            }
+
+            Vector<double> xHat = (B.Transpose() * B).Inverse() *(B.Transpose()* L);
+
+            double a = xHat[0];  // m*sin(θ)
+            double b = xHat[1];  // m*cos(θ)
+            double c = xHat[2];  // Δx
+            double d = xHat[3];  // Δy
+
+            FourPara four = new FourPara
+            {
+                R = Math.Atan2(a, b),
+                S = (Math.Sqrt(a * a + b * b) - 1) * 1e6,
+                DX = c,
+                DY = d
+            };
+
+            return four;
+        }
+
+        private static int Min(int cnt1, int cnt2)
+        {
+            return cnt1 < cnt2 ? cnt1 : cnt2;
         }
 
         public static string Mode2Str(enumFourMode mode)
