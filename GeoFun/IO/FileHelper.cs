@@ -103,7 +103,7 @@ namespace GeoFun.IO
                 sb.Append(lines[i][0]);
                 for (int j = 1; j < lines[i].Length; j++)
                 {
-                    sb.Append(" ");
+                    sb.Append(sp);
                     sb.Append(lines[i][j]);
                 }
                 sb.Append("\r\n");

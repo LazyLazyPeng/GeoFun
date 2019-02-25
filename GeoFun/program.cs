@@ -1,11 +1,17 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace GeoFun
 {
     public class program
     {
+        //[DllImport("GeoFunC.dll", CallingConvention = CallingConvention.Cdecl)]
+        //public static extern int Sum(int a, int b);
+
         public static void Main()
         {
+            //int c = Sum(100, 200);
+
             double X, Y, Z;
             double b = 35d;
             double l = 112d;

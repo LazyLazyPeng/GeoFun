@@ -87,7 +87,7 @@ namespace GeoFun
             double B, double L, double H,
             SevenPara para, Ellipsoid ell1, Ellipsoid ell2)
         {
-            dB = 0d;dL = 0d;dH = 0d;
+            dB = 0d; dL = 0d; dH = 0d;
 
             double X, Y, Z, BB, LL, HH;
 
@@ -97,7 +97,7 @@ namespace GeoFun
             double YY = (1 + para.M * 1e-6) * (-X * para.ZRot * Angle.S2R + Y + Z * para.XRot * Angle.S2R) + para.YOff;
             double ZZ = (1 + para.M * 1e-6) * (X * para.YRot * Angle.S2R - Y * para.XRot * Angle.S2R + Z) + para.ZOff;
 
-            Coordinate.XYZ2BLH(XX,YY,ZZ, out BB, out LL, out HH, ell2);
+            Coordinate.XYZ2BLH(XX, YY, ZZ, out BB, out LL, out HH, ell2);
 
             dB = BB - B;
             dL = LL - L;
@@ -126,7 +126,7 @@ namespace GeoFun
         /// <param name="f2">扁率倒数</param>
         public void Seven3d(out double dB, out double dL, out double dH,
             double B, double L, double H,
-            double xoff, double yoff, double zoff, double xrot, double yrot ,double zrot,double m,
+            double xoff, double yoff, double zoff, double xrot, double yrot, double zrot, double m,
             double a1, double f1, double a2, double f2)
         {
             SevenPara para = new SevenPara
@@ -159,7 +159,7 @@ namespace GeoFun
             if (B1.Count != H1.Count) throw new ArgumentException("Number of coordinates is not uniform");
 
             double dB, dL, dH;
-            for(int i = 0; i < B1.Count;i++)
+            for (int i = 0; i < B1.Count; i++)
             {
                 Seven3d(out dB, out dL, out dH, B1[i], L1[i], H1[i], sev, ell1, ell2);
 
@@ -169,33 +169,57 @@ namespace GeoFun
             }
         }
 
-        public void Seven3d(List<double> B1, List<double> L1, 
-            out List<double> B2, out List<double> L2, 
+        public void Seven3d(List<double> B1, List<double> L1,
+            out List<double> B2, out List<double> L2,
             SevenPara sev, Ellipsoid ell1, Ellipsoid ell2)
         {
             B2 = new List<double>();
             L2 = new List<double>();
 
-            if (B1 == null || L1 == null ||  sev == null || ell1 == null || ell2 == null) return;
+            if (B1 == null || L1 == null || sev == null || ell1 == null || ell2 == null) return;
             if (B1.Count != L1.Count) throw new ArgumentException("Number of coordinates is not uniform");
 
             double dB, dL, dH;
-            for(int i = 0; i < B1.Count;i++)
+            for (int i = 0; i < B1.Count; i++)
             {
-                Seven2d(out dB, out dL,  B1[i], L1[i], sev, ell1, ell2);
+                Seven2d(out dB, out dL, B1[i], L1[i], sev, ell1, ell2);
 
                 B2.Add(B1[i] + dB);
                 L2.Add(B1[i] + dL);
             }
         }
 
-        public void Four(double x1,double y1,out double x2,out double y2,
-            double dx,double dy,double r,double s)
+        public void Four(double x1, double y1, out double x2, out double y2,
+            double dx, double dy, double r, double s)
         {
             double cos = Math.Cos(r);
             double sin = Math.Sin(r);
-            x2 = (1 + s / 1e6) * ( cos*(x1+dx)+sin*(y1+dy));
-            y2 = (1 + s / 1e6) * (-sin*(x1+dx)+cos*(y1+dy));
+            x2 = (1 + s / 1e6) * (cos * (x1 + dx) + sin * (y1 + dy));
+            y2 = (1 + s / 1e6) * (-sin * (x1 + dx) + cos * (y1 + dy));
+        }
+
+        public static void Four2d(ref double x, ref double y, double dx,  double dy,  double r,  double s, string mode = "ors")
+        {
+            double xx = x;
+            double yy = y;
+
+            s = 1 + s * 1e-6;
+            double cos = Math.Cos(r);
+            double sin = Math.Sin(r);
+
+            if (mode.StartsWith("o"))
+            {
+                xx = x + dx;
+                yy = y + dy;
+
+                x = s * (cos * xx + sin * yy);
+                y = s * (-sin * xx + yy * cos);
+            }
+            else
+            {
+                x = s * (cos * xx + sin * yy)+dx;
+                y = s * (-sin * xx + yy * cos)+dy;
+            }
         }
     }
 }

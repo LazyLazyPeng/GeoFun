@@ -45,16 +45,16 @@ namespace GeoFun
         public double M { get; set; }
 
         /// <summary>
-        /// 计算七参数
+        /// 计算七参数(椭球1到椭球2)
         /// </summary>
-        /// <param name="b1">弧度</param>
-        /// <param name="l1"></param>
-        /// <param name="h1"></param>
-        /// <param name="b2"></param>
-        /// <param name="l2"></param>
-        /// <param name="h2"></param>
-        /// <param name="ell1"></param>
-        /// <param name="ell2"></param>
+        /// <param name="b1">纬度(弧度)</param>
+        /// <param name="l1">经度(弧度)</param>
+        /// <param name="h1">大地高</param>
+        /// <param name="b2">纬度(弧度)</param>
+        /// <param name="l2">经度(弧度)</param>
+        /// <param name="h2">大地高</param>
+        /// <param name="ell1">椭球1</param>
+        /// <param name="ell2">椭球2</param>
         /// <returns></returns>
         public static SevenPara CalPara(List<double> b1, List<double> l1, List<double> h1,
             List<double> b2, List<double> l2, List<double> h2,
@@ -161,21 +161,21 @@ namespace GeoFun
         }
 
         /// <summary>
-        /// 迭代计算七参数，剔除粗差
+        /// 计算七参数(椭球1到椭球2)
         /// </summary>
-        /// <param name="b1">弧度</param>
-        /// <param name="l1"></param>
-        /// <param name="h1"></param>
-        /// <param name="b2"></param>
-        /// <param name="l2"></param>
-        /// <param name="h2"></param>
-        /// <param name="ell1"></param>
-        /// <param name="ell2"></param>
+        /// <param name="b1">纬度(弧度)</param>
+        /// <param name="l1">经度(弧度)</param>
+        /// <param name="h1">大地高</param>
+        /// <param name="b2">纬度(弧度)</param>
+        /// <param name="l2">经度(弧度)</param>
+        /// <param name="h2">大地高</param>
+        /// <param name="ell1">椭球1</param>
+        /// <param name="ell2">椭球2</param>
         /// <param name="maxRes">最大残差(m)</param>
         /// <returns></returns>
         public static SevenPara CalParaIter(List<double> b1, List<double> l1, List<double> h1,
             List<double> b2, List<double> l2, List<double> h2,
-            Ellipsoid ell1, Ellipsoid ell2, double maxRes)
+            Ellipsoid ell1, Ellipsoid ell2)
         {
             if (b1 is null || l1 is null || b2 is null || l2 is null || ell1 is null || ell2 is null) throw new ArgumentNullException("公共点不能为空");
             if ((h1 is null) || (h2 is null)) throw new ArgumentNullException("至少需要一个坐标系的高程值");
@@ -205,7 +205,7 @@ namespace GeoFun
             //// 最大残差
             var maxDiff = 1d;
             var maxInde = 0;
-            while (indexes.Count < 3 || maxDiff > maxRes)
+            while (indexes.Count > 3)
             {
                 b1Com.Clear();
                 l1Com.Clear();
@@ -225,7 +225,7 @@ namespace GeoFun
                     h2Com.Add(h2[index]);
                 }
 
-                sev = CalPara(b1Com,l1Com,h1Com,b2Com,l2Com,h2Com, ell1, ell2);
+                sev = CalPara(b1Com, l1Com, h1Com, b2Com, l2Com, h2Com, ell1, ell2);
 
                 //// 转换后的blh
                 List<double> b2Trans, l2Trans, h2Trans;
@@ -236,7 +236,7 @@ namespace GeoFun
                 Coordinate.BLH2XYZ(b2Trans, l2Trans, h2Trans, out X2Trans, out Y2Trans, out Z2Trans, Ellipsoid.ELLIP_CGCS2000);
 
                 //// 原始的xyz
-                 List<double> X2Tem, Y2Tem, Z2Tem;
+                List<double> X2Tem, Y2Tem, Z2Tem;
                 Coordinate.BLH2XYZ(b2Com, l2Com, h2Com, out X2Tem, out Y2Tem, out Z2Tem, Ellipsoid.ELLIP_CGCS2000);
 
                 ///// 计算残差(单位米)
@@ -247,12 +247,14 @@ namespace GeoFun
                                 Diff = Math.Sqrt(Math.Pow(X2Tem[i] - X2Trans[i], 2) + Math.Pow(Y2Trans[i] - Y2Tem[i], 2) + Math.Pow(Z2Trans[i] - Z2Tem[i], 2))
                             }).ToList();
 
+                double sigma = Math.Sqrt(diff.Sum(d => d.Diff * d.Diff) / indexes.Count);
+
                 var max = diff.OrderByDescending(d => d.Diff).First();
 
                 maxInde = max.Index;
                 maxDiff = max.Diff;
 
-                if(maxDiff >maxRes)
+                if (maxDiff > sigma * 3d)
                 {
                     indexes.Remove(maxInde);
                 }
