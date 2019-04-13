@@ -3,10 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Double;
+
 namespace GeoFun
 {
     public class Coordinate
     {
+        public static void compute_xyz(double b, double l, double h, double a, double e, ref double x, ref double y, ref double z)
+        {
+            double n;
+            n = a / Math.Sqrt(1 - e * Math.Pow(Math.Sin(b), 2));
+            x = (n + h) * Math.Cos(b);
+            y = x * Math.Sin(l);
+            x *= Math.Cos(l);
+            z = (n * (1 - e) + h) * Math.Sin(b);
+            return;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -156,6 +170,56 @@ namespace GeoFun
                 XYZ2BLH(X[i], Y[i], Z[i], out b, out l, out h, ell);
 
                 B.Add(b); L.Add(l); H.Add(h);
+            }
+        }
+
+        public static void CalIPP(double xSat, double ySat, double zSat,
+            double xRec, double yRec, double zRec,
+            out double x, out double y, out double z,
+            double earthR = 63781000,double ionoH = 450000)
+        {
+            x = y = z = 0d;
+
+            Vector<double> op1 = new DenseVector(new double[] { xRec, yRec, zRec });
+            Vector<double> op2 = new DenseVector(new double[] { xSat, ySat, zSat });
+
+            Vector<double> p1p2 = op1 - op2;
+            p1p2=p1p2/p1p2.L2Norm();
+
+            double a = p1p2.DotProduct(p1p2);
+            double b = 2 * p1p2.DotProduct(op1);
+            double c = op1.DotProduct(op1) - Math.Pow(earthR + ionoH, 2);
+
+            double t1, t2;
+            double delta = b * b - 4 * a * c;
+            if (delta < 1e-14) return;
+
+            else
+            {
+                t1 = (-b + Math.Sqrt(delta)) / 2d / a;
+                t2 = (-b - Math.Sqrt(delta)) / 2d / a;
+
+                var oi1 = op1 + t1 * p1p2;
+                var oi2 = op1 + t2 * p1p2;
+
+                var i1p2 = op2 - oi1;
+                var i2p2 = op2 - oi2;
+
+                double d1 = i1p2.DotProduct(i1p2);
+                double d2 = i2p2.DotProduct(i2p2);
+
+                if(d1<d2)
+                {
+                    x = oi1[0];
+                    y = oi1[1];
+                    z = oi1[2];
+                }
+                else
+                {
+                    x = oi1[0];
+                    y = oi1[1];
+                    z = oi1[2];
+                }
             }
         }
     }

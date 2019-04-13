@@ -83,7 +83,7 @@ namespace GeoFun
         /// <param name="para">七参数</param>
         /// <param name="ell1">椭球1</param>
         /// <param name="ell2">椭球2</param>
-        public void Seven3d(out double dB, out double dL, out double dH,
+        public  void Seven3d(out double dB, out double dL, out double dH,
             double B, double L, double H,
             SevenPara para, Ellipsoid ell1, Ellipsoid ell2)
         {
@@ -189,16 +189,109 @@ namespace GeoFun
             }
         }
 
-        public void Four(double x1, double y1, out double x2, out double y2,
-            double dx, double dy, double r, double s)
+        /// <summary>
+        /// 七参数转换
+        /// </summary>
+        /// <param name="X1">X1坐标(米)</param>
+        /// <param name="Y1">Y1坐标(米)</param>
+        /// <param name="Z1">Z1坐标(米)</param>
+        /// <param name="dx">X平移(米)</param>
+        /// <param name="dy">Y平移(米)</param>
+        /// <param name="dz">Z坐标(米)</param>
+        /// <param name="rx">X旋转(角度秒)</param>
+        /// <param name="ry">X旋转(角度秒)</param>
+        /// <param name="rz">X旋转(角度秒)</param>
+        /// <param name="m">尺度(ppm)</param>
+        /// <param name="X2"></param>
+        /// <param name="Y2"></param>
+        /// <param name="Z2"></param>
+        public void Seven3d(List<double> X1, List<double> Y1, List<double> Z1,
+            double dx,double dy, double dz, double rx, double ry, double rz, double m,
+            out List<double> X2, out List<double> Y2, out List<double> Z2)
         {
-            double cos = Math.Cos(r);
-            double sin = Math.Sin(r);
-            x2 = (1 + s / 1e6) * (cos * (x1 + dx) + sin * (y1 + dy));
-            y2 = (1 + s / 1e6) * (-sin * (x1 + dx) + cos * (y1 + dy));
+            X2 = new List<double>();
+            Y2 = new List<double>();
+            Z2 = new List<double>();
+
+            double x2, y2, z2;
+            for(int i =0; i < X1.Count; i++)
+            {
+                Seven3d(X1[i], Y1[i], Z1[i], dx, dy, dz, rx, ry, rz, m, out x2, out y2, out z2);
+
+                X2.Add(x2);
+                Y2.Add(y2);
+                Z2.Add(z2);
+            }
         }
 
-        public static void Four2d(ref double x, ref double y, double dx,  double dy,  double r,  double s, string mode = "ors")
+        /// <summary>
+        /// 七参数转换
+        /// </summary>
+        /// <param name="X1">X1坐标(米)</param>
+        /// <param name="Y1">Y1坐标(米)</param>
+        /// <param name="Z1">Z1坐标(米)</param>
+        /// <param name="dx">X平移(米)</param>
+        /// <param name="dy">Y平移(米)</param>
+        /// <param name="dz">Z坐标(米)</param>
+        /// <param name="rx">X旋转(角度秒)</param>
+        /// <param name="ry">X旋转(角度秒)</param>
+        /// <param name="rz">X旋转(角度秒)</param>
+        /// <param name="m">尺度(ppm)</param>
+        /// <param name="X2"></param>
+        /// <param name="Y2"></param>
+        /// <param name="Z2"></param>
+        public void Seven3d(double X1, double Y1, double Z1,
+            double dx, double dy, double dz, double rx, double ry, double rz, double m,
+            out double X2, out double Y2, out double Z2)
+        {
+            X2 = (1 + m * 1e-6) * (X1 + Y1 * rz * Angle.S2R - Z1 * ry * Angle.S2R) + dx;
+            Y2 = (1 + m * 1e-6) * (-X1 * rz * Angle.S2R + Y1 + Z1 * rx * Angle.S2R) + dy;
+            Z2 = (1 + m * 1e-6) * (X1 * ry * Angle.S2R - Y1 * rx * Angle.S2R + Z1) + dz;
+        }
+
+        /// <summary>
+        /// 1七参数转换
+        /// </summary>
+        /// <param name="X1"></param>
+        /// <param name="Y1"></param>
+        /// <param name="Z1"></param>
+        /// <param name="sev"></param>
+        /// <param name="X2"></param>
+        /// <param name="Y2"></param>
+        /// <param name="Z2"></param>
+        public void Seven3d(double X1, double Y1, double Z1, SevenPara sev,
+            out double X2, out double Y2, out double Z2)
+        {
+            Seven3d(X1, Y1, Z1, sev.XOff, sev.YOff, sev.ZOff,sev.XRot,sev.YRot,sev.ZRot, sev.M,
+                out X2, out Y2, out Z2);
+        }
+
+        public void Four(double x1, double y1, out double x2, out double y2,
+            double dx, double dy, double r, double s, string mode = "ors")
+        {
+            if (mode.ToLower().StartsWith("o"))
+            {
+                double cos = Math.Cos(r);
+                double sin = Math.Sin(r);
+                x2 = (1 + s / 1e6) * (cos * (x1 + dx) + sin * (y1 + dy));
+                y2 = (1 + s / 1e6) * (-sin * (x1 + dx) + cos * (y1 + dy));
+            }
+            else
+            {
+                double cos = Math.Cos(r);
+                double sin = Math.Sin(r);
+                x2 = (1 + s / 1e6) * (cos * x1 + sin * y1) + dx;
+                y2 = (1 + s / 1e6) * (-sin * x1 + cos * y1) + dy;
+            }
+        }
+
+        public void Four(double x1,double y1, out double x2,out double y2,
+            FourPara four)
+        {
+            Four(x1, y1, out x2, out y2, four.DX, four.DY, four.R, four.S, FourPara.Mode2Str(four.Mode));
+        }
+
+        public static void Four2d(ref double x, ref double y, double dx, double dy, double r, double s, string mode = "ors")
         {
             double xx = x;
             double yy = y;
@@ -217,9 +310,14 @@ namespace GeoFun
             }
             else
             {
-                x = s * (cos * xx + sin * yy)+dx;
-                y = s * (-sin * xx + yy * cos)+dy;
+                x = s * (cos * xx + sin * yy) + dx;
+                y = s * (-sin * xx + yy * cos) + dy;
             }
+        }
+
+        public static void Four2d(ref double x, ref double y, FourPara four)
+        {
+            Four2d(ref x, ref y, four.DX, four.DY, four.R, four.S, FourPara.Mode2Str(four.Mode));
         }
     }
 }

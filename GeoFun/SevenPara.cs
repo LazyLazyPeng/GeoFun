@@ -44,6 +44,129 @@ namespace GeoFun
         /// </summary>
         public double M { get; set; }
 
+        public static SevenPara CalParaYao(List<double> b1, List<double> l1, List<double> h1,
+            List<double> b2, List<double> l2, List<double> h2,
+            Ellipsoid ell1, Ellipsoid ell2)
+        {
+            double[] p = new double[49];
+            double[] x = new double[7];
+            double[] l = new double[3000];
+            double[] w = new double[7];
+            double[] v = new double[3000];
+            char[] dh = new char[20];
+            double targetx = 0, targety = 0, targetz = 0;
+            double sourcex = 0, sourcey = 0d, sourcez = 0;
+            double targetb = 0d, targetl = 0d, targeth = 0d;
+            double sourceb = 0d, sourcel = 0d, sourceh = 0d;
+            double[,] a = new double[1500, 7];
+            double pvv, m0, targeta, targetf, sourcea, sourcef, targete, sourcee; ;
+            double[] m = new double[7];
+            int i, j, n, k;
+            n = l1.Count;
+
+            int num = 7;
+            x[0] = x[1] = x[2] = x[3] = x[4] = x[5] = x[6] = 0;
+            m[0] = m[1] = m[2] = m[3] = m[4] = m[5] = m[6] = 0;
+
+            sourcea = ell1.A;
+            targeta = ell2.A;
+            sourcee = ell1.E1;
+            targete = ell2.E1;
+
+            int[] pos = { 3, 4, 5, 6 };
+            double P0 = 360d * 180d / Angle.PI;
+            for (i = 0; i < l1.Count; i++)
+            {
+                //sourceb = Angle.gd(b1[i]);
+                //sourcel = Angle.gd(l1[i]);
+                sourceb = b1[i];
+                sourcel = l1[i];
+                sourceh = h1[i];
+                //targetb = Angle.gd(b2[i]);
+                //targetl = Angle.gd(l2[i]);
+                targetb = b2[i];
+                targetl = l2[i];
+                targeth = h2[i];
+
+                Coordinate.compute_xyz(sourceb, sourcel, sourceh, sourcea, sourcee, ref sourcex, ref sourcey, ref sourcez);
+                Coordinate.compute_xyz(targetb, targetl, targeth, targeta, targete, ref targetx, ref targety, ref targetz);
+
+                a[3 * i + 0, 0] = 1;
+                a[3 * i + 0, 1] = 0;
+                a[3 * i + 0, 2] = 0;
+                a[3 * i + 0, pos[0]] = sourcex / 1000000.0;
+                a[3 * i + 0, pos[1]] = 0;
+                a[3 * i + 0, pos[2]] = -sourcez / P0;
+                a[3 * i + 0, pos[3]] = sourcey / P0;
+
+                a[3 * i + 1, 0] = 0;
+                a[3 * i + 1, 1] = 1;
+                a[3 * i + 1, 2] = 0;
+                a[3 * i + 1, pos[0]] = sourcey / 1000000.0;
+                a[3 * i + 1, pos[1]] = sourcez / P0;
+                a[3 * i + 1, pos[2]] = 0;
+                a[3 * i + 1, pos[3]] = -sourcex / P0;
+
+                a[3 * i + 2, 0] = 0;
+                a[3 * i + 2, 1] = 0;
+                a[3 * i + 2, 2] = 1;
+                a[3 * i + 2, pos[0]] = sourcez / 1000000.0;
+                a[3 * i + 2, pos[1]] = -sourcey / P0;
+                a[3 * i + 2, pos[2]] = sourcex / P0;
+                a[3 * i + 2, pos[3]] = 0;
+
+
+                l[3 * i + 0] = -targetx + sourcex;
+                l[3 * i + 1] = -targety + sourcey;
+                l[3 * i + 2] = -targetz + sourcez;
+            }
+
+            for (i = 0; i < num; i++)
+            {
+                for (j = i; j < num; j++)
+                {
+                    p[i * num + j] = 0;
+                    for (k = 0; k < 3 * n; k++)
+                        p[i * num + j] += a[k, j] * a[k, i];
+                    p[j * num + i] = p[i * num + j];
+                }
+            }
+            for (i = 0; i < num; i++)
+            {
+                w[i] = 0.0;
+                for (j = 0; j < 3 * n; j++)
+                    w[i] += a[j, i] * l[j];
+            }
+            MatrixHelper.Inv(ref p, num);
+            for (i = 0; i < num; i++)
+            {
+                x[i] = 0;
+                for (j = 0; j < num; j++)
+                    x[i] += -p[i * num + j] * w[j];
+            }
+            pvv = 0;
+            for (i = 0; i < 3 * n; i++)
+            {
+                v[i] = l[i];
+                for (j = 0; j < num; j++)
+                    v[i] += a[i, j] * x[j];
+                pvv += v[i] * v[i];
+            }
+            m0 = Math.Sqrt(pvv / (3 * n - num + 0.000000001));
+
+            SevenPara sev = new SevenPara
+            {
+                XOff = x[0],
+                YOff = x[1],
+                ZOff = x[2],
+                M = x[3],
+                XRot = x[4],
+                YRot = x[5],
+                ZRot = x[6],
+            };
+            return sev;
+        }
+
         /// <summary>
         /// 计算七参数(椭球1到椭球2)
         /// </summary>
@@ -89,6 +212,25 @@ namespace GeoFun
                 Coordinate.BLH2XYZ(b2[i], l2[i], h2[i], out x, out y, out z, ell2);
                 X2.Add(x); Y2.Add(y); Z2.Add(z);
             }
+
+            return CalPara(X1, Y1, Z1, X2, Y2, Z2);
+
+        }
+
+        /// <summary>
+        /// 计算七参数
+        /// </summary>
+        /// <param name="X1"></param>
+        /// <param name="Y1"></param>
+        /// <param name="Z1"></param>
+        /// <param name="X2"></param>
+        /// <param name="Y2"></param>
+        /// <param name="Z2"></param>
+        /// <returns></returns>
+        public static SevenPara CalPara(List<double> X1, List<double> Y1, List<double> Z1,
+            List<double> X2, List<double> Y2, List<double> Z2)
+        {
+            var pointNum = (new List<int> { X1.Count, Y1.Count, Z1.Count, X2.Count, Y2.Count, Z2.Count }).Min();
 
             Matrix<double> matrix = new DenseMatrix(pointNum * 3, 7);
             Vector<double> vector = new DenseVector(pointNum * 3);
@@ -266,6 +408,7 @@ namespace GeoFun
 
             return sev;
         }
+
 
         override
         public string ToString()

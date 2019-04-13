@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C298A600-CE0D-4C7E-8939-676AB9ABA040}</ProjectGuid>
+    <ProjectGuid>{D208A3E9-5BF4-414E-9807-7605898102A0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GeoFun</RootNamespace>
@@ -20,7 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -52,8 +53,10 @@
   <ItemGroup>
     <Compile Include="Angle.cs" />
     <Compile Include="Coordinate.cs" />
-    <Compile Include="CoordinateSystem\GeographicCoorSystem.cs" />
-    <Compile Include="CoordinateSystem\ProjectionCoorSystem.cs" />
+    <Compile Include="CoordinateSystem\enumCSType.cs" />
+    <Compile Include="CoordinateSystem\ICoordinateSytem.cs" />
+    <Compile Include="CoordinateSystem\IGeographicSystem.cs" />
+    <Compile Include="CoordinateSystem\IProjectionSystem.cs" />
     <Compile Include="CoorSeriesType.cs" />
     <Compile Include="CoorSystemPara.cs" />
     <Compile Include="DoubleHelper.cs" />
@@ -63,6 +66,7 @@
     <Compile Include="FileAttr.cs" />
     <Compile Include="FourPara.cs" />
     <Compile Include="IO\FileHelper.cs" />
+    <Compile Include="MatrixHelper.cs" />
     <Compile Include="Number.cs" />
     <Compile Include="PathHelper.cs" />
     <Compile Include="program.cs" />
@@ -78,4 +82,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
 </Project>

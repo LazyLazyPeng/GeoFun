@@ -24,6 +24,19 @@ namespace GeoFun
         /// </summary>
         public static double S2R = PI / 180d / 3600d;
 
+        public static double gd(double g)
+        {
+            int g1, g2, i;
+            i = Math.Sign(g);
+            g = Math.Abs(g);
+            g1 = (int)Math.Floor(g + 1e-12);
+            g2 = (int)Math.Floor((g - g1) * 100.0 + 1e-12);
+            g = (g - g1 - g2 / 100.0) * 10000.0 / 3600.0;
+            g += g1 + g2 / 60.0;
+            g *= PI / 180.0;
+            return (i * g);
+        }
+
         /// <summary>
         /// 将度转换为度分秒格式的数
         /// </summary>

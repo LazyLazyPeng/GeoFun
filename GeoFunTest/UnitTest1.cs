@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using GeoFun;
@@ -10,6 +11,50 @@ namespace GeoFunTest
     [TestClass]
     public class UnitTest1
     {
+        [DllImport("GeoFunC.DLL", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int Sum(int a, int b);
+        [DllImport("GeoFunC.DLL", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int FourCal(int num,
+        [In,Out] double[] x1, [In,Out] double[] y1,[In,Out] double[] x2,[In,Out] double[] y2,
+        [In,Out] double dx, [In,Out] double dy, [In,Out] double r, [In,Out] double s);
+
+        [TestMethod]
+        public void TestFourYao()
+        {
+            double[] x1 = { 0, 500, 0 };
+            double[] y1 = { 0, 0, 500 };
+
+            double[] x2 = { 0, 0, 0 };
+            double[] y2 = { 0, 0, 0 };
+
+            double dx1 = 35.389;
+            double dy1 = 127.442;
+            double r1 = 2.53 / 3600*Angle.D2R;
+            double s1 = 1.53;
+
+            double sin = Math.Sin(r1);
+            double cos = Math.Cos(r1);
+            for(int i = 0; i < 3; i++)
+            {
+                x2[i] = (1 + s1 * 1e-6)*(cos * (x1[i]+dx1) + sin * (y1[i]+dy1));
+                y2[i] = (1 + s1 * 1e-6)*(-sin * (x1[i]+dx1) + cos * (y1[i]+dy1));
+            }
+
+            double dx2 = 0, dy2=0, r2=0, s2=0;
+            FourCal(3, x1, y1, x2, y2, dx2, dy2, r2, s2);
+
+            Assert.IsTrue(Math.Abs(dx1-dx2)<1e-3);
+            Assert.IsTrue(Math.Abs(dy1-dy2)<1e-3);
+            Assert.IsTrue(Math.Abs(r1-r2)<1e-4);
+            Assert.IsTrue(Math.Abs(s1-s2)<1e-4);
+        }
+
+        [TestMethod]
+        public void TestSum()
+        {
+            Assert.IsTrue(Sum(1, 2) == 3);
+        }
+
         [TestMethod]
         public void TestFourPara1()
         {
@@ -243,7 +288,7 @@ namespace GeoFunTest
                 h2.Add(h);
             }
 
-            SevenPara sev = SevenPara.CalParaIter(b1, l1, h1, b2, l2, h2, Ellipsoid.ELLIP_XIAN80, Ellipsoid.ELLIP_CGCS2000);
+            SevenPara sev = SevenPara.CalPara(b1, l1, h1, b2, l2, h2, Ellipsoid.ELLIP_XIAN80, Ellipsoid.ELLIP_CGCS2000);
 
             Assert.IsTrue(Math.Abs(sev.XOff - 4) < 1e-3);
             Assert.IsTrue(Math.Abs(sev.YOff - 5) < 1e-3);

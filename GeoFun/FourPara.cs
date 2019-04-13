@@ -15,6 +15,11 @@ namespace GeoFun
         public enumFourMode Mode { get; set; } = enumFourMode.ORS;
 
         /// <summary>
+        /// 名称
+        /// </summary>
+        public string Name { get; set; } = "";
+
+        /// <summary>
         /// X平移量(米),默认0
         /// </summary>
         public double DX { get; set; } = 0d;
@@ -235,6 +240,14 @@ namespace GeoFun
             r2 = -r1;
             s2 = s1;
         }
+        public void SwapXY()
+        {
+            double temp = DX;
+            DX = DY;
+            DY = temp;
+
+            R = -R;
+        }
 
         /// <summary>
         /// 交换x和y方向的参数
@@ -336,64 +349,77 @@ namespace GeoFun
             //// 模型,默认是 旋转-缩放-平移
             if(mode is null)
             {
-                mode = "rso";
+                mode = "ors";
             }
 
-            int minCnt = Min(Min(x1.Count, y1.Count), Min(x2.Count, y2.Count));
+            #region 自己的算法
+            //int minCnt = Min(Min(x1.Count, y1.Count), Min(x2.Count, y2.Count));
 
-            if (minCnt < 2) return null;
+            //if (minCnt < 2) return null;
 
-            Matrix<double> B = new DenseMatrix(minCnt * 2, 4);
-            Vector<double> L = new DenseVector(minCnt * 2);
+            //Matrix<double> B = new DenseMatrix(minCnt * 2, 4);
+            //Vector<double> L = new DenseVector(minCnt * 2);
 
-            for (int i = 0; i < minCnt; i++)
-            {
-                B[i * 2, 0] = y1[i];
-                B[i * 2, 1] = x1[i];
-                B[i * 2, 2] = 1;
-                B[i * 2, 3] = 0;
+            //for (int i = 0; i < minCnt; i++)
+            //{
+            //    B[i * 2, 0] = y1[i];
+            //    B[i * 2, 1] = x1[i];
+            //    B[i * 2, 2] = 1;
+            //    B[i * 2, 3] = 0;
 
-                B[i * 2 + 1, 0] = -x1[i];
-                B[i * 2 + 1, 1] = y1[i];
-                B[i * 2 + 1, 2] = 0;
-                B[i * 2 + 1, 3] = 1;
+            //    B[i * 2 + 1, 0] = -x1[i];
+            //    B[i * 2 + 1, 1] = y1[i];
+            //    B[i * 2 + 1, 2] = 0;
+            //    B[i * 2 + 1, 3] = 1;
 
-                L[i * 2] = x2[i];
-                L[i * 2 + 1] = y2[i];
-            }
+            //    L[i * 2] = x2[i];
+            //    L[i * 2 + 1] = y2[i];
+            //}
 
-            Vector<double> xHat = (B.Transpose() * B).Inverse() * (B.Transpose() * L);
+            //Vector<double> xHat = (B.Transpose() * B).Inverse() * (B.Transpose() * L);
 
-            double a = xHat[0];  // m*sin(θ)
-            double b = xHat[1];  // m*cos(θ)
-            double c = xHat[2];  // Δx
-            double d = xHat[3];  // Δy
+            //double a = xHat[0];  // m*sin(θ)
+            //double b = xHat[1];  // m*cos(θ)
+            //double c = xHat[2];  // Δx
+            //double d = xHat[3];  // Δy
 
+            //FourPara four = new FourPara
+            //{
+            //    Mode = enumFourMode.RSO,
+            //    R = Math.Atan2(a, b),
+            //    S = (Math.Sqrt(a * a + b * b) - 1) * 1e6,
+            //    DX = c,
+            //    DY = d
+            //};
+
+            //try
+            //{
+            //    //// 将模型改为 平移-旋转-缩放
+            //    if (mode.ToLower().StartsWith("o"))
+            //    {
+            //        four.Mode = enumFourMode.ORS;
+
+            //        double dx = four.DX;
+            //        double dy = four.DY;
+
+            //        four.DX = (1/(1 + four.S * 1e-6)) * (Math.Cos(four.R) * dx - Math.Sin(four.R) * dy);
+            //        four.DY = (1/(1 + four.S * 1e-6)) * (Math.Sin(four.R) * dx + Math.Cos(four.R) * dy);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //}
+            #endregion
+
+            double dx, dy, r, s;
+            CalPara(x1, y1, x2, y2, out dx, out dy, out r, out s, mode);
             FourPara four = new FourPara
             {
-                Mode = enumFourMode.RSO,
-                R = Math.Atan2(a, b),
-                S = (Math.Sqrt(a * a + b * b) - 1) * 1e6,
-                DX = c,
-                DY = d
+                DX = dx,
+                DY = dy,
+                R = r,
+                S = s,
             };
-
-            try
-            {
-                //// 将模型改为 平移-旋转-缩放
-                if (mode.ToLower().StartsWith("o"))
-                {
-                    double dx = four.DX;
-                    double dy = four.DY;
-
-                    four.DX = (1 + four.S * 1e-6) * (Math.Cos(four.R) * dx + Math.Sin(four.R) * dy);
-                    four.DY = (1 + four.S * 1e-6) * (-Math.Sin(four.R) * dx + Math.Cos(four.R) * dy);
-                }
-            }
-            catch (Exception ex)
-            {
-            }
-
             return four;
         }
 
@@ -420,46 +446,104 @@ namespace GeoFun
                 return false;
             }
 
-            int minCnt = Min(Min(x1.Count, y1.Count), Min(x2.Count, y2.Count));
-
-            if (minCnt < 2) return false;
-
-            Matrix<double> B = new DenseMatrix(minCnt * 2, 4);
-            Vector<double> L = new DenseVector(minCnt * 2);
-
-            for (int i = 0; i < minCnt; i++)
+            //// 老板的算法
+            FourPara four = new FourPara();
+            if (!(x1.Count() == y1.Count() &&
+                x2.Count() == y2.Count() &&
+                x1.Count() == x2.Count()))
             {
-                B[i * 2, 0] = y1[i];
-                B[i * 2, 1] = x1[i];
-                B[i * 2, 2] = 1;
-                B[i * 2, 3] = 0;
+                return false;
+            }
+            int n = x1.Count();
+            if (n <= 2) return false;
+            List<double> xin = new List<double>(n);
+            List<double> yin = new List<double>(n);
+            List<double> xout = new List<double>(n);
+            List<double> yout = new List<double>(n);
 
-                B[i * 2 + 1, 0] = -x1[i];
-                B[i * 2 + 1, 1] = y1[i];
-                B[i * 2 + 1, 2] = 0;
-                B[i * 2 + 1, 3] = 1;
+            for (int i = 0; i < x1.Count(); i++)
+            {
+                if (x1[i] >= 999999999 || y1[i] >= 999999999 ||
+                    x2[i] >= 999999999 || y2[i] >= 999999999)
+                {
+                    continue;
+                }
+                dx += x2[i] - x1[i];
+                dy += y2[i] - y1[i];
+            }
+            dx = dx / n;
+            dy = dy / n;
 
-                L[i * 2] = x2[i];
-                L[i * 2 + 1] = y2[i];
+            //Matrix<double> B = new DenseMatrix(n * 2, 4);
+            //Vector<double> L = new DenseVector(n * 2);
+            //Vector<double> xHat = new DenseVector(4);
+
+            double[,] B = new double[n * 2, 4];
+            double[] L = new double[n * 2];
+            double[] xHat = new double[4];
+            double[] w = new double[4];
+            xHat[0] = xHat[1] = xHat[2] = xHat[3] = 100;
+            int count = 0;
+            int num = 4;
+            while (count < 20 && Math.Abs(xHat[0]) > 1E-10 && Math.Abs(xHat[1]) > 1E-10 && Math.Abs(xHat[2]) > 1E-15 && Math.Abs(xHat[3]) > 1E-15)
+            {
+                count++;
+                for (int i = 0; i < n; i++)
+                {
+                    B[i * 2, 0] = (1 + s) * Math.Cos(r);
+                    B[i * 2, 1] = (1 + s) * Math.Sin(r);
+                    B[i * 2, 2] = Math.Cos(r) * (x1[i] + dx) + Math.Sin(r) * (y1[i] + dy);
+                    B[i * 2, 3] = -(1 + s) * Math.Sin(r) * (x1[i] + dx) + (1 + s) * Math.Cos(r) * (y1[i] + dy);
+
+                    B[i * 2 + 1, 0] = -(1 + s) * Math.Sin(r);
+                    B[i * 2 + 1, 1] = (1 + s) * Math.Cos(r);
+                    B[i * 2 + 1, 2] = -Math.Sin(r) * (x1[i] + dx) + Math.Cos(r) * (y1[i] + dy);
+                    B[i * 2 + 1, 3] = -(1 + s) * Math.Cos(r) * (x1[i] + dx) - (1 + s) * Math.Sin(r) * (y1[i] + dy);
+
+                    L[i * 2] = (1 + s) * Math.Cos(r) * (x1[i] + dx) + (1 + s) * Math.Sin(r) * (y1[i] + dy) - x2[i];
+                    L[i * 2 + 1] = -(1 + s) * Math.Sin(r) * (x1[i] + dx) + (1 + s) * Math.Cos(r) * (y1[i] + dy) - y2[i];
+                }
+                //xHat = -(B.Transpose() * B).Inverse() * (B.Transpose() * L);
+
+                double[] p = new double[num * num];
+                for (int i = 0; i < num; i++)
+                {
+                    for (int j = i; j < num; j++)
+                    {
+                        p[i * num + j] = 0;
+                        for (int k = 0; k < 2 * n; k++)
+                            p[i * num + j] += B[k, j] * B[k, i];
+                        p[j * num + i] = p[i * num + j];
+                    }
+                }
+                for (int i = 0; i < num; i++)
+                {
+                    w[i] = 0.0;
+                    for (int j = 0; j < 2 * n; j++)
+                        w[i] += B[j, i] * L[j];
+                }
+                inv(ref p, num);
+                for (int i = 0; i < num; i++)
+                {
+                    xHat[i] = 0;
+                    for (int j = 0; j < num; j++)
+                        xHat[i] += -p[i * num + j] * w[j];
+                }
+
+
+                dx += xHat[0];
+                dy += xHat[1];
+                s += xHat[2];
+                r += xHat[3];
             }
 
-            Vector<double> xHat = (B.Transpose() * B).Inverse() * (B.Transpose() * L);
+            s *= 1e6;
 
-            double a = xHat[0];  // m*sin(θ)
-            double b = xHat[1];  // m*cos(θ)
-            double c = xHat[2];  // Δx
-            double d = xHat[3];  // Δy
-
-            r = Math.Atan2(a, b);
-            s = (Math.Sqrt(a * a + b * b) - 1) * 1e6;
-            dx = c;
-            dy = d;
-
-            //// 计算出参数的模型是rso，转换成ors
-            if (mode.StartsWith("o"))
+            //// 计算出参数的模型是ors，转换成rso
+            if (!mode.StartsWith("o"))
             {
                 double dx2, dy2, r2, s2;
-                ChangeMode(dx, dy, r, s, "rso", out dx2, out dy2, out r2, out s2, "ors");
+                ChangeMode(dx, dy, r, s, "ors", out dx2, out dy2, out r2, out s2, "rso");
                 dx = dx2;
                 dy = dy2;
                 r = r2;
@@ -478,7 +562,7 @@ namespace GeoFun
         /// <param name="y2">y坐标(米)</param>
         /// <returns></returns>
         public static FourPara CalParaIter(List<double> x1, List<double> y1,
-            List<double> x2, List<double> y2)
+            List<double> x2, List<double> y2,string mode = "ors")
         {
             List<int> counts = new List<int> { x1.Count, x2.Count, y1.Count, y2.Count };
             int minCount = counts.Min();
@@ -515,13 +599,13 @@ namespace GeoFun
                 }
 
                 //// 计算四参数
-                four = CalPara(xx1, yy1, xx2, yy2);
+                four = CalPara(xx1, yy1, xx2, yy2,mode);
 
                 //// 用得到的四参数进行转换
                 double x = 0d, y = 0d;
                 for (int i = 0; i < xx1.Count; i++)
                 {
-                    trans.Four(xx1[i], yy1[i], out x, out y, four.DX, four.DY, four.R, four.S);
+                    trans.Four(xx1[i], yy1[i], out x, out y,four);
                     x3.Add(x);
                     y3.Add(y);
                 }
@@ -549,6 +633,41 @@ namespace GeoFun
             }
 
             return four;
+        }
+
+        /// <summary>
+        /// 将四参数转换为等价的七参数
+        /// </summary>
+        /// <param name="a1">椭球1长半轴(米）</param>
+        /// <param name="f1">椭球1扁率倒数</param>
+        /// <param name="a2">椭球1长半轴(米）</param>
+        /// <param name="f2">椭球1扁率倒数</param>
+        /// <param name="l0">中央子午线(弧度)</param>
+        /// <param name="dx">平移量(米)</param>
+        /// <param name="dy">平移量(米)</param>
+        /// <param name="r">旋转量(秒)</param>
+        /// <param name="s">尺度(ppm)</param>
+        /// <returns></returns>
+        public static void ToSeven(double a1, double f1, double a2, double f2,double l0,
+            double xoff, double yoff, double r, double s,
+            out double dx, out double dy, out double dz, out double rx, out double ry, out double rz, out double ss,
+            string mode = "ors")
+        {
+            dx = dy = dz = rx = ry = rz = ss = 0d;
+
+            int iterateCount = 3;
+
+            List<double> x1 = new List<double>();
+            List<double> y1 = new List<double>();
+            List<double> x2 = new List<double>();
+            List<double> y2 = new List<double>();
+
+            x1.Add(0d);y1.Add(0d);
+
+            for(int i = 0; i < iterateCount; i++)
+            {
+
+            }
         }
 
         private static int Min(int cnt1, int cnt2)
@@ -589,6 +708,60 @@ namespace GeoFun
             {
                 return enumFourMode.ORS;
             }
+        }
+
+        private static void inv(ref double[] p, int i1)
+        {
+            double[] pq;
+            double p1, pc;
+            int i, j, k;
+            pq = new double[i1];
+            for (i = 0; i < i1; i++)
+                pq[i] = p[i * i1 + i];
+            for (i = 0; i < i1 - 1; i++)
+            {
+                for (j = i + 1; j < i1; j++)
+                {
+                    p1 = -p[j * i1 + i] / p[i * i1 + i];
+                    for (k = 0; k < i1; k++)
+                    {
+                        if (k == i) continue;
+                        p[j * i1 + k] = p[j * i1 + k] + p1 * p[i * i1 + k];
+                    }
+                    p[j * i1 + i] = p1;
+                }
+            }
+            for (i = 0; i < i1; i++)
+            {
+                for (j = 0; j < i1; j++)
+                {
+                    if (j == i) continue;
+                    p[i * i1 + j] = p[i * i1 + j] / p[i * i1 + i];
+                }
+                p[i * i1 + i] = 1 / p[i * i1 + i];
+            }
+            for (i = i1 - 1; i >= 1; i--)
+                for (j = i - 1; j >= 0; j--)
+                {
+                    pc = -p[j * i1 + i];
+                    for (k = 0; k <= j; k++)
+                        p[j * i1 + k] = p[j * i1 + k] + pc * p[i * i1 + k];
+                }
+            for (i = 0; i < i1; i++)
+                if (p[i * i1 + i] < 0)
+                {
+                    for (j = 0; j < i1; j++)
+                        for (k = 0; k < i1; k++)
+                            if (k == j)
+                                p[j * i1 + j] = 1.0 / pq[j];
+                            else
+                                p[i * i1 + j] = 0.0;
+                    return;
+                }
+            for (i = 0; i < i1 - 1; i++)
+                for (j = i + 1; j < i1; j++)
+                    p[i * i1 + j] = p[j * i1 + i];
+            pq = null;
         }
     }
 }

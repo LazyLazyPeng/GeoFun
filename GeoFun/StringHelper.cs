@@ -38,7 +38,10 @@ namespace GeoFun
 
         public static string[] SplitFields(string line, char spliter = ' ')
         {
-            line = RemoveRedundantBlank(line);
+            if (spliter == ' ')
+            {
+                line = RemoveRedundantBlank(line);
+            }
 
             return line.Split(spliter);
         }
