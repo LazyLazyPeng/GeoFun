@@ -4,16 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B8D64A98-4A98-4811-8E01-F9783209AAF0}</ProjectGuid>
+    <ProjectGuid>{D1D72B0E-D8EB-4636-9230-3E1B8D244C3E}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GeoFun.GNSS</RootNamespace>
-    <AssemblyName>GeoFun.GNSS</AssemblyName>
+    <RootNamespace>GeoFun.Spatial</RootNamespace>
+    <AssemblyName>GeoFun.Spatial</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,15 +23,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -43,27 +41,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Coor3.cs" />
-    <Compile Include="Day.cs" />
-    <Compile Include="DCBFile.cs" />
-    <Compile Include="GPST.cs" />
-    <Compile Include="Iono.cs" />
-    <Compile Include="NEpoch.cs" />
-    <Compile Include="NFile.cs" />
-    <Compile Include="NHeader.cs" />
-    <Compile Include="NSat.cs" />
-    <Compile Include="OEpoch.cs" />
-    <Compile Include="OFile.cs" />
-    <Compile Include="OHeader.cs" />
-    <Compile Include="OSat.cs" />
-    <Compile Include="program.cs" />
-    <Compile Include="SP3Epoch.cs" />
-    <Compile Include="SP3File.cs" />
-    <Compile Include="SP3Header.cs" />
-    <Compile Include="SP3Sat.cs" />
+    <Compile Include="Box.cs" />
+    <Compile Include="enumPartType.cs" />
+    <Compile Include="enumShapeCode.cs" />
+    <Compile Include="enumShapeType.cs" />
+    <Compile Include="IFeature.cs" />
+    <Compile Include="MultiPatch.cs" />
+    <Compile Include="MultiPoint.cs" />
+    <Compile Include="Point.cs" />
+    <Compile Include="PolyLine.cs" />
+    <Compile Include="Polyon.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Time.cs" />
-    <Compile Include="Week.cs" />
+    <Compile Include="ShapeNull.cs" />
+    <Compile Include="SHPFile.cs" />
+    <Compile Include="SHPFileHeader.cs" />
+    <Compile Include="SHPRecord.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GeoFun\GeoFun.csproj">

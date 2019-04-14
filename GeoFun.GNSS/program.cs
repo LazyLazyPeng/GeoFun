@@ -9,6 +9,11 @@ namespace GeoFun.GNSS
     {
         static void Main(string[] args)
         {
+
+        }
+
+        public static void TestOFile()
+        {
             string prn = "";
             string obsType = "";
             OFile ofile = new OFile(@"E:\Data\Typhoon\201307_Soulik\FLNM1930.13o");
@@ -38,6 +43,7 @@ namespace GeoFun.GNSS
             }
 
             Console.ReadKey();
+
         }
     }
 }

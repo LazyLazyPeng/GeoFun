@@ -52,6 +52,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Angle.cs" />
+    <Compile Include="ArrayHelper.cs" />
+    <Compile Include="ByteHelper.cs" />
     <Compile Include="Coordinate.cs" />
     <Compile Include="CoordinateSystem\enumCSType.cs" />
     <Compile Include="CoordinateSystem\ICoordinateSytem.cs" />
@@ -62,6 +64,7 @@
     <Compile Include="DoubleHelper.cs" />
     <Compile Include="Ellipsoid.cs" />
     <Compile Include="enumAngleFormat.cs" />
+    <Compile Include="enumByteOrder.cs" />
     <Compile Include="enumFourMode.cs" />
     <Compile Include="FileAttr.cs" />
     <Compile Include="FourPara.cs" />
