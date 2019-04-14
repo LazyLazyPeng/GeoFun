@@ -394,5 +394,30 @@ namespace GeoFunTest
             shpF.CloseRead();
             shpF.CloseWrite();
         }
+
+        [TestMethod]
+        public void TestSHPFile_BigData()
+        {
+            SHPFile shpF = new SHPFile(@"E:\Data\Shanxi\T图件转换\大数据\test\test.shp",@"C: \Users\niuni\Desktop\新建文件夹\big.shp");
+
+            shpF.OpenRead();
+            shpF.OpenWrite();
+            if (shpF.ReadHeader())
+            {
+                shpF.WriteHeader();
+                List<SHPRecord> records = new List<SHPRecord>();
+                uint readNum = 10000;
+                int writeNum = 0;
+                do
+                {
+                    records = shpF.ReadRecords(readNum);
+                    Console.WriteLine("读取1000条数据...");
+                    writeNum = shpF.WriteRecords(records);
+                    Console.WriteLine(string.Format("写入{0}条数据...", writeNum));
+                } while (records.Count == 10000);
+            }
+            shpF.CloseRead();
+            shpF.CloseWrite();
+        }
     }
 }

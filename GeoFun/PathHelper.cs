@@ -20,5 +20,28 @@ namespace GeoFun
 
             return string.Format("{0}\\{1}{2}{3}",Path.GetDirectoryName(path),Path.GetFileNameWithoutExtension(path),append,Path.GetExtension(path));
         }
+
+        public static bool CreateBaseFolder(string path)
+        {
+            try
+            {
+                if(string.IsNullOrWhiteSpace(path))
+                {
+                    return true;
+                }
+
+                string baseFolder = Path.GetDirectoryName(path);
+                if(!Directory.Exists(baseFolder))
+                {
+                    Directory.CreateDirectory(baseFolder);
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

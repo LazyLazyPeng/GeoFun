@@ -44,6 +44,8 @@ namespace GeoFun.Spatial
         /// </summary>
         public BinaryWriter Writer = null;
 
+        public List<string> OtherFiles = new List<string>() { "cpg", "dbf", "prj", "sbn", "sbx", "shx" };
+
         public SHPFile(string pathSrc = "", string pathDst = "")
         {
             PathSrc = pathSrc;
@@ -84,9 +86,45 @@ namespace GeoFun.Spatial
                 {
                     Writer.Close();
                 }
+
+                CopyOtherFiles(PathSrc, PathDst);
             }
             catch
             { }
+        }
+
+        private void CopyOtherFiles(string pathSrc, string pathDst)
+        {
+            string path1, path2;
+            for (int i = 0; i < OtherFiles.Count; i++)
+            {
+                try
+                {
+                    path1 = pathSrc.Substring(0, pathSrc.Length - 4) + "." + OtherFiles[i];
+                    path2 = pathDst.Substring(0, pathDst.Length - 4) + "." + OtherFiles[i];
+
+                    if(File.Exists(path1))
+                    {
+                        FileInfo info = new FileInfo(path1);
+
+                        info.CopyTo(path2);
+                    }
+
+                    //path1 = pathSrc.Substring(0, pathSrc.Length - 4) + "." + OtherFiles[i].ToUpper();
+                    //path2 = pathDst.Substring(0, pathDst.Length - 4) + "." + OtherFiles[i].ToUpper();
+
+                    //if(File.Exists(path1))
+                    //{
+                    //    FileInfo info = new FileInfo(path1);
+
+                    //    info.CopyTo(path2);
+                    //}
+                }
+                catch
+                {
+                    continue;
+                }
+            }
         }
 
         /// <summary>
@@ -718,7 +756,7 @@ namespace GeoFun.Spatial
                     line.HasM = true;
 
                     line.MRange[0] = BitConverter.ToDouble(buffer, Z);
-                    line.MRange[0] = BitConverter.ToDouble(buffer, Z + 8);
+                    line.MRange[1] = BitConverter.ToDouble(buffer, Z + 8);
                     for (int i = 0; i < line.NumPoints; i++)
                     {
                         line.Points[i].M = BitConverter.ToDouble(buffer, Z + 16 + 8 * i);
@@ -956,7 +994,7 @@ namespace GeoFun.Spatial
                     polygon.HasM = true;
 
                     polygon.MRange[0] = BitConverter.ToDouble(buffer, Z);
-                    polygon.MRange[0] = BitConverter.ToDouble(buffer, Z + 8);
+                    polygon.MRange[1] = BitConverter.ToDouble(buffer, Z + 8);
                     for (int i = 0; i < polygon.NumPoints; i++)
                     {
                         polygon.Points[i].M = BitConverter.ToDouble(buffer, Z + 16 + 8 * i);
