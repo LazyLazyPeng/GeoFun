@@ -63,6 +63,8 @@
     <Compile Include="CoorSystemPara.cs" />
     <Compile Include="DoubleHelper.cs" />
     <Compile Include="Ellipsoid.cs" />
+    <Compile Include="enum2DAxis.cs" />
+    <Compile Include="enum2DOrientation.cs" />
     <Compile Include="enumAngleFormat.cs" />
     <Compile Include="enumByteOrder.cs" />
     <Compile Include="enumFourMode.cs" />

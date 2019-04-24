@@ -14,10 +14,112 @@ namespace GeoFun
         /// </summary>
         public enumFourMode Mode { get; set; } = enumFourMode.ORS;
 
+        public string ModeStr
+        {
+            get
+            {
+                return Mode2Str(Mode);
+            }
+            set
+            {
+                Mode = Str2Mode(value);
+            }
+        }
+
         /// <summary>
         /// 名称
         /// </summary>
         public string Name { get; set; } = "";
+
+        /// <summary>
+        ///  东方向所在的轴
+        /// </summary>
+        public enum2DAxis North { get; set; } = enum2DAxis.X;
+        /// <summary>
+        ///  北方向所在的轴
+        /// </summary>
+        public enum2DAxis East
+        {
+            get
+            {
+                if (North == enum2DAxis.X)
+                {
+                    return enum2DAxis.Y;
+                }
+                else
+                {
+                    return enum2DAxis.X;
+                }
+            }
+            set
+            {
+                if (value == enum2DAxis.X)
+                {
+                    North = enum2DAxis.Y;
+                }
+                else
+                {
+                    North = enum2DAxis.X;
+                }
+            }
+        }
+
+        /// <summary>
+        /// X轴朝向
+        /// </summary>
+        public enum2DOrientation OrientationX
+        {
+            get
+            {
+                if (North == enum2DAxis.X)
+                {
+                    return enum2DOrientation.North;
+                }
+                else
+                {
+                    return enum2DOrientation.East;
+                }
+            }
+            set
+            {
+                if (value == enum2DOrientation.North)
+                {
+                    North = enum2DAxis.X;
+                }
+                else
+                {
+                    North = enum2DAxis.Y;
+                }
+            }
+        }
+        /// <summary>
+        /// Y轴朝向
+        /// </summary>
+        public enum2DOrientation OrientationY
+        {
+            get
+            {
+                if (North == enum2DAxis.X)
+                {
+                    return enum2DOrientation.East;
+                }
+                else
+                {
+                    return enum2DOrientation.North;
+                }
+            }
+            set
+            {
+                if (value == enum2DOrientation.North)
+                {
+                    North = enum2DAxis.Y;
+                }
+                else
+                {
+                    North = enum2DAxis.X;
+                }
+            }
+        }
 
         /// <summary>
         /// X平移量(米),默认0
@@ -28,13 +130,50 @@ namespace GeoFun
         /// </summary>
         public double DY { get; set; } = 0d;
         /// <summary>
-        /// 旋转量(秒),默认0
+        /// 旋转量(弧度),默认0
         /// </summary>
         public double R { get; set; } = 0d;
         /// <summary>
         /// 尺度(ppm),默认0
         /// </summary>
         public double S { get; set; } = 0d;
+
+        /// <summary>
+        /// 改变模型
+        /// </summary>
+        /// <param name="newMode"></param>
+        public void ChangeMode(enumFourMode newMode)
+        {
+            if (Mode == newMode)
+            {
+                return;
+            }
+            else
+            {
+                double dx, dy, r, s;
+
+                ChangeMode(DX, DY, R , S, Mode, out dx, out dy, out r, out s, newMode);
+
+                DX = dx;
+                DY = dy;
+                R = r;
+                S = s;
+            }
+        }
+
+        /// <summary>
+        /// 转换为仿射变换参数
+        /// </summary>
+        /// <param name="A"></param>
+        /// <param name="B"></param>
+        /// <param name="C"></param>
+        /// <param name="D"></param>
+        /// <param name="E"></param>
+        /// <param name="F"></param>
+        public void ToAffine(out double A, out double B, out double C, out double D, out double E, out double F)
+        {
+            Four2Affine(this, out A, out B, out C, out D, out E, out F);
+        }
 
         /// <summary>
         /// 四参数转仿射参数
@@ -240,6 +379,10 @@ namespace GeoFun
             r2 = -r1;
             s2 = s1;
         }
+
+        /// <summary>
+        /// 交换坐标轴的参数
+        /// </summary>
         public void SwapXY()
         {
             double temp = DX;
@@ -247,6 +390,15 @@ namespace GeoFun
             DY = temp;
 
             R = -R;
+
+            if (North == enum2DAxis.X)
+            {
+                North = enum2DAxis.Y;
+            }
+            else
+            {
+                North = enum2DAxis.X;
+            }
         }
 
         /// <summary>
@@ -347,7 +499,7 @@ namespace GeoFun
             }
 
             //// 模型,默认是 旋转-缩放-平移
-            if(mode is null)
+            if (mode is null)
             {
                 mode = "ors";
             }
@@ -562,7 +714,7 @@ namespace GeoFun
         /// <param name="y2">y坐标(米)</param>
         /// <returns></returns>
         public static FourPara CalParaIter(List<double> x1, List<double> y1,
-            List<double> x2, List<double> y2,string mode = "ors")
+            List<double> x2, List<double> y2, string mode = "ors")
         {
             List<int> counts = new List<int> { x1.Count, x2.Count, y1.Count, y2.Count };
             int minCount = counts.Min();
@@ -599,13 +751,13 @@ namespace GeoFun
                 }
 
                 //// 计算四参数
-                four = CalPara(xx1, yy1, xx2, yy2,mode);
+                four = CalPara(xx1, yy1, xx2, yy2, mode);
 
                 //// 用得到的四参数进行转换
                 double x = 0d, y = 0d;
                 for (int i = 0; i < xx1.Count; i++)
                 {
-                    trans.Four(xx1[i], yy1[i], out x, out y,four);
+                    trans.Four(xx1[i], yy1[i], out x, out y, four);
                     x3.Add(x);
                     y3.Add(y);
                 }
@@ -648,7 +800,7 @@ namespace GeoFun
         /// <param name="r">旋转量(秒)</param>
         /// <param name="s">尺度(ppm)</param>
         /// <returns></returns>
-        public static void ToSeven(double a1, double f1, double a2, double f2,double l0,
+        public static void ToSeven(double a1, double f1, double a2, double f2, double l0,
             double xoff, double yoff, double r, double s,
             out double dx, out double dy, out double dz, out double rx, out double ry, out double rz, out double ss,
             string mode = "ors")
@@ -662,9 +814,9 @@ namespace GeoFun
             List<double> x2 = new List<double>();
             List<double> y2 = new List<double>();
 
-            x1.Add(0d);y1.Add(0d);
+            x1.Add(0d); y1.Add(0d);
 
-            for(int i = 0; i < iterateCount; i++)
+            for (int i = 0; i < iterateCount; i++)
             {
 
             }
