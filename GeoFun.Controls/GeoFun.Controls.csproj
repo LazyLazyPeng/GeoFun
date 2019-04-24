@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D1D72B0E-D8EB-4636-9230-3E1B8D244C3E}</ProjectGuid>
+    <ProjectGuid>{C431E105-D431-4A57-A617-C1FA5D038B7D}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>GeoFun.Spatial</RootNamespace>
-    <AssemblyName>GeoFun.Spatial</AssemblyName>
+    <RootNamespace>GeoFun.Controls</RootNamespace>
+    <AssemblyName>GeoFun.Controls</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,16 +22,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -41,31 +36,20 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Box.cs" />
-    <Compile Include="enumPartType.cs" />
-    <Compile Include="enumShapeCode.cs" />
-    <Compile Include="enumShapeType.cs" />
-    <Compile Include="IFeature.cs" />
-    <Compile Include="MultiPatch.cs" />
-    <Compile Include="MultiPoint.cs" />
-    <Compile Include="Point.cs" />
-    <Compile Include="PolyLine.cs" />
-    <Compile Include="Polyon.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="OpenFolderDialog.cs" />
+    <Compile Include="UserControl1.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControl1.Designer.cs">
+      <DependentUpon>UserControl1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShapeNull.cs" />
-    <Compile Include="SHPFile.cs" />
-    <Compile Include="SHPFileHeader.cs" />
-    <Compile Include="SHPRecord.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GeoFun\GeoFun.csproj">
-      <Project>{d208a3e9-5bf4-414e-9807-7605898102a0}</Project>
-      <Name>GeoFun</Name>
-    </ProjectReference>
+    <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

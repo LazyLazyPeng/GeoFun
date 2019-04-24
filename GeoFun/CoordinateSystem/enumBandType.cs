@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using GeoFun;
-
 namespace GeoFun.CoordinateSystem
 {
-    public interface IGeographicSystem : ICoordinateSystem
+    public enum enumBandType
     {
+        BandNo,
+        Band3,
+        Band6
     }
 }

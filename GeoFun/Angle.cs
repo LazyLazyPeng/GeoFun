@@ -7,6 +7,50 @@ namespace GeoFun
         public static double PI = 3.1415926535897932;
         public static decimal PIM = 3.1415926535897932m;
 
+        private decimal dd = 0m;
+        private decimal dms = 0m;
+        private decimal arc = 0m;
+
+        public decimal DD
+        {
+            get
+            {
+                return dd;
+            }
+            set
+            {
+                dd = value;
+                dms = DD2DMS(dd);
+                arc = dd * Angle.D2RM;
+            }
+        }
+        public decimal DMS
+        {
+            get
+            {
+                return dms;
+            }
+            set
+            {
+                dms = value;
+                dd = DMS2DD(dms);
+                arc = dd * Angle.R2DM;
+            }
+        }
+        public decimal ARC
+        {
+            get
+            {
+                return arc;
+            }
+            set
+            {
+                arc = value;
+                dd = arc * Angle.R2DM;
+                dms = DD2DMS(dd);
+            }
+        }
+
         /// <summary>
         /// 弧度转度
         /// </summary>
@@ -23,6 +67,39 @@ namespace GeoFun
         /// 秒转弧度
         /// </summary>
         public static double S2R = PI / 180d / 3600d;
+
+        public Angle(decimal ang = 0m, enumAngleFormat format = enumAngleFormat.DD)
+        {
+            switch(format)
+            {
+                case enumAngleFormat.DMS:
+                    DMS = ang;
+                    break;
+                case enumAngleFormat.Arc:
+                    ARC = ang;
+                    break;
+                default:
+                    DD = ang;
+                    break;
+            }
+        }
+        public Angle(double angle, enumAngleFormat format = enumAngleFormat.DD)
+        {
+            decimal ang = (decimal)angle;
+            switch(format)
+            {
+                case enumAngleFormat.DMS:
+                    DMS = ang;
+                    break;
+                case enumAngleFormat.Arc:
+                    ARC = ang;
+                    break;
+                default:
+                    DD = ang;
+                    break;
+            }
+        }
+
 
         public static double gd(double g)
         {

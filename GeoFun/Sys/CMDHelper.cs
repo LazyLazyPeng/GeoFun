@@ -10,9 +10,15 @@ namespace GeoFun.Sys
 {
     public class CMDHelper
     {
+        public int SkipMessNum = 4;
+        public int messNum = 0;
         public event EventHandler<DataReceivedEventArgs> OnOutputDataReceived;
         public event EventHandler<DataReceivedEventArgs> OnErrorDataReceived;
 
+        /// <summary>
+        /// 异步执行命令
+        /// </summary>
+        /// <param name="cmd"></param>
         public virtual void Execute(string cmd)
         {
             using (Process proc = new Process())
@@ -60,6 +66,25 @@ namespace GeoFun.Sys
             }
         }
 
+        /// <summary>
+        /// 同步执行命令，无返回结果
+        /// </summary>
+        /// <param name="cmd"></param>
+        public virtual void ExecuteNoWait(string cmd)
+        {
+            //调用外部程序导cmd命令行
+            Process p = new Process();
+            p.StartInfo.FileName = "cmd.exe";
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardInput = true;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.CreateNoWindow = false;
+            p.Start();
+            p.StandardInput.WriteLine(cmd);
+            //cmd又调用了ociuldr.ex
+            //string output = p.StandardOutput.ReadToEnd(); 这句可以用来获取执行命令的输出结果
+        }
+
         public virtual void Proc_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
             OnErrorDataReceived?.Invoke(sender, e);
@@ -67,6 +92,10 @@ namespace GeoFun.Sys
 
         public virtual void Proc_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
+            messNum++;
+            if (messNum <= SkipMessNum) return;
+            if (string.IsNullOrWhiteSpace(e.Data)) return;
+
             OnOutputDataReceived?.Invoke(sender, e);
         }
     }

@@ -10,6 +10,13 @@ namespace GeoFun
     /// </summary>
     public class Ellipsoid
     {
+        private static readonly string FME_STR =
+            "\"ELLIPSOID_DEF {0}               \\"
+            + "\r\nDESC_NM \"Test Ellipsoid\"  \\"
+            + "\r\nSOURCE \"PowerMap\"         \\"
+            + "\r\nE_RAD {1}                   \\"
+            + "\r\nP_RAD {2}";
+
         /// <summary>
         /// 椭球名称
         /// </summary>
@@ -217,6 +224,11 @@ namespace GeoFun
             {
                 return false;
             }
+        }
+
+        public string ToFMEString()
+        {
+            return string.Format(FME_STR, Name, A, B);
         }
     }
 }

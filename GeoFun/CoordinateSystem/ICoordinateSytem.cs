@@ -20,6 +20,11 @@ namespace GeoFun.CoordinateSystem
         enumCSType CSType { get; }
 
         /// <summary>
+        /// 基准
+        /// </summary>
+        Datum Datum { get; set; }
+
+        /// <summary>
         /// 椭球
         /// </summary>
         Ellipsoid Ellipsoid { get; set; }
@@ -28,6 +33,20 @@ namespace GeoFun.CoordinateSystem
         /// 是否是ArcGIS内置的坐标系
         /// </summary>
         bool IsArcGIS { get; set; }
+
+        /// <summary>
+        /// ArcGIS坐标系名称
+        /// </summary>
+        string ArcGISName { get; }
+
+        /// <summary>
+        /// FME坐标系名称
+        /// </summary>
+        string FMEName { get; set; }
+
+        string ToESRIString();
+        string ToFMEString();
+        void WritePrj(string path);
     }
 
 

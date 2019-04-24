@@ -55,10 +55,14 @@
     <Compile Include="ArrayHelper.cs" />
     <Compile Include="ByteHelper.cs" />
     <Compile Include="Coordinate.cs" />
+    <Compile Include="CoordinateSystem\Datum.cs" />
+    <Compile Include="CoordinateSystem\enumBandType.cs" />
     <Compile Include="CoordinateSystem\enumCSType.cs" />
+    <Compile Include="CoordinateSystem\GeographicSystem.cs" />
     <Compile Include="CoordinateSystem\ICoordinateSytem.cs" />
     <Compile Include="CoordinateSystem\IGeographicSystem.cs" />
     <Compile Include="CoordinateSystem\IProjectionSystem.cs" />
+    <Compile Include="CoordinateSystem\ProjectionSystem.cs" />
     <Compile Include="CoorSeriesType.cs" />
     <Compile Include="CoorSystemPara.cs" />
     <Compile Include="DoubleHelper.cs" />

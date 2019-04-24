@@ -44,7 +44,7 @@ namespace GeoFun.Spatial
         /// </summary>
         public BinaryWriter Writer = null;
 
-        public List<string> OtherFiles = new List<string>() { "cpg", "dbf", "prj", "sbn", "sbx", "shx" };
+        public static List<string> FileAppends = new List<string>() {"shp", "cpg", "dbf", "prj", "sbn", "sbx", "shx" };
 
         public SHPFile(string pathSrc = "", string pathDst = "")
         {
@@ -96,12 +96,13 @@ namespace GeoFun.Spatial
         private void CopyOtherFiles(string pathSrc, string pathDst)
         {
             string path1, path2;
-            for (int i = 0; i < OtherFiles.Count; i++)
+            for (int i = 0; i < FileAppends.Count; i++)
             {
+                if (FileAppends[i] == "shp") continue;
                 try
                 {
-                    path1 = pathSrc.Substring(0, pathSrc.Length - 4) + "." + OtherFiles[i];
-                    path2 = pathDst.Substring(0, pathDst.Length - 4) + "." + OtherFiles[i];
+                    path1 = pathSrc.Substring(0, pathSrc.Length - 4) + "." + FileAppends[i];
+                    path2 = pathDst.Substring(0, pathDst.Length - 4) + "." + FileAppends[i];
 
                     if(File.Exists(path1))
                     {
@@ -119,6 +120,30 @@ namespace GeoFun.Spatial
 
                     //    info.CopyTo(path2);
                     //}
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+        }
+
+        public static void Copy(string pathSrc,string pathDst)
+        {
+            string path1, path2;
+            for (int i = 0; i < FileAppends.Count; i++)
+            {
+                try
+                {
+                    path1 = pathSrc.Substring(0, pathSrc.Length - 4) + "." + FileAppends[i];
+                    path2 = pathDst.Substring(0, pathDst.Length - 4) + "." + FileAppends[i];
+
+                    if (File.Exists(path1))
+                    {
+                        FileInfo info = new FileInfo(path1);
+
+                        info.CopyTo(path2);
+                    }
                 }
                 catch
                 {

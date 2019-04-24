@@ -21,6 +21,17 @@ namespace GeoFun
             return string.Format("{0}\\{1}{2}{3}",Path.GetDirectoryName(path),Path.GetFileNameWithoutExtension(path),append,Path.GetExtension(path));
         }
 
+        /// <summary>
+        /// 改变文件夹，不改文件名
+        /// </summary>
+        /// <param name="pathSrc"></param>
+        /// <param name="pathDst"></param>
+        /// <returns></returns>
+        public static string ChangeFolder(string pathSrc, string folder)
+        {
+            return Path.Combine(folder, Path.GetFileName(pathSrc));
+        }
+
         public static bool CreateBaseFolder(string path)
         {
             try
