@@ -78,6 +78,7 @@ namespace GeoFun.CoordinateSystem
         /// </summary>
         public bool IsFME { get; set; } = false;
 
+        private string fmeName = "";
         /// <summary>
         /// FME内置名称
         /// </summary>
@@ -96,7 +97,7 @@ namespace GeoFun.CoordinateSystem
             }
             set
             {
-
+                fmeName = value;
             }
         }
 
@@ -116,6 +117,18 @@ namespace GeoFun.CoordinateSystem
         public string ToFMEString()
         {
             return string.Format(FME_STR,Name,Datum.Name);
+        }
+
+        override
+        public string ToString()
+        {
+            string pjstr = "|" + Name
+            + "|" + Ellipsoid.Name
+            + "|" + Ellipsoid.A.ToString()
+            + "|" + Ellipsoid.F
+            + "|0|0|0|0|0";
+
+            return pjstr;
         }
 
         /// <summary>

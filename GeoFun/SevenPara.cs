@@ -10,39 +10,44 @@ namespace GeoFun
     public class SevenPara
     {
         /// <summary>
-        /// 平移参数(m)
+        /// 名称
         /// </summary>
-        public double XOff { get; set; }
+        public string Name { get; set; } = "";
 
         /// <summary>
         /// 平移参数(m)
         /// </summary>
-        public double YOff { get; set; }
+        public double XOff { get; set; } = 0d;
 
         /// <summary>
         /// 平移参数(m)
         /// </summary>
-        public double ZOff { get; set; }
+        public double YOff { get; set; } = 0d;
+
+        /// <summary>
+        /// 平移参数(m)
+        /// </summary>
+        public double ZOff { get; set; } = 0d;
 
         /// <summary>
         /// 旋转(秒)
         /// </summary>
-        public double XRot { get; set; }
+        public double XRot { get; set; } = 0d;
 
         /// <summary>
         /// 旋转(秒)
         /// </summary>
-        public double YRot { get; set; }
+        public double YRot { get; set; } = 0d;
 
         /// <summary>
         /// 旋转(秒)
         /// </summary>
-        public double ZRot { get; set; }
+        public double ZRot { get; set; } = 0d;
 
         /// <summary>
         /// 尺度参数(ppm)
         /// </summary>
-        public double M { get; set; }
+        public double M { get; set; } = 0d;
 
         public static SevenPara CalParaYao(List<double> b1, List<double> l1, List<double> h1,
             List<double> b2, List<double> l2, List<double> h2,

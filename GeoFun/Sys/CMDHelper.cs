@@ -46,16 +46,12 @@ namespace GeoFun.Sys
                     proc.OutputDataReceived += Proc_OutputDataReceived;
                     proc.ErrorDataReceived += Proc_ErrorDataReceived;
 
+                    //// 异步获取命令行内容
+                    proc.BeginOutputReadLine();
+                    proc.BeginErrorReadLine();
+
                     //proc.StandardInput.WriteLine("@echo off");//proc.StandardInput.Write("chcp 936");
                     proc.StandardInput.WriteLine(cmd);
-
-                    //// 异步获取命令行内容
-                    //proc.BeginOutputReadLine();
-                    //proc.BeginErrorReadLine();
-
-
-                    //proc.StandardInput.WriteLine("@echo off");
-                    //proc.StandardInput.WriteLine("@echo on");
 
                     //// 没过1秒查询程序是否退出
                     while (!proc.HasExited)
@@ -75,14 +71,24 @@ namespace GeoFun.Sys
             //调用外部程序导cmd命令行
             Process p = new Process();
             p.StartInfo.FileName = "cmd.exe";
+            //// 必须禁用操作系统外壳程序
             p.StartInfo.UseShellExecute = false;
+            //// 不显示命令行窗口
+            p.StartInfo.CreateNoWindow = true;
             p.StartInfo.RedirectStandardInput = true;
             p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.CreateNoWindow = false;
             p.Start();
             p.StandardInput.WriteLine(cmd);
             //cmd又调用了ociuldr.ex
             //string output = p.StandardOutput.ReadToEnd(); 这句可以用来获取执行命令的输出结果
+        }
+
+        public virtual void ExecuteExe(string path)
+        {
+            //调用外部程序导cmd命令行
+            Process p = new Process();
+            p.StartInfo.FileName =path;
+            p.Start();
         }
 
         public virtual void Proc_ErrorDataReceived(object sender, DataReceivedEventArgs e)

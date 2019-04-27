@@ -104,6 +104,7 @@ namespace GeoFun.CoordinateSystem
         /// ArcGIS坐标系名称
         /// </summary>
         public string ArcGISName { get; }
+        private string fmeName = "";
         /// <summary>
         /// FME坐标系名称
         /// </summary>
@@ -115,7 +116,7 @@ namespace GeoFun.CoordinateSystem
             }
             set
             {
-
+                fmeName = value;
             }
         }
 
@@ -192,6 +193,22 @@ namespace GeoFun.CoordinateSystem
         public string ToFMEString()
         {
             return string.Format(FME_STR, Name, GeoCS.Datum.Name, centerMeridian.DD, OriginLat.DD, XOff, YOff);
+        }
+
+        override
+        public string ToString()
+        {
+            string pjstr = "|" + Name
+            + "|" + Ellipsoid.Name
+            + "|" + Ellipsoid.A.ToString()
+            + "|" + Ellipsoid.F
+            + "|" + centerMeridian.DD.ToString()
+            + "|" + OriginLat.DD.ToString()
+            + "|" + H0
+            + "|" + (int)BandType
+            + "|" + BandNum;
+
+            return pjstr;
         }
 
         public void WritePrj(string path)

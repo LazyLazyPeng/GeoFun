@@ -138,6 +138,12 @@ namespace GeoFun
         /// </summary>
         public double S { get; set; } = 0d;
 
+        override
+        public string ToString()
+        {
+            return string.Format("{0}|{1}|{2}|{3}|{4}",Name,DX,DY,R,S);
+        }
+
         /// <summary>
         /// 改变模型
         /// </summary>
@@ -158,6 +164,8 @@ namespace GeoFun
                 DY = dy;
                 R = r;
                 S = s;
+
+                Mode = newMode;
             }
         }
 

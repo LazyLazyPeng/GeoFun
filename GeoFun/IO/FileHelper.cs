@@ -44,7 +44,7 @@ namespace GeoFun.IO
         /// <param name="sp"></param>
         /// <returns>行数组(List)，每行为字符串数组(string[])</returns>
         /// <remarks>如果分隔符是空格，那么首先会移除多余的空格，及将多个空格替换为1个空格</remarks>
-        public static List<string[]> ReadThenSplitLine(string path, char sp)
+        public static List<string[]> ReadThenSplitLine(string path, char sp, int skipNum = 0)
         {
             if (!File.Exists(path)) return null;
 
@@ -53,9 +53,16 @@ namespace GeoFun.IO
             {
                 using (StreamReader reader = new StreamReader(fs))
                 {
+                    string line;
+                    for (int i = 0; i < skipNum; i++)
+                    {
+                        line = reader.ReadLine();
+                        continue;
+                    }
+
                     if (sp == ' ')
                     {
-                        string line = reader.ReadLine();
+                        line = reader.ReadLine();
                         while (line != null)
                         {
                             line = StringHelper.RemoveRedundantBlank(line);
@@ -65,7 +72,7 @@ namespace GeoFun.IO
                     }
                     else
                     {
-                        string line = reader.ReadLine();
+                        line = reader.ReadLine();
                         while (line != null)
                         {
                             lines.Add(line.Split(new char[] { sp }));

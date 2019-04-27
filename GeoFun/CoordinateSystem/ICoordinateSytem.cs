@@ -40,12 +40,19 @@ namespace GeoFun.CoordinateSystem
         string ArcGISName { get; }
 
         /// <summary>
+        /// 是否是FME内置坐标系
+        /// </summary>
+        bool IsFME { get;}
+        /// <summary>
         /// FME坐标系名称
         /// </summary>
         string FMEName { get; set; }
 
         string ToESRIString();
         string ToFMEString();
+
+        string ToString();
+
         void WritePrj(string path);
     }
 

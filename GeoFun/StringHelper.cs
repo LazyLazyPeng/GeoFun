@@ -46,6 +46,17 @@ namespace GeoFun
             return line.Split(spliter);
         }
 
+        public static List<string[]> SplitFields(List<string> lines,char spliter=' ')
+        {
+            List<string[]> result = new List<string[]>(lines.Count);
+            for(int i = 0; i < lines.Count; i++)
+            {
+                result.Add(SplitFields(lines[i], spliter));
+            }
+
+            return result;
+        }
+
         public static string CombineFields(string[] fields, char spliter = ' ')
         {
             if (fields == null || fields.Count() == 0) return "";
