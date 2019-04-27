@@ -10,6 +10,9 @@ namespace GeoFun
     /// </summary>
     public class Ellipsoid
     {
+        public static readonly string ESRI_STR =
+            "SPHEROID[\"{0}\",{1},{2}]";
+
         private static readonly string FME_STR =
             "\"ELLIPSOID_DEF {0}               \\"
             + "\r\nDESC_NM \"Test Ellipsoid\"  \\"
@@ -19,7 +22,7 @@ namespace GeoFun
 
         /// <summary>
         /// 椭球名称
-        /// </summary>
+        /// </summary>)
         public string Name { get; set; } = null;
 
         /// <summary>
@@ -27,7 +30,7 @@ namespace GeoFun
         /// </summary>
         /// <param name="a">长半轴(米)</param>
         /// <param name="f">扁率倒数</param>
-        public Ellipsoid(double a = 6378137d, double f = 298.257222101,string name="")
+        public Ellipsoid(double a = 6378137d, double f = 298.257222101, string name = "")
         {
             A = a;
             F = f;
@@ -40,9 +43,18 @@ namespace GeoFun
 
         }
 
-        public static readonly Ellipsoid ELLIP_CGCS2000 = new Ellipsoid(a: 6378137d, f: 298.257222101,name:"CGCS2000");
-        public static readonly Ellipsoid ELLIP_XIAN80 = new Ellipsoid(a: 6378140d, f: 298.257,name:"XIAN80");
-        public static readonly Ellipsoid ELLIP_BJ54 = new Ellipsoid(a: 6378245d, f: 298.3,name:"BJ54");
+        public static readonly Ellipsoid ELLIP_CGCS2000 = new Ellipsoid(a: 6378137d, f: 298.257222101, name: "CGCS2000")
+        {
+        };
+        public static readonly Ellipsoid ELLIP_XIAN80 = new Ellipsoid(a: 6378140d, f: 298.257, name: "XIAN80");
+        public static readonly Ellipsoid ELLIP_BJ54 = new Ellipsoid(a: 6378245d, f: 298.3, name: "BJ54")
+        {
+            isArcGIS = true,
+            arcgisName = "Krasovsky_1940",
+            isFME = true,
+            fmeName = "KRASOV",
+        };
+
 
         public static readonly Ellipsoid ELLIP_WGS84 = new Ellipsoid(a: 6378137d, f: 298.257223563);
 
@@ -226,6 +238,78 @@ namespace GeoFun
             }
         }
 
+        private bool isArcGIS = false;
+        /// <summary>
+        /// 是否为ArcGIS内置椭球
+        /// </summary>
+        /// <returns></returns>
+        public bool IsArcGIS
+        {
+            get
+            {
+                return isArcGIS;
+            }
+            set
+            {
+                isArcGIS = value;
+            }
+        }
+
+        private bool isFME = false;
+        /// <summary>
+        /// 是否为FME内置椭球
+        /// </summary>
+        /// <returns></returns>
+        public bool IsFME
+        {
+            get
+            {
+                return isFME;
+            }
+            set
+            {
+                isFME = value;
+            }
+        }
+
+        private string arcgisName = "";
+        /// <summary>
+        /// 在ArcGIS中显示的名称
+        /// </summary>
+        /// <returns></returns>
+        public string ArcGISName
+        {
+            get
+            {
+                return arcgisName;
+            }
+            set
+            {
+                arcgisName = value;
+            }
+        }
+
+        private string fmeName = "";
+        /// <summary>
+        /// 在FME中显示的名称
+        /// </summary>
+        /// <returns></returns>
+        public string FMEName
+        {
+            get
+            {
+                return fmeName;
+            }
+            set
+            {
+                fmeName = value;
+            }
+        }
+
+        public string ToESRIString()
+        {
+            return string.Format(ESRI_STR, Name, A, F);
+        }
         public string ToFMEString()
         {
             return string.Format(FME_STR, Name, A, B);

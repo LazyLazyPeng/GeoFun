@@ -55,6 +55,7 @@
     <Compile Include="ArrayHelper.cs" />
     <Compile Include="ByteHelper.cs" />
     <Compile Include="Coordinate.cs" />
+    <Compile Include="CoordinateSystem\CoordinateSystem.cs" />
     <Compile Include="CoordinateSystem\Datum.cs" />
     <Compile Include="CoordinateSystem\enumBandType.cs" />
     <Compile Include="CoordinateSystem\enumCSType.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="enumFourMode.cs" />
     <Compile Include="FileAttr.cs" />
     <Compile Include="FourPara.cs" />
+    <Compile Include="IFMEEllipsoid.cs" />
     <Compile Include="IO\FileHelper.cs" />
     <Compile Include="MatrixHelper.cs" />
     <Compile Include="Number.cs" />
