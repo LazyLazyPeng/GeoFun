@@ -51,6 +51,30 @@ namespace GeoFun
             }
         }
 
+        public decimal AllSeconds
+        {
+            get
+            {
+                return DD * 3600m;
+            }
+            set
+            {
+                DD = value / 3600m;
+            }
+        }
+
+        public decimal AllMinutes
+        {
+            get
+            {
+                return DD * 60m;
+            }
+            set
+            {
+                DD = value / 60m;
+            }
+        }
+
         /// <summary>
         /// 弧度转度
         /// </summary>

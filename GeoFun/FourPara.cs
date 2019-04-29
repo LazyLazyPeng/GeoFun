@@ -132,11 +132,34 @@ namespace GeoFun
         /// <summary>
         /// 旋转量(弧度),默认0
         /// </summary>
-        public double R { get; set; } = 0d;
+        public double R
+        {
+            get
+            {
+                return (double)rot.ARC;
+            }
+            set
+            {
+                rot.ARC = (decimal)value;
+            }
+        }
         /// <summary>
         /// 尺度(ppm),默认0
         /// </summary>
         public double S { get; set; } = 0d;
+
+        private Angle rot = new Angle();
+        public Angle Rot
+        {
+            get
+            {
+                return rot;
+            }
+            set
+            {
+                rot = value;
+            }
+        }
 
         override
         public string ToString()

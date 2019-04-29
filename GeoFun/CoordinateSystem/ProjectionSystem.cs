@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -26,7 +27,7 @@ namespace GeoFun.CoordinateSystem
             } },
         };
 
-        public static readonly string PRJ_STR = "GEOGCS[\"{0}\",DATUM[\"{1}\",SPHEROID[\"{2}\",{3},{4}]]";
+        public static readonly string ESRI_STR = "PROJCS[\"{0}\",{1},PROJECTION[\"Gauss_Kruger\"],PARAMETER[\"False_Easting\",{2}],PARAMETER[\"False_Northing\",{3}],PARAMETER[\"Central_Meridian\",{4}],PARAMETER[\"Scale_Factor\",1.0],PARAMETER[\"Latitude_Of_Origin\",{5}],UNIT[\"Meter\",1.0]]";
 
         public static readonly string FME_STR = "\r\nCOORDINATE_SYSTEM_DEF {0} \\"
             + "\r\nDESC_NM  \"CS\"  \\"
@@ -91,6 +92,21 @@ namespace GeoFun.CoordinateSystem
         public double H0 { get; set; } = 0d;
 
         /// <summary>
+        /// X偏移量(米)
+        /// </summary>
+        public double XOff { get; set; }
+        /// <summary>
+        /// Y偏移量(米)
+        /// </summary>
+        public double YOff { get; set; }
+
+        /// <summary>
+        /// 底点纬度
+        /// </summary>
+        public Angle OriginLat { get; set; } = new Angle();
+
+
+        /// <summary>
         /// 是否是ArcGIS内置
         /// </summary>
         public bool IsArcGIS { get; set; }
@@ -142,20 +158,6 @@ namespace GeoFun.CoordinateSystem
         /// </summary>
         public int BandNum { get; set; } = 0;
 
-        /// <summary>
-        /// X偏移量(米)
-        /// </summary>
-        public double XOff { get; set; }
-        /// <summary>
-        /// Y偏移量(米)
-        /// </summary>
-        public double YOff { get; set; }
-
-        /// <summary>
-        /// 底点纬度
-        /// </summary>
-        public Angle OriginLat { get; set; } = new Angle();
-
         public Ellipsoid Ellipsoid
         {
             get
@@ -184,7 +186,7 @@ namespace GeoFun.CoordinateSystem
         /// <returns></returns>
         public string ToESRIString()
         {
-            throw new NotImplementedException();
+            return string.Format(ESRI_STR,Name,GeoCS.ToESRIString(),XOff,YOff,centerMeridian.DD,OriginLat.DD);
         }
         /// <summary>
         /// 输出FME字符串
@@ -213,7 +215,7 @@ namespace GeoFun.CoordinateSystem
 
         public void WritePrj(string path)
         {
-            throw new NotImplementedException();
+            File.WriteAllText(path,ToESRIString());
         }
 
         /// <summary>

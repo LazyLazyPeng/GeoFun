@@ -7,7 +7,7 @@ namespace GeoFun.CoordinateSystem
 {
     public class GeographicSystem : IGeographicSystem
     {
-        public static readonly string PRJ_STR = "GEOGCS[\"{0}\",DATUM[\"{1}\",SPHEROID[\"{2}\",{3},{4}]]";
+        public static readonly string PRJ_STR = "GEOGCS[\"{0}\",DATUM[\"{1}\",SPHEROID[\"{2}\",{3},{4}]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]]";
 
         public static readonly string FME_STR = "\r\nCOORDINATE_SYSTEM_DEF {0} \\"
             + "\r\nDESC_NM  \"Test Coordinate System\"  \\"

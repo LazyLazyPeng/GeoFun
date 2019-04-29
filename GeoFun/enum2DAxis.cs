@@ -7,7 +7,7 @@ namespace GeoFun
 {
     public enum enum2DAxis
     {
-        X,
-        Y
+        X = 0,
+        Y = 1
     }
 }

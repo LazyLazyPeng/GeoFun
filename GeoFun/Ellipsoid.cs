@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using GeoFun.CoordinateSystem;
+
 namespace GeoFun
 {
     /// <summary>
     /// 椭球结构体
     /// </summary>
-    public class Ellipsoid
+    public class Ellipsoid:IFMEEllipsoid
     {
         public static readonly string ESRI_STR =
             "SPHEROID[\"{0}\",{1},{2}]";
@@ -93,6 +95,10 @@ namespace GeoFun
             get
             {
                 return A - Alpha * A;
+            }
+            set
+            {
+                F = A/(A - value);
             }
         }
 
@@ -305,6 +311,9 @@ namespace GeoFun
                 fmeName = value;
             }
         }
+
+        public string Description { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Source { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public string ToESRIString()
         {

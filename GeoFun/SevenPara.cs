@@ -32,17 +32,88 @@ namespace GeoFun
         /// <summary>
         /// 旋转(秒)
         /// </summary>
-        public double XRot { get; set; } = 0d;
+        public double XRot
+        {
+            get
+            {
+                return (double)rx.AllSeconds;
+            }
+            set
+            {
+                rx.AllSeconds = (decimal)value;
+            }
+        }
 
         /// <summary>
         /// 旋转(秒)
         /// </summary>
-        public double YRot { get; set; } = 0d;
+        public double YRot
+        {
+            get
+            {
+                return (double)ry.AllSeconds;
+            }
+            set
+            {
+                ry.AllSeconds = (decimal)value;
+            }
+        }
 
         /// <summary>
         /// 旋转(秒)
         /// </summary>
-        public double ZRot { get; set; } = 0d;
+        public double ZRot
+        {
+            get
+            {
+                return (double)rz.AllSeconds;
+            }
+            set
+            {
+                if (rz is null) rz = new Angle();
+                rz.AllSeconds = (decimal)value;
+            }
+        }
+
+        private Angle rx = new Angle();
+        public Angle RX
+        {
+            get
+            {
+                return rx;
+            }
+            set
+            {
+                rx = value;
+            }
+        }
+
+        private Angle ry = new Angle();
+        public Angle RY
+        {
+            get
+            {
+                return ry;
+            }
+            set
+            {
+                ry = value;
+            }
+        }
+
+        private Angle rz = new Angle();
+        public Angle RZ
+        {
+            get
+            {
+                return rz;
+            }
+            set
+            {
+                rz = value;
+            }
+        }
+
 
         /// <summary>
         /// 尺度参数(ppm)

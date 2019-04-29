@@ -75,7 +75,7 @@
     <Compile Include="enumFourMode.cs" />
     <Compile Include="FileAttr.cs" />
     <Compile Include="FourPara.cs" />
-    <Compile Include="IFMEEllipsoid.cs" />
+    <Compile Include="CoordinateSystem\IFMEEllipsoid.cs" />
     <Compile Include="IO\FileHelper.cs" />
     <Compile Include="MatrixHelper.cs" />
     <Compile Include="Number.cs" />
