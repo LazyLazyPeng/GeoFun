@@ -167,6 +167,20 @@ namespace GeoFun
             return string.Format("{0}|{1}|{2}|{3}|{4}",Name,DX,DY,R,S);
         }
 
+        public void Trans(double x1,double y1, out double x2, out double y2)
+        {
+            if(Mode == enumFourMode.ORS)
+            {
+                x2 = (1 + S * 1e-6) * (Math.Cos(R) * (x1 + DX) + Math.Sin(R) * (y1 + DY));
+                y2 = (1 + S * 1e-6) * (-Math.Sin(R) * (x1 + DX) + Math.Cos(R) * (y1 + DY));
+            }
+            else
+            {
+                x2 = (1 + S * 1e-6) * (Math.Cos(R) * x1 + Math.Sin(R) * y1)+DX;
+                y2 = (1 + S * 1e-6) * (-Math.Sin(R) * x1 + Math.Cos(R) * y1)+DY;
+            }
+        }
+
         /// <summary>
         /// 改变模型
         /// </summary>

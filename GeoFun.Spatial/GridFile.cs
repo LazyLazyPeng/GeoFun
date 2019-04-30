@@ -43,6 +43,53 @@ namespace GeoFun.Spatial
             Path = path;
         }
 
+        public bool Read()
+        {
+            if (!File.Exists(Path)) return false;
+
+            try
+            {
+                string[] lines = File.ReadAllLines(Path);
+                if (lines.Length < 6) return false;
+
+                Header.NCols = int.Parse(lines[0].Split()[1]);
+                Header.NRows = int.Parse(lines[1].Split()[1]);
+                Header.XllCorner = double.Parse(lines[2].Split()[1]);
+                Header.YllCorner = double.Parse(lines[3].Split()[1]);
+                Header.CellSize = double.Parse(lines[4].Split()[1]);
+
+                Header.NoData = double.Parse(lines[5].Split()[1]);
+
+                //// 检查文件行数
+                if (lines.Length < Header.NRows + 5) return false;
+
+                Data = new double[Header.NRows, Header.NCols];
+                string[] segs;
+                int row = 0, col = 0;
+                int count = 0;
+                for (int i = 6; i < lines.Length; i++)
+                {
+                    if (string.IsNullOrWhiteSpace(lines[i])) continue;
+
+                    segs = StringHelper.SplitFields(lines[i]);
+                    for (int j = 0; j < segs.Length; j++)
+                    {
+                        
+                        row = (int)count / Header.NCols;
+                        col = count - Header.NCols * row;
+                        Data[row, col] = Double.Parse(segs[j]);
+                        count++;
+                    }
+                }
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// 写入到文件
         /// </summary>
@@ -57,12 +104,12 @@ namespace GeoFun.Spatial
             }
 
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("ncols {0}", Header.NCols);
-            sb.AppendFormat("nrows {0}", Header.NRows);
-            sb.AppendFormat("xllcorner {0}", Header.XllCorner);
-            sb.AppendFormat("yllcorner {0}", Header.YllCorner);
-            sb.AppendFormat("cellsize {0}", Header.CellSize);
-            sb.AppendFormat("NODATA_value {0}", Header.NoData);
+            sb.AppendFormat("ncols {0}\n", Header.NCols);
+            sb.AppendFormat("nrows {0}\n", Header.NRows);
+            sb.AppendFormat("xllcorner {0}\n", Header.XllCorner);
+            sb.AppendFormat("yllcorner {0}\n", Header.YllCorner);
+            sb.AppendFormat("cellsize {0}\n", Header.CellSize);
+            sb.AppendFormat("NODATA_value {0}\n", Header.NoData);
 
             for (int i = 0; i < Header.NRows; i++)
             {
@@ -74,7 +121,7 @@ namespace GeoFun.Spatial
                 sb.Append("\n");
             }
 
-            File.WriteAllText(Path, sb.ToString());
+            File.WriteAllText(path, sb.ToString());
             return true;
         }
 
@@ -88,14 +135,13 @@ namespace GeoFun.Spatial
             file.Header = Header.ToNSDTFHeader(unit, alpha, hzoom);
 
             file.Data = Data;
-            if (Math.Abs(hzoom - 1d) < 1e-12)
+
+            for (int i = 0; i < file.Data.GetLength(0); i++)
             {
-                for(int i = 0; i < file.Data.GetLength(0);i++)
+                for (int j = 0; j < file.Data.GetLength(1); j++)
                 {
-                    for(int j = 0;j<file.Data.GetLength(1);j++)
-                    {
-                        file.Data[i, j] = file.Data[i, j] / hzoom;
-                    }
+                    if(file.Data[i, j] != -99999)
+                        file.Data[i, j] = file.Data[i, j] * hzoom;
                 }
             }
 

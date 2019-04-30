@@ -485,7 +485,6 @@ namespace GeoFun
             return sev;
         }
 
-
         override
         public string ToString()
         {

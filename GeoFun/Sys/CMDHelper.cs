@@ -100,7 +100,7 @@ namespace GeoFun.Sys
         {
             messNum++;
             if (messNum <= SkipMessNum) return;
-            if (string.IsNullOrWhiteSpace(e.Data)) return;
+            //if (string.IsNullOrWhiteSpace(e.Data)) return;
 
             OnOutputDataReceived?.Invoke(sender, e);
         }

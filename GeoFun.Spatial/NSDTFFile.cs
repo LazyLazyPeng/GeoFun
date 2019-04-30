@@ -52,7 +52,7 @@ namespace GeoFun.Spatial
                 Header.ColNum = int.Parse(lines[10]);
 
                 Header.HZoom = double.Parse(lines[11]);
-
+                if (Header.HZoom == 0) Header.HZoom = 1;
                 //// 压缩方法为0表示不压缩
                 if (Math.Abs(double.Parse(Header.Compress)) > 1e-10) return false;
 
@@ -61,13 +61,24 @@ namespace GeoFun.Spatial
 
                 Data = new double[Header.RowNum, Header.ColNum];
                 string[] segs;
-                double value;
                 int row = 0, col = 0;
+                int count = 0;
                 for(int i = 13; i<lines.Length; i++)
                 {
                     if (string.IsNullOrWhiteSpace(lines[i])) continue;
 
                     segs = StringHelper.SplitFields(lines[i]);
+                    for(int j = 0; j < segs.Length; j++)
+                    {
+                        row = (int)count / Header.ColNum;
+                        col = count - Header.ColNum * row;
+                        Data[row, col] = Double.Parse(segs[j]);
+                        if (Data[row, col] != -99999)
+                        {
+                            Data[row, col] = Data[row, col] / Header.HZoom;
+                        }
+                        count++;
+                    }
                 }
             }
             catch
@@ -108,7 +119,7 @@ namespace GeoFun.Spatial
                         for (int j = 1; j < Data.GetLength(1); j++)
                         {
                             writer.Write(" ");
-                            writer.Write(Data[i, 0]);
+                            writer.Write(Data[i, j]);
                         }
                         writer.Write("\n");
                     }
@@ -124,15 +135,15 @@ namespace GeoFun.Spatial
         public GridFile ToESRI()
         {
             GridHeader header;
-            if (Header.ToGridHeader(out header))
+            if (!Header.ToGridHeader(out header))
             {
                 return null;
             }
 
             GridFile file = new GridFile();
             file.Header = header;
+            //Array.Copy(Data, file.Data, Data.Length);
             file.Data = Data;
-
             return file;
         }
     }
