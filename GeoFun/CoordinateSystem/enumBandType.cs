@@ -7,7 +7,7 @@ namespace GeoFun.CoordinateSystem
 {
     public enum enumBandType
     {
-        BandNo,
+        Band0,
         Band3,
         Band6
     }

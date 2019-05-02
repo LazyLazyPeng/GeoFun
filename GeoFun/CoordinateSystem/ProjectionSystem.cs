@@ -11,17 +11,17 @@ namespace GeoFun.CoordinateSystem
         public static readonly Dictionary<string, Dictionary<enumBandType, string>> FME_NAME = new Dictionary<string, Dictionary<enumBandType, string>>
         {
             {"BJ54",new Dictionary<enumBandType, string>{
-                { enumBandType.BandNo,"Bjing54/a.GK3d/CM-{0}E" },
+                { enumBandType.Band0,"Bjing54/a.GK3d/CM-{0}E" },
                 { enumBandType.Band3," Beijing1954/a.GK3d-{0}" },
                 { enumBandType.Band6,"Beijing1954/a.GK-{0}" }
              }},
             {"XIAN80",new Dictionary<enumBandType, string>{
-                { enumBandType.BandNo,"Xian80.GK3d/CM-{0}E" },
+                { enumBandType.Band0,"Xian80.GK3d/CM-{0}E" },
                 { enumBandType.Band3,"Xian80.GK3d-{0}" },
                 { enumBandType.Band6,"Xian80.GK-{0}" }
              } },
             {"CGCS2000",new Dictionary<enumBandType, string>{
-                { enumBandType.BandNo,"CGCS2000/GK3d-{0}E_FME" },
+                { enumBandType.Band0,"CGCS2000/GK3d-{0}E_FME" },
                 { enumBandType.Band3,"CGCS2000/GK3d-{0}_FME" },
                 { enumBandType.Band6,"CGCS2000/GK6d-{0}_FME" }
             } },
@@ -119,7 +119,11 @@ namespace GeoFun.CoordinateSystem
         /// <summary>
         /// ArcGIS坐标系名称
         /// </summary>
-        public string ArcGISName { get; }
+        public string ArcGISName { get; set; }
+        /// <summary>
+        /// arcgis python坐标系名称
+        /// </summary>
+        public string ArcGISPyName { get; set; }
         private string fmeName = "";
         /// <summary>
         /// FME坐标系名称
@@ -128,7 +132,7 @@ namespace GeoFun.CoordinateSystem
         {
             get
             {
-                return GetFMENameOrDefault("UserDefine");
+                return fmeName;
             }
             set
             {
@@ -152,7 +156,7 @@ namespace GeoFun.CoordinateSystem
         /// <summary>
         /// 分带类型
         /// </summary>
-        public enumBandType BandType { get; set; } = enumBandType.BandNo;
+        public enumBandType BandType { get; set; } = enumBandType.Band0;
         /// <summary>
         /// 带号
         /// </summary>
@@ -231,7 +235,7 @@ namespace GeoFun.CoordinateSystem
             if (l0 % 3 != 0) return def;
 
             string csName = "";
-            if(BandType == enumBandType.BandNo)
+            if(BandType == enumBandType.Band0)
             {
                 csName = string.Format(FME_NAME[Ellipsoid.Name][BandType], (int)centerMeridian.DD);
             }

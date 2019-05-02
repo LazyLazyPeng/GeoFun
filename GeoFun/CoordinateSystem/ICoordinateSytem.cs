@@ -37,18 +37,31 @@ namespace GeoFun.CoordinateSystem
         /// <summary>
         /// ArcGIS坐标系名称
         /// </summary>
-        string ArcGISName { get; }
+        string ArcGISName { get; set; }
+
+        /// <summary>
+        /// arcgis python中坐标系名称
+        /// </summary>
+        string ArcGISPyName { get; set; }
 
         /// <summary>
         /// 是否是FME内置坐标系
         /// </summary>
-        bool IsFME { get;}
+        bool IsFME { get; set; }
         /// <summary>
         /// FME坐标系名称
         /// </summary>
         string FMEName { get; set; }
 
+        /// <summary>
+        /// 转换为ESRI字符串
+        /// </summary>
+        /// <returns></returns>
         string ToESRIString();
+        /// <summary>
+        /// 转换为FME字符串
+        /// </summary>
+        /// <returns></returns>
         string ToFMEString();
 
         string ToString();

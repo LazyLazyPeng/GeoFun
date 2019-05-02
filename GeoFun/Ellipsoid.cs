@@ -10,13 +10,13 @@ namespace GeoFun
     /// <summary>
     /// 椭球结构体
     /// </summary>
-    public class Ellipsoid:IFMEEllipsoid
+    public class Ellipsoid : IFMEEllipsoid
     {
         public static readonly string ESRI_STR =
             "SPHEROID[\"{0}\",{1},{2}]";
 
         private static readonly string FME_STR =
-            "\"ELLIPSOID_DEF {0}               \\"
+            "ELLIPSOID_DEF {0}               \\"
             + "\r\nDESC_NM \"Test Ellipsoid\"  \\"
             + "\r\nSOURCE \"PowerMap\"         \\"
             + "\r\nE_RAD {1}                   \\"
@@ -47,8 +47,18 @@ namespace GeoFun
 
         public static readonly Ellipsoid ELLIP_CGCS2000 = new Ellipsoid(a: 6378137d, f: 298.257222101, name: "CGCS2000")
         {
+            isArcGIS = true,
+            arcgisName = "CGCS2000",
+            isFME = true,
+            fmeName = "CGCS2000",
         };
-        public static readonly Ellipsoid ELLIP_XIAN80 = new Ellipsoid(a: 6378140d, f: 298.257, name: "XIAN80");
+        public static readonly Ellipsoid ELLIP_XIAN80 = new Ellipsoid(a: 6378140d, f: 298.257, name: "XIAN80")
+        {
+            isArcGIS = true,
+            arcgisName = "Xian_1980",
+            isFME = true,
+            fmeName = "Xian80",
+        };
         public static readonly Ellipsoid ELLIP_BJ54 = new Ellipsoid(a: 6378245d, f: 298.3, name: "BJ54")
         {
             isArcGIS = true,
@@ -56,7 +66,6 @@ namespace GeoFun
             isFME = true,
             fmeName = "KRASOV",
         };
-
 
         public static readonly Ellipsoid ELLIP_WGS84 = new Ellipsoid(a: 6378137d, f: 298.257223563);
 

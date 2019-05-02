@@ -72,6 +72,10 @@ namespace GeoFun.CoordinateSystem
         /// ArcGIS内置名称
         /// </summary>
         public string ArcGISName { get; set; } = "";
+        /// <summary>
+        /// ArcGIS python 坐标系名称
+        /// </summary>
+        public string ArcGISPyName { get; set; } = "";
 
         /// <summary>
         /// 是否是FME内置

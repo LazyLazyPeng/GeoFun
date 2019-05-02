@@ -17,42 +17,59 @@ namespace GeoFun.CoordinateSystem
             + "\r\nELLIPSOID {1}            \\"
             + "\r\nUSE 7PARAMETER";
 
-        public string Name { get; set; } = "D_China_2000";
+        public static readonly Datum CGCS2000 = new Datum()
+        {
+            Ellipsoid = Ellipsoid.ELLIP_CGCS2000,
+            Name = "CGCS2000",
+            IsArcGIS = true,
+            IsFME = true,
+            ArcGISName = "D_China_2000",
+            FMEName = "China_2000_FME",
+        };
+        public static readonly Datum XIAN80 = new Datum()
+        {
+            Ellipsoid = Ellipsoid.ELLIP_XIAN80,
+            Name = "D_Xian_1980",
+            IsArcGIS = true,
+            IsFME = true,
+            ArcGISName = "D_Xian_1980",
+            FMEName = "Xian80",
+        };
+        public static readonly Datum BEIJING54 = new Datum()
+        {
+            Ellipsoid = Ellipsoid.ELLIP_BJ54,
+            Name = "D_Beijing_1954",
+            IsArcGIS = true,
+            IsFME = true,
+            ArcGISName = "D_Beijing_1954",
+            FMEName = "Beijing1954/a",
+        };
+
+        public string Name { get; set; } = "UserDefine";
         public Ellipsoid Ellipsoid { get; set; } = new Ellipsoid();
 
         /// <summary>
         /// 是否为ArcGIS内置椭球
         /// </summary>
         /// <returns></returns>
-        public bool IsArcGIS()
-        {
-            return Ellipsoid.IsArcGIS;
-        }
+        public bool IsArcGIS { get; set; }
         /// <summary>
         /// 是否为FME内置椭球
         /// </summary>
         /// <returns></returns>
-        public bool IsFME()
-        {
-            return Ellipsoid.IsFME;
-        }
+        public bool IsFME { get; set; }
 
         /// <summary>
         /// 在ArcGIS中显示的名称
         /// </summary>
         /// <returns></returns>
-        public string ArcGISName()
-        {
-            return "";
-        }
+        public string ArcGISName { get; set; }
+
         /// <summary>
         /// 在FME中显示的名称
         /// </summary>
         /// <returns></returns>
-        public string FMEName()
-        {
-            return "";
-        }
+        public string FMEName { get; set; }
 
         /// <summary>
         /// 转换为Arcgis字符串
