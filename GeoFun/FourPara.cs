@@ -167,6 +167,13 @@ namespace GeoFun
             return string.Format("{0}|{1}|{2}|{3}|{4}",Name,DX,DY,R,S);
         }
 
+        /// <summary>
+        /// 用该四参数进行转换
+        /// </summary>
+        /// <param name="x1"></param>
+        /// <param name="y1"></param>
+        /// <param name="x2"></param>
+        /// <param name="y2"></param>
         public void Trans(double x1,double y1, out double x2, out double y2)
         {
             if(Mode == enumFourMode.ORS)
@@ -179,6 +186,31 @@ namespace GeoFun
                 x2 = (1 + S * 1e-6) * (Math.Cos(R) * x1 + Math.Sin(R) * y1)+DX;
                 y2 = (1 + S * 1e-6) * (-Math.Sin(R) * x1 + Math.Cos(R) * y1)+DY;
             }
+        }
+
+        /// <summary>
+        /// 用该四参数进行转换
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public void Trans(ref double x, ref double y)
+        {
+            double xx = x;
+            double yy = y;
+
+            if (Mode == enumFourMode.ORS)
+            {
+                xx = (1 + S * 1e-6) * (Math.Cos(R) * (x + DX) + Math.Sin(R) * (y + DY));
+                yy = (1 + S * 1e-6) * (-Math.Sin(R) * (x + DX) + Math.Cos(R) * (y + DY));
+            }
+            else
+            {
+                xx = (1 + S * 1e-6) * (Math.Cos(R) * x + Math.Sin(R) * y) + DX;
+                yy = (1 + S * 1e-6) * (-Math.Sin(R) * x + Math.Cos(R) * y) + DY;
+            }
+
+            x = xx;
+            y = yy;
         }
 
         /// <summary>

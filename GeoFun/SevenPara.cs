@@ -485,6 +485,30 @@ namespace GeoFun
             return sev;
         }
 
+        /// <summary>
+        /// 七参数转换
+        /// </summary>
+        /// <param name="b1">弧度</param>
+        /// <param name="l1">弧度</param>
+        /// <param name="h1">米</param>
+        /// <param name="b2">弧度</param>
+        /// <param name="l2">弧度</param>
+        /// <param name="h2">米</param>
+        /// <param name="ell1"></param>
+        /// <param name="ell2"></param>
+        public void Trans(double b1, double l1, double h1, out double b2, out double l2, out double h2,
+            Ellipsoid ell1, Ellipsoid ell2)
+        {
+            double X1, Y1, Z1;
+            Coordinate.BLH2XYZ(b1, l1, h1, out X1, out Y1, out Z1, ell1);
+
+            double XX = (1 + M * 1e-6) * (X1 + Y1 * ZRot * Angle.S2R - Z1 * YRot * Angle.S2R) + XOff;
+            double YY = (1 + M * 1e-6) * (-X1 * ZRot * Angle.S2R + Y1 + Z1 * XRot * Angle.S2R) + YOff;
+            double ZZ = (1 + M * 1e-6) * (X1 * YRot * Angle.S2R - Y1 * XRot * Angle.S2R + Z1) + ZOff;
+
+            Coordinate.XYZ2BLH(XX, YY, ZZ, out b2, out l2, out h2, ell2);
+        }
+
         override
         public string ToString()
         {
