@@ -612,6 +612,7 @@ namespace GeoFun
             CalPara(x1, y1, x2, y2, out dx, out dy, out r, out s, mode);
             FourPara four = new FourPara
             {
+                Mode = Str2Mode(mode),
                 DX = dx,
                 DY = dy,
                 R = r,
