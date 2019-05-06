@@ -35,7 +35,7 @@ namespace GeoFun.CoordinateSystem
             + "\r\nPROJ GAUSSK            \\"
             + "\r\nDT_NAME {1}            \\"
             + "\r\nUNIT METER             \\"
-            + "\r\nPARM1   {2}            \\"
+            + "\r\nPARM1   {2:f12}            \\"
             + "\r\nORG_LAT {3}            \\"
             + "\r\nSCL_RED 1.0            \\"
             + "\r\nMAP_SCL 1.0            \\"
@@ -198,7 +198,7 @@ namespace GeoFun.CoordinateSystem
         /// <returns></returns>
         public string ToFMEString()
         {
-            return string.Format(FME_STR, Name, GeoCS.Datum.Name, centerMeridian.DD, OriginLat.DD, XOff, YOff);
+            return string.Format(FME_STR, Name, GeoCS.Datum.FMEName, centerMeridian.DD, OriginLat.DD, XOff, YOff);
         }
 
         override

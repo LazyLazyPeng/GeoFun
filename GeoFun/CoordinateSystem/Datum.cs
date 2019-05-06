@@ -77,7 +77,7 @@ namespace GeoFun.CoordinateSystem
         /// <returns></returns>
         public string ToESRIString()
         {
-            return string.Format(ESRI_STR,Name,Ellipsoid.ToESRIString());
+            return string.Format(ESRI_STR,ArcGISName,Ellipsoid.ToESRIString());
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace GeoFun.CoordinateSystem
         /// <returns></returns>
         public string ToFMEString()
         {
-            return string.Format(FME_STR,Name,Ellipsoid.Name);
+            return string.Format(FME_STR,FMEName,Ellipsoid.Name);
         }
     }
 }
