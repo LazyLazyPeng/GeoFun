@@ -190,7 +190,7 @@ namespace GeoFun.CoordinateSystem
         /// <returns></returns>
         public string ToESRIString()
         {
-            return string.Format(ESRI_STR,Name,GeoCS.ToESRIString(),XOff,YOff,centerMeridian.DD,OriginLat.DD);
+            return string.Format(ESRI_STR, Name, GeoCS.ToESRIString(), XOff, YOff, centerMeridian.DD, OriginLat.DD);
         }
         /// <summary>
         /// 输出FME字符串
@@ -219,7 +219,7 @@ namespace GeoFun.CoordinateSystem
 
         public void WritePrj(string path)
         {
-            File.WriteAllText(path,ToESRIString());
+            File.WriteAllText(path, ToESRIString());
         }
 
         /// <summary>
@@ -235,7 +235,7 @@ namespace GeoFun.CoordinateSystem
             if (l0 % 3 != 0) return def;
 
             string csName = "";
-            if(BandType == enumBandType.Band0)
+            if (BandType == enumBandType.Band0)
             {
                 csName = string.Format(FME_NAME[Ellipsoid.Name][BandType], (int)centerMeridian.DD);
             }
@@ -245,6 +245,39 @@ namespace GeoFun.CoordinateSystem
             }
 
             return csName;
+        }
+
+        public static bool operator ==(ProjectionSystem pcs1, ProjectionSystem pcs2)
+        {
+            if (pcs1 is null && pcs2 is null) return true;
+            if (pcs1 is null && pcs2 != null) return false;
+            if (pcs1 != null && pcs2 is null) return false;
+
+            if (pcs1.Name == pcs2.Name) return true;
+            if (pcs1.ArcGISName == pcs2.ArcGISName) return true;
+            if (pcs1.fmeName == pcs2.fmeName) return true;
+
+            return pcs1.Datum == pcs2.Datum
+                && Math.Abs(pcs1.L0 - pcs2.L0) < 1e-14
+                && Math.Abs(pcs1.XOff - pcs2.XOff) < 1e-14
+                && Math.Abs(pcs1.YOff - pcs2.YOff) < 1e-14;
+        }
+
+        public static bool operator !=(ProjectionSystem pcs1, ProjectionSystem pcs2)
+        {
+            if (pcs1 is null && pcs2 is null) return true;
+            if (pcs1 is null && pcs2 != null) return false;
+            if (pcs1 != null && pcs2 is null) return false;
+
+            if (pcs1.Name == pcs2.Name) return true;
+            if (pcs1.ArcGISName == pcs2.ArcGISName) return true;
+            if (pcs1.fmeName == pcs2.fmeName) return true;
+
+            return pcs1.Datum != pcs2.Datum
+                || Math.Abs(pcs1.L0 - pcs2.L0) > 1e-14
+                || Math.Abs(pcs1.XOff - pcs2.XOff) > 1e-14
+                || Math.Abs(pcs1.YOff - pcs2.YOff) > 1e-14;
+
         }
     }
 }

@@ -25,7 +25,20 @@ namespace GeoFun
         /// <summary>
         /// 中央子午线(弧度) 
         /// </summary>
-        public double L0 { get; set; } = 0;
+        public double L0
+        {
+            get
+            {
+                return (double)CenterL.ARC;
+            }
+            set
+            {
+                CenterL.ARC = (decimal)value;
+            }
+        }
+
+        public Angle CenterL { get; set; } = new Angle();
+
         private double h0 = 0d;
         /// <summary>
         /// 投影抬高(m)

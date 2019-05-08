@@ -107,7 +107,7 @@ namespace GeoFun
             }
             set
             {
-                F = A/(A - value);
+                F = A / (A - value);
             }
         }
 
@@ -205,37 +205,6 @@ namespace GeoFun
             A = A + Math.Sqrt(1 - E1 * Math.Pow(Math.Sin(B), 2)) * dh;
         }
 
-        public static bool operator ==(Ellipsoid ell1, Ellipsoid ell2)
-        {
-            try
-            {
-                if (!DoubleHelper.Equals(ell1.A, ell2.A)) return false;
-                if (!DoubleHelper.Equals(ell1.F, ell2.F)) return false;
-
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        public static bool operator !=(Ellipsoid ell1, Ellipsoid ell2)
-        {
-            try
-            {
-                if (DoubleHelper.Equals(ell1.A, ell2.A) &&
-                    DoubleHelper.Equals(ell1.F, ell2.F))
-                    return false;
-
-                return true;
-            }
-            catch
-            {
-                return true;
-            }
-        }
-
         public override bool Equals(object obj)
         {
             if (obj is Ellipsoid)
@@ -321,8 +290,8 @@ namespace GeoFun
             }
         }
 
-        public string Description { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Source { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Description { get; set; } = "";
+        public string Source { get; set; } = "";
 
         public string ToESRIString()
         {
@@ -331,6 +300,32 @@ namespace GeoFun
         public string ToFMEString()
         {
             return string.Format(FME_STR, Name, A, B);
+        }
+
+        public static bool operator ==(Ellipsoid ell1, Ellipsoid ell2)
+        {
+            if (ell1 is null && ell2 is null) return true;
+            if (ell1 is null && ell2 != null) return false;
+            if (ell1 != null && ell2 is null) return false;
+
+            if (ell1.Name == ell2.Name) return true;
+            if (ell1.FMEName == ell2.FMEName) return true;
+            if (ell1.ArcGISName == ell2.ArcGISName) return true;
+
+            return Math.Abs(ell1.A - ell2.A) < 1e-14 && Math.Abs(ell1.F - ell2.F) < 1e-14;
+        }
+
+        public static bool operator !=(Ellipsoid ell1, Ellipsoid ell2)
+        {
+            if (ell1 is null && ell2 is null) return false;
+            if (ell1 is null && ell2 != null) return true;
+            if (ell1 != null && ell2 is null) return true;
+
+            if (ell1.Name == ell2.Name) return false;
+            if (ell1.FMEName == ell2.FMEName) return false;
+            if (ell1.ArcGISName == ell2.ArcGISName) return false;
+
+            return Math.Abs(ell1.A - ell2.A) > 1e-14 || Math.Abs(ell1.F - ell2.F) > 1e-14;
         }
     }
 }

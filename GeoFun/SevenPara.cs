@@ -12,7 +12,7 @@ namespace GeoFun
         /// <summary>
         /// 名称
         /// </summary>
-        public string Name { get; set; } = "";
+        public string Name { get; set; } = "UserDefine";
 
         /// <summary>
         /// 平移参数(m)

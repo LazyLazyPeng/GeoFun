@@ -10,9 +10,9 @@ namespace GeoFun.CoordinateSystem
         public static readonly string ESRI_STR =
             "DATUM[\"{0}\",{1}]";
 
-        public static readonly string FME_STR = 
+        public static readonly string FME_STR =
             "DATUM_DEF {0}               \\"
-            + "\r\nDESC_NM \"Datum\"        \\" 
+            + "\r\nDESC_NM \"Datum\"        \\"
             + "\r\nSOURCE \"PowerMap\"      \\"
             + "\r\nELLIPSOID {1}            \\"
             + "\r\nUSE 7PARAMETER";
@@ -77,7 +77,7 @@ namespace GeoFun.CoordinateSystem
         /// <returns></returns>
         public string ToESRIString()
         {
-            return string.Format(ESRI_STR,ArcGISName,Ellipsoid.ToESRIString());
+            return string.Format(ESRI_STR, ArcGISName, Ellipsoid.ToESRIString());
         }
 
         /// <summary>
@@ -86,7 +86,33 @@ namespace GeoFun.CoordinateSystem
         /// <returns></returns>
         public string ToFMEString()
         {
-            return string.Format(FME_STR,FMEName,Ellipsoid.Name);
+            return string.Format(FME_STR, FMEName, Ellipsoid.Name);
+        }
+
+        public static bool operator ==(Datum dat1, Datum dat2)
+        {
+            if (dat1 is null && dat2 is null) return true;
+            if (dat1 is null && dat2 != null) return false;
+            if (dat1 != null && dat2 is null) return false;
+
+            if (dat1.Name == dat2.Name) return true;
+            if (dat1.FMEName == dat2.FMEName) return true;
+            if (dat1.ArcGISName == dat2.ArcGISName) return true;
+
+            return dat1.Ellipsoid == dat2.Ellipsoid;
+        }
+
+        public static bool operator !=(Datum dat1, Datum dat2)
+        {
+            if (dat1 is null && dat2 is null) return false;
+            if (dat1 is null && dat2 != null) return true;
+            if (dat1 != null && dat2 is null) return true;
+
+            if (dat1.Name == dat2.Name) return false;
+            if (dat1.FMEName == dat2.FMEName) return false;
+            if (dat1.ArcGISName == dat2.ArcGISName) return false;
+
+            return dat1.Ellipsoid != dat2.Ellipsoid;
         }
     }
 }

@@ -51,6 +51,52 @@ namespace GeoFun
             }
         }
 
+        public int D
+        {
+            get
+            {
+                int d = 0;
+                decimal ddms = dms < 0m ? -dms : dms;
+
+                if (dms < 0) d = (int)Math.Floor(ddms);
+                else
+                {
+                    d = (int)Math.Floor(ddms);
+                }
+
+                if (dms < 0m) d = -d;
+
+                return d;
+            }
+        }
+
+        public int M
+        {
+            get
+            {
+                int m = 0;
+                decimal ddms = dms < 0m ? -dms : dms;
+
+                if (dms < 0) m = (int)Math.Floor(-dms * 100 - D * 100);
+                else
+                {
+                    m = (int)Math.Floor(dms * 100 - D * 100);
+                }
+
+                if (dms < 0) m = -m;
+
+                return m;
+            }
+        }
+
+        public decimal S
+        {
+            get
+            {
+                return dms*1e4m - D*1e4m - M*100m;
+            }
+        }
+
         public decimal AllSeconds
         {
             get
@@ -94,7 +140,7 @@ namespace GeoFun
 
         public Angle(decimal ang = 0m, enumAngleFormat format = enumAngleFormat.DD)
         {
-            switch(format)
+            switch (format)
             {
                 case enumAngleFormat.DMS:
                     DMS = ang;
@@ -110,7 +156,7 @@ namespace GeoFun
         public Angle(double angle, enumAngleFormat format = enumAngleFormat.DD)
         {
             decimal ang = (decimal)angle;
-            switch(format)
+            switch (format)
             {
                 case enumAngleFormat.DMS:
                     DMS = ang;

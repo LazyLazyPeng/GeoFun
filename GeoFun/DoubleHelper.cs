@@ -44,7 +44,7 @@ namespace GeoFun
         /// <param name="doublePart"></param>
         public static void Separate(double value, out int intPart, out double doublePart)
         {
-            intPart = (int)Math.Floor(value);
+            intPart = (int)Math.Floor(value+1e-14);
             doublePart = value - intPart;
         }
         public static void Separate(double value, out int intPart, out ulong doublePart)
