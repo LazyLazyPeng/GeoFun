@@ -126,11 +126,26 @@ namespace GeoFun.CoordinateSystem
         override
         public string ToString()
         {
-            string pjstr = "|" + Name
+            string pjstr =
+             "|" + (int)CSType
+            + "|" + Name
+            + "|" + ArcGISName
+            + "|" + ArcGISPyName
+            + "|" + FMEName
+            + "|" + IsArcGIS
+            + "|" + IsFME
+            + "|" + Datum.Name
+            + "|" + Datum.ArcGISName
+            + "|" + Datum.FMEName
+            + "|" + Datum.IsArcGIS
+            + "|" + Datum.IsFME
             + "|" + Ellipsoid.Name
+            + "|" + Ellipsoid.ArcGISName
+            + "|" + Ellipsoid.FMEName
+            + "|" + Ellipsoid.IsArcGIS
+            + "|" + Ellipsoid.IsFME
             + "|" + Ellipsoid.A.ToString()
-            + "|" + Ellipsoid.F
-            + "|0|0|0|0|0";
+            + "|" + Ellipsoid.F.ToString();
 
             return pjstr;
         }

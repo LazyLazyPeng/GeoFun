@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using GeoFun;
 using GeoFun.IO;
+using GeoFun.CoordinateSystem;
 using System.Collections.Generic;
 
 namespace GeoFunTest
@@ -316,6 +317,21 @@ namespace GeoFunTest
                 outX += four.DX;
                 outY += four.DY;
             }
+        }
+
+        [TestMethod]
+        public void TestCoordinateSystem()
+        {
+            ICoordinateSystem cs1 = CoordinateSystem.Beijing_1954_3_Degree_GK_Zone_29;
+            string prj = cs1.ToString();
+            ICoordinateSystem cs2 = CoordinateSystem.FromString(prj);
+            Assert.IsNotNull(cs2);
+
+            ICoordinateSystem cs3 = CoordinateSystem.GCS_2000;
+            prj = cs3.ToString();
+            ICoordinateSystem cs4 = CoordinateSystem.FromString(prj);
+
+            Assert.IsNotNull(cs4);
         }
     }
 }

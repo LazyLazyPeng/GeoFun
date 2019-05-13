@@ -434,5 +434,177 @@ namespace GeoFun.CoordinateSystem
 
             return pcs;
         }
+
+        public static ICoordinateSystem FromString(string prj)
+        {
+            if (prj is null) return null;
+
+            try
+            {
+                string[] segs = prj.Split('|');
+                enumCSType csType = (enumCSType)int.Parse(segs[1]);
+
+                if (csType == enumCSType.Geographic)
+                {
+                    string csName = segs[2];
+                    string csAGName = segs[3];
+                    string csAGPyName = segs[4];
+                    string csFMEName = segs[5];
+                    bool csIsAG = bool.Parse(segs[6]);
+                    bool csIsFME = bool.Parse(segs[7]);
+
+                    string datName = segs[8];
+                    string datAGName = segs[9];
+                    string datFMEName = segs[10];
+                    bool datIsAG = bool.Parse(segs[11]);
+                    bool datIsFME = bool.Parse(segs[12]);
+
+                    string ellName = segs[13];
+                    string ellAGName = segs[14];
+                    string ellFMEName = segs[15];
+                    bool ellIsAG = bool.Parse(segs[16]);
+                    bool ellIsFME = bool.Parse(segs[17]);
+                    double a = double.Parse(segs[18]);
+                    double f = double.Parse(segs[19]);
+
+                    ICoordinateSystem cs = GetCSFromPyName(csAGPyName);
+                    if (cs != null) return cs;
+
+                    Ellipsoid ell = new Ellipsoid
+                    {
+                        Name = ellName,
+                        ArcGISName = ellAGName,
+                        FMEName = ellFMEName,
+                        IsArcGIS = ellIsAG,
+                        IsFME = ellIsFME,
+                        A = a,
+                        F = f,
+                    };
+
+                    Datum dat = new Datum
+                    {
+                        Name = datName,
+                        ArcGISName = datAGName,
+                        FMEName = datFMEName,
+                        IsArcGIS = datIsAG,
+                        IsFME = datIsFME,
+                    };
+
+                    GeographicSystem gcs = new GeographicSystem
+                    {
+                        Name = csName,
+                        ArcGISName = csAGName,
+                        FMEName = csFMEName,
+                        Datum = dat,
+                        IsArcGIS = csIsAG,
+                        IsFME = csIsFME,
+                    };
+
+                    return gcs as IGeographicSystem;
+                }
+                else
+                {
+                    string csName = segs[2];
+                    string csAGName = segs[3];
+                    string csAGPyName = segs[4];
+                    string csFMEName = segs[5];
+                    bool csIsAG = bool.Parse(segs[6]);
+                    bool csIsFME = bool.Parse(segs[7]);
+
+                    string csGeoName = segs[8];
+                    string csGeoAGName = segs[9];
+                    string csGeoAGPyName = segs[10];
+                    string csGeoFMEName = segs[11];
+                    bool csGeoIsAG = bool.Parse(segs[12]);
+                    bool csGeoIsFME = bool.Parse(segs[13]);
+
+                    string datName = segs[14];
+                    string datAGName = segs[15];
+                    string datFMEName = segs[16];
+                    bool datIsAG = bool.Parse(segs[17]);
+                    bool datIsFME = bool.Parse(segs[18]);
+
+                    string ellName = segs[19];
+                    string ellAGName = segs[20];
+                    string ellFMEName = segs[21];
+                    bool ellIsAG = bool.Parse(segs[22]);
+                    bool ellIsFME = bool.Parse(segs[23]);
+                    double a = double.Parse(segs[24]);
+                    double f = double.Parse(segs[25]);
+
+                    double l0 = double.Parse(segs[26]);
+                    double b0 = double.Parse(segs[27]);
+                    double h0 = double.Parse(segs[28]);
+                    double x0 = double.Parse(segs[29]);
+                    double y0 = double.Parse(segs[30]);
+                    enumBandType bandType = (enumBandType)int.Parse(segs[31]);
+                    int bandNum = int.Parse(segs[32]);
+
+                    ICoordinateSystem cs = GetCSFromPyName(csAGPyName);
+                    if (cs != null) return cs;
+
+                    Ellipsoid ell = new Ellipsoid
+                    {
+                        Name = ellName,
+                        ArcGISName = ellAGName,
+                        FMEName = ellFMEName,
+                        IsArcGIS = ellIsAG,
+                        IsFME = ellIsFME,
+                        A = a,
+                        F = f,
+                    };
+
+                    Datum dat = new Datum
+                    {
+                        Name = datName,
+                        ArcGISName = datAGName,
+                        FMEName = datFMEName,
+                        IsArcGIS = datIsAG,
+                        IsFME = datIsFME,
+                    };
+
+                    GeographicSystem gcs = null;
+                    if (csGeoIsAG) gcs = GetCSFromPyName(csGeoAGName) as GeographicSystem;
+
+                    if (gcs == null)
+                    {
+                        gcs = new GeographicSystem
+                        {
+                            Name = csGeoName,
+                            ArcGISName = csGeoAGName,
+                            FMEName = csGeoFMEName,
+                            Datum = dat,
+                            IsArcGIS = csGeoIsAG,
+                            IsFME = csGeoIsFME,
+                        };
+                    }
+
+                    ICoordinateSystem pcs = new ProjectionSystem
+                    {
+                        Name = csName,
+                        ArcGISName = csAGName,
+                        ArcGISPyName = csAGPyName,
+                        FMEName = csFMEName,
+
+                        GeoCS = gcs,
+
+                        CenterMeridian = new Angle(l0),
+                        OriginLat = new Angle(b0),
+                        XOff = x0,
+                        YOff = y0,
+                        H0 = h0,
+
+                        BandType = bandType,
+                        BandNum = bandNum,
+                    };
+
+                    return pcs;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }

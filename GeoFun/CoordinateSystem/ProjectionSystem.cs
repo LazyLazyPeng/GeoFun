@@ -204,15 +204,44 @@ namespace GeoFun.CoordinateSystem
         override
         public string ToString()
         {
-            string pjstr = "|" + Name
+            string pjstr =
+             "|" + (int)CSType
+            + "|" + Name
+            + "|" + ArcGISName
+            + "|" + ArcGISPyName
+            + "|" + FMEName
+            + "|" + IsArcGIS
+            + "|" + IsFME
+
+            + "|" + GeoCS.Name
+            + "|" + GeoCS.ArcGISName
+            + "|" + GeoCS.ArcGISPyName
+            + "|" + GeoCS.FMEName
+            + "|" + GeoCS.IsArcGIS
+            + "|" + GeoCS.IsFME
+
+            + "|" + Datum.Name
+            + "|" + Datum.ArcGISName
+            + "|" + Datum.FMEName
+            + "|" + Datum.IsArcGIS
+            + "|" + Datum.IsFME
+
             + "|" + Ellipsoid.Name
+            + "|" + Ellipsoid.ArcGISName
+            + "|" + Ellipsoid.FMEName
+            + "|" + Ellipsoid.IsArcGIS
+            + "|" + Ellipsoid.IsFME
             + "|" + Ellipsoid.A.ToString()
-            + "|" + Ellipsoid.F
-            + "|" + centerMeridian.DD.ToString()
-            + "|" + OriginLat.DD.ToString()
+            + "|" + Ellipsoid.F.ToString()
+
+            + "|" + centerMeridian.DD.ToString("f12")
+            + "|" + OriginLat.DD.ToString("f12")
             + "|" + H0
+            + "|" + XOff
+            + "|" + YOff
             + "|" + (int)BandType
-            + "|" + BandNum;
+            + "|" + BandNum
+            + "|";
 
             return pjstr;
         }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GeoFun
 {
-    public class Projection : Object
+    public class Projection
     {
         public static double PI = 3.1415926535897932;
 
@@ -125,6 +125,11 @@ namespace GeoFun
             DH = h0;
             BL2xy(y, x, ref y, ref x);
         }
+        public void Proj(ref double x, ref double y, double l0)
+        {
+            L0 = l0;
+            Proj(ref x, ref y);
+        }
 
         /// <summary>
         /// 高斯反算
@@ -171,6 +176,11 @@ namespace GeoFun
             xy2BL(y, x, ref b, ref l);
             y = b;
             x = l;
+        }
+        public void Inverse(ref double x, ref double y, double l0)
+        {
+            L0 = l0;
+            Inverse(ref x, ref y);
         }
 
         /// <summary>
