@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommonT.cs" />
     <Compile Include="Coor3.cs" />
     <Compile Include="Day.cs" />
     <Compile Include="DCBFile.cs" />

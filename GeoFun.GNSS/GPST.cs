@@ -22,11 +22,11 @@ namespace GeoFun.GNSS
             }
         }
 
-        private DateTime commonT;
+        private CommonT commonT;
         /// <summary>
         /// 通用时,只精确到秒的整数部分
         /// </summary>
-        public DateTime CommonT
+        public CommonT CommonT
         {
             get
             {
@@ -35,21 +35,6 @@ namespace GeoFun.GNSS
             set
             {
                 commonT = value;
-            }
-        }
-        private ulong picoSeconds = 0;
-        /// <summary>
-        /// 一秒之内的小数部分，单位为皮秒(10^12)
-        /// </summary>
-        public ulong PicoSeconds
-        {
-            get
-            {
-                return picoSeconds;
-            }
-            set
-            {
-                picoSeconds = value;
             }
         }
 
@@ -66,22 +51,22 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 一天之内的小数部分，单位:秒
         /// </summary>
-        public double SecondsOfDay
+        public decimal SecondsOfDay
         {
             get
             {
-                return CommonT.Hour * 3600 + CommonT.Minute * 60 + CommonT.Second + PicoSeconds * 1e-12;
+                return CommonT.SecondOfDay;
             }
         }
 
         /// <summary>
         /// 一年之内的小数部分，单位：秒
         /// </summary>
-        public double SecondsOfYear
+        public decimal SecondsOfYear
         {
             get
             {
-                return CommonT.Day * Time.SecondsPerDay + SecondsOfDay;
+                return SecondsOfDay * 24m * 3600m + SecondsOfDay;
             }
         }
 
@@ -92,8 +77,7 @@ namespace GeoFun.GNSS
 
         public GPST(int year, int month, int day, int hour, int minute, int second,ulong picoSecond)
         {
-            CommonT = new DateTime(year, month, day, hour, minute, second);
-            PicoSeconds = picoSecond;
+            CommonT = new CommonT(year, month, day, hour, minute, second);
 
             MJD = Time.CommonToMJD(commonT, PicoSeconds);
             week = Time.MJDToGPS(MJD);
@@ -104,8 +88,7 @@ namespace GeoFun.GNSS
             int secInt;double secDouble;
             DoubleHelper.Separate(second, out secInt, out secDouble);
 
-            CommonT = new DateTime(year, month, day, hour, minute, secInt);
-            PicoSeconds = (ulong)(secDouble * 1e12);
+            CommonT = new CommonT(year, month, day, hour, minute, secInt);
 
             MJD = Time.CommonToMJD(commonT,picoSeconds);
             week = Time.CommonToGPS(commonT);

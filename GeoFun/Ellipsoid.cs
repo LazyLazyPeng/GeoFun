@@ -49,6 +49,7 @@ namespace GeoFun
         {
             isArcGIS = true,
             arcgisName = "CGCS2000",
+            Name =  "CGCS2000",
             isFME = true,
             fmeName = "CGCS2000",
         };
@@ -56,6 +57,7 @@ namespace GeoFun
         {
             isArcGIS = true,
             arcgisName = "Xian_1980",
+            Name = "Xian_1980",
             isFME = true,
             fmeName = "Xian80",
         };
@@ -63,6 +65,7 @@ namespace GeoFun
         {
             isArcGIS = true,
             arcgisName = "Krasovsky_1940",
+            Name = "Krasovsky_1940",
             isFME = true,
             fmeName = "KRASOV",
         };

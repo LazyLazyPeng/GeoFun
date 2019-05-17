@@ -13,18 +13,18 @@ namespace GeoFun
         /// <summary>
         /// O(ffset) R(otate) S(cale)
         /// </summary>
-        ORS,
+        ORS = 0,
         /// <summary>
         /// O(ffset) S(cale) R(otate)
         /// </summary>
-        OSR,
+        OSR = 1,
         /// <summary>
         /// R(otate) S(cale) O(ffset)
         /// </summary>
-        RSO,
+        RSO = 2,
         /// <summary>
         /// S(cale) R(otateI) O(ffset)
         /// </summary>
-        SRO,
+        SRO = 3,
     }
 }

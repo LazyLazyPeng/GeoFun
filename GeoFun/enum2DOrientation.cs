@@ -2,7 +2,7 @@
 {
     public enum enum2DOrientation
     {
-        North,
-        East,
+        North = 0,
+        East = 1,
     }
 }
