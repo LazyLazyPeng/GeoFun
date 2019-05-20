@@ -75,22 +75,19 @@ namespace GeoFun.GNSS
         /// </summary>
         public Day MJD;
 
-        public GPST(int year, int month, int day, int hour, int minute, int second,ulong picoSecond)
+        public GPST(int year, int month, int day, int hour, int minute, double second)
         {
             CommonT = new CommonT(year, month, day, hour, minute, second);
 
-            MJD = Time.CommonToMJD(commonT, PicoSeconds);
+            MJD = Time.CommonToMJD(commonT);
             week = Time.MJDToGPS(MJD);
         }
 
-        public GPST(int year, int month, int day, int hour, int minute, double second)
+        public GPST(int year, int month, int day, int hour, int minute, decimal second)
         {
-            int secInt;double secDouble;
-            DoubleHelper.Separate(second, out secInt, out secDouble);
+            CommonT = new CommonT(year, month, day, hour, minute, second);
 
-            CommonT = new CommonT(year, month, day, hour, minute, secInt);
-
-            MJD = Time.CommonToMJD(commonT,picoSeconds);
+            MJD = Time.CommonToMJD(commonT);
             week = Time.CommonToGPS(commonT);
         }
 
@@ -109,9 +106,8 @@ namespace GeoFun.GNSS
         {
             string[] segs = StringHelper.SplitFields(timeStr);
 
-            ulong picoSecond;
             double seconds;
-            int year, month, day, hour, minute,second;
+            int year, month, day, hour, minute;
 
             year = int.Parse(segs[0]);
             month = int.Parse(segs[1]);
@@ -123,9 +119,18 @@ namespace GeoFun.GNSS
             if (year < 50) year += 2000;
             else if (year < 100) year += 1900;
 
-            DoubleHelper.Separate(seconds, out second, out picoSecond);
+            return new GPST(year, month, day, hour, minute, seconds);
+        }
 
-            return new GPST(year, month, day, hour, minute, second, picoSecond);
+        public string ToRinexString(string version = "2.11")
+        {
+            if (version == "2.11")
+            {
+                int year = CommonT.Year > 2000 ? CommonT.Year - 2000 : CommonT.Year - 1900;
+                return string.Format("{0} {1,2} {2,2} {3,2} {4,2} {5,11:f7}", year, CommonT.Month, CommonT.Day,
+                    CommonT.Hour, CommonT.Minute, commonT.second);
+            }
+            return "";
         }
     }
 }

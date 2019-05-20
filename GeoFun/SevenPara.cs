@@ -499,14 +499,55 @@ namespace GeoFun
         public void Trans(double b1, double l1, double h1, out double b2, out double l2, out double h2,
             Ellipsoid ell1, Ellipsoid ell2)
         {
-            double X1, Y1, Z1;
+            double X1, Y1, Z1, X2, Y2, Z2;
             Coordinate.BLH2XYZ(b1, l1, h1, out X1, out Y1, out Z1, ell1);
 
-            double XX = (1 + M * 1e-6) * (X1 + Y1 * ZRot * Angle.S2R - Z1 * YRot * Angle.S2R) + XOff;
-            double YY = (1 + M * 1e-6) * (-X1 * ZRot * Angle.S2R + Y1 + Z1 * XRot * Angle.S2R) + YOff;
-            double ZZ = (1 + M * 1e-6) * (X1 * YRot * Angle.S2R - Y1 * XRot * Angle.S2R + Z1) + ZOff;
+            Trans(X1, Y1, Z1, out X2, out Y2, out Z2);
+            //double XX = (1 + M * 1e-6) * (X1 + Y1 * ZRot * Angle.S2R - Z1 * YRot * Angle.S2R) + XOff;
+            //double YY = (1 + M * 1e-6) * (-X1 * ZRot * Angle.S2R + Y1 + Z1 * XRot * Angle.S2R) + YOff;
+            //double ZZ = (1 + M * 1e-6) * (X1 * YRot * Angle.S2R - Y1 * XRot * Angle.S2R + Z1) + ZOff;
 
-            Coordinate.XYZ2BLH(XX, YY, ZZ, out b2, out l2, out h2, ell2);
+            Coordinate.XYZ2BLH(X2, Y2, Z2, out b2, out l2, out h2, ell2);
+        }
+
+        /// <summary>
+        /// 七参数转换
+        /// </summary>
+        /// <param name="b1">弧度</param>
+        /// <param name="l1">弧度</param>
+        /// <param name="h1">米</param>
+        /// <param name="b2">弧度</param>
+        /// <param name="l2">弧度</param>
+        /// <param name="h2">米</param>
+        /// <param name="ell1"></param>
+        /// <param name="ell2"></param>
+        public void Trans(List<double> b1, List<double> l1, List<double> h1,
+            out List<double> b2, out List<double> l2, out List<double> h2,
+            Ellipsoid ell1, Ellipsoid ell2)
+        {
+            b2 = new List<double>();
+            l2 = new List<double>();
+            h2 = new List<double>();
+            if (b1 is null || l1 is null || h1 is null) return;
+            if (ell1 is null || ell2 is null) return;
+
+            int Max = Math.Min(b1.Count, Math.Min(l1.Count, h1.Count));
+            for (int i = 0; i < Max; i++)
+            {
+                double bb2, ll2, hh2;
+                Trans(b1[i], l1[i], h1[i], out bb2, out ll2, out hh2, ell1, ell2);
+
+                b2.Add(bb2);
+                l2.Add(ll2);
+                h2.Add(hh2);
+            }
+        }
+
+        public void Trans(double X1, double Y1, double Z1, out double X2, out double Y2, out double Z2)
+        {
+            X2 = (1 + M * 1e-6) * (X1 + Y1 * ZRot * Angle.S2R - Z1 * YRot * Angle.S2R) + XOff;
+            Y2 = (1 + M * 1e-6) * (-X1 * ZRot * Angle.S2R + Y1 + Z1 * XRot * Angle.S2R) + YOff;
+            Z2 = (1 + M * 1e-6) * (X1 * YRot * Angle.S2R - Y1 * XRot * Angle.S2R + Z1) + ZOff;
         }
 
         override

@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoFun.Encrypt", "GeoFun.En
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoFun.Controls", "GeoFun.Controls\GeoFun.Controls.csproj", "{C431E105-D431-4A57-A617-C1FA5D038B7D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoFun.GNSS.Net", "GeoFun.GNSS.Net\GeoFun.GNSS.Net.csproj", "{5406F13B-7702-4CCE-A05B-0B00396E7495}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -147,6 +149,18 @@ Global
 		{C431E105-D431-4A57-A617-C1FA5D038B7D}.Release|x64.Build.0 = Release|Any CPU
 		{C431E105-D431-4A57-A617-C1FA5D038B7D}.Release|x86.ActiveCfg = Release|Any CPU
 		{C431E105-D431-4A57-A617-C1FA5D038B7D}.Release|x86.Build.0 = Release|Any CPU
+		{5406F13B-7702-4CCE-A05B-0B00396E7495}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5406F13B-7702-4CCE-A05B-0B00396E7495}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5406F13B-7702-4CCE-A05B-0B00396E7495}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5406F13B-7702-4CCE-A05B-0B00396E7495}.Debug|x64.Build.0 = Debug|Any CPU
+		{5406F13B-7702-4CCE-A05B-0B00396E7495}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5406F13B-7702-4CCE-A05B-0B00396E7495}.Debug|x86.Build.0 = Debug|Any CPU
+		{5406F13B-7702-4CCE-A05B-0B00396E7495}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5406F13B-7702-4CCE-A05B-0B00396E7495}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5406F13B-7702-4CCE-A05B-0B00396E7495}.Release|x64.ActiveCfg = Release|Any CPU
+		{5406F13B-7702-4CCE-A05B-0B00396E7495}.Release|x64.Build.0 = Release|Any CPU
+		{5406F13B-7702-4CCE-A05B-0B00396E7495}.Release|x86.ActiveCfg = Release|Any CPU
+		{5406F13B-7702-4CCE-A05B-0B00396E7495}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -32,7 +32,7 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 所有历元的观测数据
         /// </summary>
-        public Dictionary<GPST, OEpoch> AllEpoch { get; set; } = new Dictionary<GPST, OEpoch>();
+        public List<OEpoch> AllEpoch  = new List<OEpoch>();
 
         public OFile(string path)
         {
@@ -111,7 +111,6 @@ namespace GeoFun.GNSS
 
             //读取观测值
             line = sr.ReadLine();
-            int ii = 0;//处理数据行时，代表处理到第几行
             //obsdata_allepoch = new List<OBSDATA_EPOCH>();//全局变量初始化
             OEpoch epoch = new OEpoch();//
             epoch.AllSat = new Dictionary<string, OSat>();
@@ -228,7 +227,7 @@ namespace GeoFun.GNSS
 
                         epoch.AllSat.Add(oSat.SatPRN, oSat);
                     }
-                    AllEpoch.Add(epoch.Epoch,epoch);
+                    AllEpoch.Add(epoch);
                 }
                 catch (Exception ex)
                 {

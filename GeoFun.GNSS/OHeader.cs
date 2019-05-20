@@ -84,7 +84,7 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 数据采样率
         /// </summary>
-        public double interval = 0d;
+        public double interval = 30d;
         /// <summary>
         /// 跳秒数
         /// </summary>

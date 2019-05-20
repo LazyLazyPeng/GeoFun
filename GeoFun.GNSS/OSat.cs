@@ -19,7 +19,11 @@ namespace GeoFun.GNSS
         /// </summary>
         public string SatPRN;
         /// <summary>
-        /// 各种不同的观测值，例如C1、P1、P2、L1、L2、LP1（相位平滑伪距结果）、LP2（相位平滑伪距结果）等等，用哈希表储存，便于查找.
+        /// 各种不同的观测值，例如
+        ///     C1、P1、P2、L1、L2、
+        ///     P4、L4、SM_P4
+        ///     LP1（相位平滑伪距结果）、LP2（相位平滑伪距结果）
+        /// 用哈希表储存，便于查找.
         /// </summary>
         public Dictionary<string,double> SatData = new Dictionary<string, double>();
         /// <summary>
@@ -35,7 +39,7 @@ namespace GeoFun.GNSS
         /// </summary>
         public Coor3 SatCoor;
         /// <summary>
-        /// 卫星钟差，可有精密星历或者广播星历计算得到
+        /// 卫星钟差，可由精密星历或者广播星历计算得到
         /// </summary>
         public double SatClock;
         /// <summary>
@@ -47,9 +51,15 @@ namespace GeoFun.GNSS
         /// </summary>
         public Coor3 approPOS;
 
+        /// <summary>
+        /// 模糊度N1
+        /// </summary>
         public double N1;
-
+        /// <summary>
+        /// 模糊度N2
+        /// </summary>
         public double N2;
+
         /// <summary>
         /// 利用P码伪距求得的带DCB影响的STEC
         /// </summary>
@@ -71,5 +81,29 @@ namespace GeoFun.GNSS
         /// 是否缺少P1
         /// </summary>
         public bool IsLackOfP1;
+
+        /// <summary>
+        /// 根据观测值名称索引
+        /// </summary>
+        /// <param name="obsType"></param>
+        /// <returns></returns>
+        public double this[string obsType]
+        {
+            get
+            {
+                return SatData[obsType];
+            }
+            set
+            {
+                if(SatData.ContainsKey(obsType))
+                {
+                    SatData[obsType] = value;
+                }
+                else
+                {
+                    SatData.Add(obsType, value);
+                }
+            }
+        }
     }
 }

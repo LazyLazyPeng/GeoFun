@@ -16,18 +16,15 @@ namespace GeoFunTest
         [TestMethod]
         public void TestMethod1()
         {
-            DateTime dt1, dt2;
-            ulong pico1, pico2;
+            CommonT dt1, dt2;
             Week week1, week2;
 
-            dt1 = new DateTime(2002, 1, 1, 3, 59, 59);
-            pico1 = (ulong)(5 * 1e11);
-            week1 = Time.CommonToGPS(dt1, pico1);
+            dt1 = new CommonT(2002, 1, 1, 3, 59, 60-1e-11);
+            week1 = Time.CommonToGPS(dt1);
 
-            Time.GPSToCommon(week1, out dt2, out pico2);
+            Time.GPSToCommon(week1, out dt2);
 
             Assert.IsTrue(dt1 == dt2, "dt1不等于dt2");
-            Assert.IsTrue(pico1 == pico2, "dt1不等于dt2");
         }
 
         [TestMethod]

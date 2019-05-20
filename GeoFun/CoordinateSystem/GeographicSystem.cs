@@ -90,14 +90,7 @@ namespace GeoFun.CoordinateSystem
         {
             get
             {
-                if (FME_NAME.ContainsKey(Ellipsoid.Name))
-                {
-                    return FME_NAME[Ellipsoid.Name];
-                }
-                else
-                {
-                    return "UserDefine";
-                }
+                return fmeName;
             }
             set
             {

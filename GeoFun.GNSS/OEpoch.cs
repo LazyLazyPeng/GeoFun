@@ -1,9 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace GeoFun.GNSS
 {
-    public class OEpoch
+    public class OEpoch:IEnumerable<KeyValuePair<string,OSat>>
     {
         /// <summary>
         /// 历元
@@ -17,11 +18,11 @@ namespace GeoFun.GNSS
         /// 0:OK
         /// 1:power failure between previous and current epoch
         /// >1:event flag
-        /// 2:start moving antenna
-        /// 3:new site occupation
-        /// 4:header information follows
-        /// 5:external event(epoch is significant,same time frame as observation time tags)
-        /// 6:cycle slip records follow to optionally report detected and repaired cycle slip
+        ///  2:start moving antenna
+        ///  3:new site occupation
+        ///  4:header information follows
+        ///  5:external event(epoch is significant,same time frame as observation time tags)
+        ///  6:cycle slip records follow to optionally report detected and repaired cycle slip
         /// </remarks>
         public int Flag { get; set; } = 0;
 
@@ -51,6 +52,11 @@ namespace GeoFun.GNSS
         /// </summary>
         public double ClockBias { get; set; } = 0d;
 
+        /// <summary>
+        /// 根据卫星PRN号检索观测数据
+        /// </summary>
+        /// <param name="prn"></param>
+        /// <returns></returns>
         public OSat this[string prn]
         {
             get
@@ -63,5 +69,30 @@ namespace GeoFun.GNSS
             }
         }
 
+        /// <summary>
+        /// 按顺序返回第index颗卫星的观测数据
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public OSat this[int index]
+        {
+            get
+            {
+                return AllSat[PRNList[index]];
+            }
+            set
+            {
+                AllSat[PRNList[index]] = value;
+            }
+        }
+
+        public IEnumerator<KeyValuePair<string, OSat>> GetEnumerator()
+        {
+            return AllSat.GetEnumerator();
+        }
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return AllSat.GetEnumerator();
+        }
     }
 }

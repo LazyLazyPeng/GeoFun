@@ -4,16 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B8D64A98-4A98-4811-8E01-F9783209AAF0}</ProjectGuid>
+    <ProjectGuid>{5406F13B-7702-4CCE-A05B-0B00396E7495}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GeoFun.GNSS</RootNamespace>
-    <AssemblyName>GeoFun.GNSS</AssemblyName>
+    <RootNamespace>GeoFun.GNSS.Net</RootNamespace>
+    <AssemblyName>GeoFun.GNSS.Net</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,6 +23,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -30,12 +31,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FluentFTP, Version=24.0.0.0, Culture=neutral, PublicKeyToken=f4af092b1d8df44f, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentFTP.24.0.0\lib\net40\FluentFTP.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,37 +46,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common.cs" />
-    <Compile Include="CommonT.cs" />
-    <Compile Include="Coor3.cs" />
-    <Compile Include="Corrector.cs" />
-    <Compile Include="Day.cs" />
-    <Compile Include="DCBFile.cs" />
-    <Compile Include="GPST.cs" />
-    <Compile Include="Iono.cs" />
-    <Compile Include="NEpoch.cs" />
-    <Compile Include="NFile.cs" />
-    <Compile Include="NHeader.cs" />
-    <Compile Include="NSat.cs" />
-    <Compile Include="Observation.cs" />
-    <Compile Include="OEpoch.cs" />
-    <Compile Include="OFile.cs" />
-    <Compile Include="OHeader.cs" />
-    <Compile Include="OSat.cs" />
-    <Compile Include="program.cs" />
-    <Compile Include="Smoother.cs" />
-    <Compile Include="SP3Epoch.cs" />
-    <Compile Include="SP3File.cs" />
-    <Compile Include="SP3Header.cs" />
-    <Compile Include="SP3Sat.cs" />
+    <Compile Include="Downloader.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Time.cs" />
-    <Compile Include="Week.cs" />
+    <Compile Include="UrlHelper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GeoFun\GeoFun.csproj">
-      <Project>{d208a3e9-5bf4-414e-9807-7605898102a0}</Project>
-      <Name>GeoFun</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="7za.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="7za.exe" />
+    <Content Include="7zxa.dll" />
+    <Content Include="temp\temp.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -9,36 +9,33 @@ namespace GeoFun.GNSS
     {
         static void Main(string[] args)
         {
-
+            TestOFile();
         }
 
         public static void TestOFile()
         {
-            string prn = "";
-            string obsType = "";
-            OFile ofile = new OFile(@"E:\Data\Typhoon\201307_Soulik\FLNM1930.13o");
+            OFile ofile = new OFile(@"E:\Data\Typhoon\obs\201307_Soulik\FLNM1930.13o");
 
             if (ofile.TryRead())
             {
-                var enumerator = ofile.AllEpoch.GetEnumerator();
-                while (enumerator.MoveNext())
+                Observation.CalP4(ref ofile.AllEpoch);
+                foreach(var epoch in ofile.AllEpoch)
                 {
-                    var epoch = enumerator.Current;
+                    Console.WriteLine(string.Format(epoch.Epoch.ToRinexString()));
 
-                    Console.Write(string.Format("{0}:{1}:{2:00}\n",epoch.Key.CommonT.Hour,epoch.Key.CommonT.Minute,epoch.Key.CommonT.Second));
-                    for (int i = 0; i < ofile.AllEpoch[epoch.Key].PRNList.Count; i++)
+                    foreach(var prn in epoch.PRNList)
                     {
-                        prn = ofile.AllEpoch[epoch.Key].PRNList[i];
+                        if (prn[0] != 'G') continue;
                         Console.Write(prn);
-
-                        for(int j = 0; j < ofile.Header.obsTypeNum;j++)
+                        foreach(var otype in new List<string> { "P1", "P2", "L1", "L2" })
                         {
-                            obsType = ofile.Header.obsTypeList[j];
-                            Console.Write(string.Format(" {0} {1,13:f3}",obsType,ofile.AllEpoch[epoch.Key].AllSat[prn].SatData[obsType]));
+                            Console.Write(" {0}:{1,13:f3}",otype,epoch[prn][otype]);
                         }
-
+                        Console.Write(" P1-P2(P4),{0,13:f3}", epoch[prn]["P4"]);
+                        Console.Write(" P1-C1(ns),{0,13:f3}", (epoch[prn]["P1"] - epoch[prn]["C1"])*1e9 / Common.SPEED_OF_LIGHT);
                         Console.Write("\n");
                     }
+                    Console.WriteLine();
                 }
             }
 
