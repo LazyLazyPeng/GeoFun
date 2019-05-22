@@ -9,7 +9,10 @@ namespace GeoFun.GNSS.Net
     {
         static void Main(string[] args)
         {
-            Downloader.DownloadSp3(1748, 5,center:"IGS");
+            //Downloader.DownloadSp3(1748, 5,center:"IGS");
+            //Downloader.DownloadClk(1748, 5,center:"IGS");
+            //Downloader.DownloadN(2013, 193);
+            Downloader.DownloadDCB(2013, 9,"P1P2");
         }
     }
 }
