@@ -19,20 +19,22 @@ namespace GeoFun.GNSS
             if (ofile.TryRead())
             {
                 Observation.CalP4(ref ofile.AllEpoch);
-                foreach(var epoch in ofile.AllEpoch)
+                Observation.CalL4(ref ofile.AllEpoch);
+                foreach (var epoch in ofile.AllEpoch)
                 {
                     Console.WriteLine(string.Format(epoch.Epoch.ToRinexString()));
 
-                    foreach(var prn in epoch.PRNList)
+                    foreach (var prn in epoch.PRNList)
                     {
                         if (prn[0] != 'G') continue;
                         Console.Write(prn);
-                        foreach(var otype in new List<string> { "P1", "P2", "L1", "L2" })
+                        foreach (var otype in new List<string> { "P1", "P2", "L1", "L2" })
                         {
-                            Console.Write(" {0}:{1,13:f3}",otype,epoch[prn][otype]);
+                            Console.Write(" {0}:{1,13:f3}", otype, epoch[prn][otype]);
                         }
-                        Console.Write(" P1-P2(P4),{0,13:f3}", epoch[prn]["P4"]);
-                        Console.Write(" P1-C1(ns),{0,13:f3}", (epoch[prn]["P1"] - epoch[prn]["C1"])*1e9 / Common.SPEED_OF_LIGHT);
+                        Console.Write(" P1-P2(P4):{0,7:f3}", epoch[prn]["P4"]);
+                        Console.Write(" L1-L2(L4):{0,13:f3}", epoch[prn]["L4"]);
+                        //Console.Write(" P1-C1(ns),{0,13:f3}", (epoch[prn]["P1"] - epoch[prn]["C1"])*1e9 / Common.SPEED_OF_LIGHT);
                         Console.Write("\n");
                     }
                     Console.WriteLine();
