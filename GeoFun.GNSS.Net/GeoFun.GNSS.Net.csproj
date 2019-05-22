@@ -55,12 +55,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="7za.dll">
+    <Content Include="temp\temp.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="7za.exe" />
-    <Content Include="7zxa.dll" />
-    <Content Include="temp\temp.txt">
+    <Content Include="wget.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

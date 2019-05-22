@@ -34,5 +34,31 @@ namespace GeoFun.GNSS
                 }
             }
         }
+
+        public static void CalL4(ref List<OEpoch> epoches)
+        {
+            if (epoches is null || epoches.Count == 0) return;
+
+            double l1 = 0d;
+            double l2 = 0d;
+            for (int i = 0; i < epoches.Count; i++)
+            {
+                foreach (var prn in epoches[i].PRNList)
+                {
+                    l1 = l2 = 0d;
+                    if (!epoches[i][prn].SatData.TryGetValue("L1", out l1)) continue;
+                    if (!epoches[i][prn].SatData.TryGetValue("L2", out l2)) continue;
+
+                    if (!epoches[i][prn].SatData.ContainsKey("L4"))
+                    {
+                        epoches[i][prn].SatData["L4"] = l1*Common.GPS_L1 - l2*Common.GPS_L2;
+                    }
+                    else
+                    {
+                        epoches[i][prn].SatData.Add("L4", l1*Common.GPS_L1 - l2*Common.GPS_L2);
+                    }
+                }
+            }
+        }
     }
 }

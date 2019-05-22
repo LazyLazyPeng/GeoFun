@@ -9,7 +9,7 @@ namespace GeoFun.GNSS.Net
     {
         static void Main(string[] args)
         {
-            Downloader.DownloadSp3(1748, 5);
+            Downloader.DownloadSp3(1748, 5,center:"IGS");
         }
     }
 }
