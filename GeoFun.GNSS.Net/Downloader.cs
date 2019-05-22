@@ -6,6 +6,7 @@ using System.Text;
 
 using GeoFun;
 using FluentFTP;
+using GeoFun.Sys;
 
 namespace GeoFun.GNSS.Net
 {
@@ -34,7 +35,7 @@ namespace GeoFun.GNSS.Net
             string localPath = Path.Combine(Path.GetFullPath(outPath), name);
 
             // 本地缓存路径
-            string localTempPath = Path.Combine(Common.TEMP_DIR, "orbit", "sp3", name);
+            string localTempPath = Path.Combine(Common.TEMP_DIR, "weekly",week.ToString(), name);
 
             if (!File.Exists(localTempPath))
             {
@@ -49,8 +50,9 @@ namespace GeoFun.GNSS.Net
                 //{
                 //    return false;
                 //}
-                string cmd = string.Format("{0}\\wget.exe -P\"{1}\" \"{2}\" --ftp-user={3} --ftp-password={4}", AppDomain.CurrentDomain.BaseDirectory, Path.GetDirectoryName(localTempPath), remoteFullPath, ANONY_USER, ANONY_PSSD); ;
-                
+                string cmd = string.Format("\"{0}\\wget.exe\" -P\"{1}\" \"{2}\" --ftp-user={3} --ftp-password={4} &exit", AppDomain.CurrentDomain.BaseDirectory, Path.GetDirectoryName(localTempPath), remoteFullPath, ANONY_USER, ANONY_PSSD); ;
+                CMDHelper cmdH = new CMDHelper();
+                cmdH.Execute(cmd);
             }
             if (!File.Exists(localTempPath)) return false;
 
@@ -67,22 +69,187 @@ namespace GeoFun.GNSS.Net
             return true;
         }
 
-        public static void DownloadClk()
+        public static bool DownloadClk(int week, int day, string outPath = "temp", string center = "IGS")
         {
+            string productName = center + "_CLK";
 
+            // ftp全路径
+            string remoteFullPath;
+            if (!Common.URL.TryGetValue(productName, out remoteFullPath)) return false;
+            remoteFullPath = remoteFullPath.Replace("%W", "{0}").Replace("%D", "{1}");
+            remoteFullPath = string.Format(remoteFullPath, week, day);
+
+            // ftp主机名和相对路径
+            string host = UrlHelper.GetHost(remoteFullPath);
+            string remoteRelPath = UrlHelper.GetRelPath(remoteFullPath);
+            if (string.IsNullOrWhiteSpace(remoteRelPath)) return false;
+
+            /// 本地路径
+            string name = string.Format("{0}{1}{2}.clk.Z", center.ToLower(), week, day);
+            string localPath = Path.Combine(Path.GetFullPath(outPath), name);
+
+            // 本地缓存路径
+            string localTempPath = Path.Combine(Common.TEMP_DIR, "weekly", week.ToString(), name);
+
+            if (!File.Exists(localTempPath))
+            {
+                //FtpClient client = new FtpClient(host, ANONY_USER, ANONY_PSSD);
+                //client.Connect();
+
+                //try
+                //{
+                //    client.DownloadFile(localTempPath, remoteRelPath);
+                //}
+                //catch
+                //{
+                //    return false;
+                //}
+                string cmd = string.Format("\"{0}\\wget.exe\" -P\"{1}\" \"{2}\" --ftp-user={3} --ftp-password={4} &exit", AppDomain.CurrentDomain.BaseDirectory, Path.GetDirectoryName(localTempPath), remoteFullPath, ANONY_USER, ANONY_PSSD); ;
+                CMDHelper cmdH = new CMDHelper();
+                cmdH.Execute(cmd);
+            }
+            if (!File.Exists(localTempPath)) return false;
+
+            try
+            {
+                File.Copy(localTempPath, localPath, true);
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+            if (!File.Exists(localPath)) return false;
+            return true;
         }
 
-        public void DownloadN()
-        { }
+        public static bool DownloadN(int year, int doy,string outPath = "temp",string center="IGS")
+        {
+            int year2 = 0;
+            int year4 = 0;
+
+            if(year<50)
+            {
+                year2 = year;
+                year4 = year + 2000;
+            }
+            else if(year>=50 && year<100)
+            {
+                year2 = year;
+                year4 = year + 1900;
+            }
+            else
+            {
+                year4 = year;
+                if (year4 < 2000) year2 = year4 - 1900;
+                else year2 = year4 - 2000;
+            }
+
+            string productName = center + "_NAV";
+
+            // ftp全路径
+            string remoteFullPath;
+            if (!Common.URL.TryGetValue(productName, out remoteFullPath)) return false;
+            remoteFullPath = remoteFullPath.Replace("%Y", "{0}").Replace("%n", "{1}").Replace("%y","{2:D2}");
+            remoteFullPath = string.Format(remoteFullPath, year4,doy,year2);
+
+            // ftp主机名和相对路径
+            string host = UrlHelper.GetHost(remoteFullPath);
+            string remoteRelPath = UrlHelper.GetRelPath(remoteFullPath);
+            if (string.IsNullOrWhiteSpace(remoteRelPath)) return false;
+
+            /// 本地路径
+            string name = string.Format("brdc{0}0.{1}n.Z",doy,year2);
+            string localPath = Path.Combine(Path.GetFullPath(outPath), name);
+
+            // 本地缓存路径
+            string localTempPath = Path.Combine(Common.TEMP_DIR, "daily",year4.ToString(),doy.ToString(),year2.ToString("D2")+"n", name);
+
+            if (!File.Exists(localTempPath))
+            {
+                string cmd = string.Format("\"{0}\\wget.exe\" -P\"{1}\" \"{2}\" --ftp-user={3} --ftp-password={4} &exit", AppDomain.CurrentDomain.BaseDirectory, Path.GetDirectoryName(localTempPath), remoteFullPath, ANONY_USER, ANONY_PSSD); ;
+                CMDHelper cmdH = new CMDHelper();
+                cmdH.Execute(cmd);
+            }
+            if (!File.Exists(localTempPath)) return false;
+
+            try
+            {
+                File.Copy(localTempPath, localPath, true);
+            }
+            catch (Exception ex)
+            {
+                throw new IOException("无法复制到路径", ex);
+            }
+
+            if (!File.Exists(localPath)) return false;
+            return true;
+        }
 
         public void DonwloadO()
         { }
 
-        public void DownloadP1P2()
-        { }
-
-        public void DownloadP1C1()
+        public static bool DownloadDCB(int year,int month,string code="P1C1",string outPath = "temp")
         {
+            int year2 = 0;
+            int year4 = 0;
+
+            if (year < 50)
+            {
+                year2 = year;
+                year4 = year + 2000;
+            }
+            else if (year >= 50 && year < 100)
+            {
+                year2 = year;
+                year4 = year + 1900;
+            }
+            else
+            {
+                year4 = year;
+                if (year4 < 2000) year2 = year4 - 1900;
+                else year2 = year4 - 2000;
+            }
+
+            string productName = "COD_DCB" + "_"+code.ToUpper();
+
+            // ftp全路径
+            string remoteFullPath;
+            if (!Common.URL.TryGetValue(productName, out remoteFullPath)) return false;
+            remoteFullPath = remoteFullPath.Replace("%Y", "{0}").Replace("%m", "{1,2:00}").Replace("%y", "{2,2:00}");
+            remoteFullPath = string.Format(remoteFullPath, year4, month, year2);
+
+            // ftp主机名和相对路径
+            string host = UrlHelper.GetHost(remoteFullPath);
+            string remoteRelPath = UrlHelper.GetRelPath(remoteFullPath);
+            if (string.IsNullOrWhiteSpace(remoteRelPath)) return false;
+
+            /// 本地路径
+            string name = string.Format("{0}{1,2:00}{2,2:00}.DCB.Z",code.ToUpper(), year2,month);
+            string localPath = Path.Combine(Path.GetFullPath(outPath), name);
+
+            // 本地缓存路径
+            string localTempPath = Path.Combine(Common.TEMP_DIR, "dcb", name);
+
+            if (!File.Exists(localTempPath))
+            {
+                string cmd = string.Format("\"{0}\\wget.exe\" -P\"{1}\" \"{2}\" --ftp-user={3} --ftp-password={4} &exit", AppDomain.CurrentDomain.BaseDirectory, Path.GetDirectoryName(localTempPath), remoteFullPath, ANONY_USER, ANONY_PSSD); ;
+                CMDHelper cmdH = new CMDHelper();
+                cmdH.Execute(cmd);
+            }
+            if (!File.Exists(localTempPath)) return false;
+
+            try
+            {
+                File.Copy(localTempPath, localPath, true);
+            }
+            catch (Exception ex)
+            {
+                throw new IOException("无法复制到路径", ex);
+            }
+
+            if (!File.Exists(localPath)) return false;
+            return true;
         }
 
 
