@@ -32,7 +32,7 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 所有历元的观测数据
         /// </summary>
-        public List<OEpoch> AllEpoch  = new List<OEpoch>();
+        public List<OEpoch> AllEpoch = new List<OEpoch>();
 
         public OFile(string path)
         {
@@ -124,17 +124,31 @@ namespace GeoFun.GNSS
                 }
 
                 //// 60行以后，如果包含COMMENT,则认为是注释行
-                if (flag.Contains("COMMENT")) continue;
+                if (flag.Contains("COMMENT"))
+                {
+                    line = sr.ReadLine();
+                    continue;
+                }
 
                 try
                 {
                     epoch = new OEpoch();
 
                     //// 读取历元
-                    epoch.Epoch = GPST.Decode(line.Substring(0, 26));
+                    GPST epochT = GPST.Decode(line.Substring(0, 26));
+                    if (epochT is null)
+                    {
+                        line = sr.ReadLine();
+                        continue;
+                    }
+                    epoch.Epoch = epochT;
 
                     //// 历元标识
-                    epoch.Flag = int.Parse(line.Substring(26, 3).Trim());
+                    int epoFlag = 0;
+                    if (int.TryParse(line.Substring(26, 3), out epoFlag))
+                    {
+                        epoch.Flag = epoFlag;
+                    }
 
                     //// 观测到的卫星的数量
                     int prnNum = int.Parse(line.Substring(29, 3).Trim());

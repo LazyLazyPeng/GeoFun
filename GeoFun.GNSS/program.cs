@@ -14,10 +14,31 @@ namespace GeoFun.GNSS
 
         public static void TestOFile()
         {
-            OFile ofile = new OFile(@"E:\Data\Typhoon\obs\201307_Soulik\FLNM1930.13o");
+            OFile ofile = new OFile(@"E:\Data\ZhaiCZ\2011070test\30900700.11o");
 
             if (ofile.TryRead())
             {
+                List<string> prns = new List<string>();
+                for(int i = 0; i <32; i++)
+                {
+                    prns.Add("G" + (i+1).ToString("00"));
+                }
+                var arcs = Observation.DetectArcs(ref ofile.AllEpoch, prns);
+
+                foreach(var prn in prns)
+                {
+                    if (arcs[prn].Count < 1) continue;
+
+                    Console.WriteLine(prn);
+                    foreach(var arc in arcs[prn])
+                    {
+                        Console.Write(" {0},{1},{2}",arc[0],arc[1],arc[1]-arc[0]+1);
+                    }
+                    Console.Write("\r\n");
+                }
+                Console.ReadKey();
+                return;
+
                 Observation.CalP4(ref ofile.AllEpoch);
                 Observation.CalL4(ref ofile.AllEpoch);
                 foreach (var epoch in ofile.AllEpoch)

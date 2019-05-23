@@ -17,6 +17,18 @@ namespace GeoFun.GNSS.Net
             return url.Substring(0, index+1);
         }
 
+        public static string GetFileName(string url)
+        {
+            if (string.IsNullOrWhiteSpace(url)) return null;
+            if (url.Length <= 0) return null;
+
+            url = url.Replace("\\","/");
+            int index = url.LastIndexOf("/");
+            if (index < 0) return null;
+
+            return url.Substring(index + 1);
+        }
+
         /// <summary>
         /// 获取ftp文件的相对路径
         /// </summary>

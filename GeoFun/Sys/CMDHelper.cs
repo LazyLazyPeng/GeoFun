@@ -53,10 +53,10 @@ namespace GeoFun.Sys
                     //proc.StandardInput.WriteLine("@echo off");//proc.StandardInput.Write("chcp 936");
                     proc.StandardInput.WriteLine(cmd);
 
-                    //// 没过1秒查询程序是否退出
+                    //// 每过1秒查询程序是否退出
                     while (!proc.HasExited)
                     {
-                        System.Threading.Thread.Sleep(1000);
+                        Thread.Sleep(1000);
                     }
                 }
             }
