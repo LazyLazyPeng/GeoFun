@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="codeaddicts.libArgument, Version=1.0.6001.31903, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Codeaddicts.libArgument.1.0.6001.31903\lib\codeaddicts.libArgument.dll</HintPath>
+    </Reference>
     <Reference Include="FluentFTP, Version=24.0.0.0, Culture=neutral, PublicKeyToken=f4af092b1d8df44f, processorArchitecture=MSIL">
       <HintPath>..\packages\FluentFTP.24.0.0\lib\net40\FluentFTP.dll</HintPath>
     </Reference>
@@ -47,6 +50,7 @@
   <ItemGroup>
     <Compile Include="Common.cs" />
     <Compile Include="Downloader.cs" />
+    <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UrlHelper.cs" />
@@ -55,6 +59,15 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="7-zip.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="7z.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="7z.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="crx2rnx.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

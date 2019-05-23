@@ -91,12 +91,12 @@ namespace GeoFun.GNSS
         /// <param name="mjd"></param>
         /// <param name="dt"></param>
         /// <param name="pico"></param>
-        public static void MJDToCommon(Day mjd, out CommonT dt)
+        public static CommonT MJDToCommon(Day mjd)
         {
             int year, month, day, hour, minute;
             decimal second;
             MJDToCommon(mjd.Days, mjd.Seconds, out year, out month, out day, out hour, out minute, out second);
-            dt = new CommonT(year, month, day, hour, minute, second);
+            return new CommonT(year, month, day, hour, minute, second);
         }
 
         public static void MJDToGPS(int days, double sod, out int weeks, out double sow)
@@ -158,12 +158,19 @@ namespace GeoFun.GNSS
         /// <param name="sod"></param>
         public static void GPSToMJD(int weeks,double sow,out int days, out double sod)
         {
-            int day;
+            int dow;
             sod = sow;
 
-            day = (int)(sow / 86400);
-            sod = sow - day * 86400;
-            days = weeks * 7 + 44244 + day;
+            // 防止出现负数
+            if(sow<0)
+            {
+                sow += SecondsPerWeek;
+                weeks--;
+            }
+
+            dow = (int)(sow / 86400);
+            sod = sow - dow * 86400;
+            days = weeks * 7 + 44244 + dow;
         }
         public static Day GPSToMJD(Week week)
         {
@@ -193,14 +200,14 @@ namespace GeoFun.GNSS
             GPSToMJD(weeks,sow,out days,out sod);
             MJDToCommon(days, sod, out year, out month, out day, out hour, out minute, out second);
         }
-        public static void GPSToCommon(Week gpsWeek,out CommonT dt)
+        public static CommonT GPSToCommon(Week gpsWeek)
         {
             int year, month, day, hour, minute;
             decimal second;
 
             GPSToCommon(gpsWeek.Weeks, gpsWeek.Seconds, out year, out month, out day, out hour, out minute, out second);
 
-            dt = new CommonT(year, month, day, hour, minute, second);
+             return new CommonT(year, month, day, hour, minute, second);
         }
     }
 }

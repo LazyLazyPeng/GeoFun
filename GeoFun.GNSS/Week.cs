@@ -43,5 +43,16 @@ namespace GeoFun.GNSS
                 Seconds = sow;
             }
         }
+
+        /// <summary>
+        /// 总的秒数
+        /// </summary>
+        public double TotalSeconds
+        {
+            get
+            {
+                return Weeks * Time.SecondsPerWeek + Seconds;
+            }
+        }
     }
 }

@@ -8,12 +8,28 @@ namespace GeoFun.GNSS
 {
     public class DCBFile
     {
+        /// <summary>
+        /// DCB文件路径
+        /// </summary>
         public string Path { get; set; }
+
+        /// <summary>
+        /// 硬件延迟(ns)
+        /// </summary>
         public Dictionary<string, double> DCBList = new Dictionary<string, double>();
+        /// <summary>
+        /// 硬件延迟bias(ns)
+        /// </summary>
         public Dictionary<string, double> DCBBias = new Dictionary<string, double>();
 
-        public int Year { get; set; }
-        public int Month { get; set; }
+        /// <summary>
+        /// 年
+        /// </summary>
+        public int Year { get; set; } = 0;
+        /// <summary>
+        /// 月
+        /// </summary>
+        public int Month { get; set; } = 0;
 
         public DCBFile(string path)
         {

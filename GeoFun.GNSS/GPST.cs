@@ -20,6 +20,11 @@ namespace GeoFun.GNSS
             {
                 return week;
             }
+            set
+            {
+                commonT = Time.GPSToCommon(week);
+                mjd = Time.GPSToMJD(week);
+            }
         }
 
         private CommonT commonT;
@@ -35,6 +40,9 @@ namespace GeoFun.GNSS
             set
             {
                 commonT = value;
+
+                mjd = Time.CommonToMJD(commonT);
+                week = Time.CommonToGPS(commonT);
             }
         }
 
@@ -73,7 +81,21 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 简化儒略日
         /// </summary>
-        public Day MJD;
+        public Day mjd = new Day();
+        public Day MJD
+        {
+            get
+            {
+                return mjd;
+            }
+            set
+            {
+                mjd = value;
+
+                week=Time.MJDToGPS(mjd);
+                commonT = Time.MJDToCommon(mjd);
+            }
+        }
 
         public GPST(int year, int month, int day, int hour, int minute, double second)
         {
@@ -105,6 +127,7 @@ namespace GeoFun.GNSS
         public static GPST Decode(string timeStr)
         {
             string[] segs = StringHelper.SplitFields(timeStr);
+            if (segs.Length < 6) return null;
 
             double seconds;
             int year, month, day, hour, minute;
@@ -131,6 +154,19 @@ namespace GeoFun.GNSS
                     CommonT.Hour, CommonT.Minute, commonT.second);
             }
             return "";
+        }
+
+        /// <summary>
+        /// 返回两个日期之间的秒数
+        /// </summary>
+        /// <param name="t1"></param>
+        /// <param name="t2"></param>
+        /// <returns></returns>
+        public static double operator -(GPST t1,GPST t2)
+        {
+            if (t1 is null || t2 is null) return 0d;
+
+            return t1.Week.TotalSeconds - t2.Week.TotalSeconds;
         }
     }
 }
