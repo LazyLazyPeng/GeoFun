@@ -7,7 +7,7 @@ namespace GeoFun
         public static double PI = 3.1415926535897932;
         public static decimal PIM = 3.1415926535897932m;
 
-        private decimal dd = 0m;
+        private decimal ddd = 0m;
         private decimal dms = 0m;
         private decimal arc = 0m;
 
@@ -15,13 +15,13 @@ namespace GeoFun
         {
             get
             {
-                return dd;
+                return ddd;
             }
             set
             {
-                dd = value;
-                dms = DD2DMS(dd);
-                arc = dd * Angle.D2RM;
+                ddd = value;
+                dms = DD2DMS(ddd);
+                arc = ddd * Angle.D2RM;
             }
         }
         public decimal DMS
@@ -33,8 +33,8 @@ namespace GeoFun
             set
             {
                 dms = value;
-                dd = DMS2DD(dms);
-                arc = dd * Angle.R2DM;
+                ddd = DMS2DD(dms);
+                arc = ddd * Angle.R2DM;
             }
         }
         public decimal ARC
@@ -46,8 +46,8 @@ namespace GeoFun
             set
             {
                 arc = value;
-                dd = arc * Angle.R2DM;
-                dms = DD2DMS(dd);
+                ddd = arc * Angle.R2DM;
+                dms = DD2DMS(ddd);
             }
         }
 
