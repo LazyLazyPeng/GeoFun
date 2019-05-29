@@ -49,6 +49,7 @@
     <Compile Include="Corrector.cs" />
     <Compile Include="Day.cs" />
     <Compile Include="DCBFile.cs" />
+    <Compile Include="enumGNSSSystem.cs" />
     <Compile Include="GPST.cs" />
     <Compile Include="Iono.cs" />
     <Compile Include="NEpoch.cs" />

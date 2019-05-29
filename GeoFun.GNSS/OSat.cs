@@ -18,6 +18,9 @@ namespace GeoFun.GNSS
         /// 卫星PRN号
         /// </summary>
         public string SatPRN;
+
+        public enumGNSSSystem GNSSSystem { get; set; } = enumGNSSSystem.GPS;
+
         /// <summary>
         /// 各种不同的观测值，例如
         ///     C1、P1、P2、L1、L2、
@@ -72,15 +75,15 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 该历元是否发生周跳
         /// </summary>
-        public bool IsCycleSlip;
+        public bool CycleSlip;
         /// <summary>
         /// 伪距是否被平滑过
         /// </summary>
-        public bool IsCodePhased;
+        public bool CodePhased;
         /// <summary>
         /// 是否缺少P1
         /// </summary>
-        public bool IsLackOfP1;
+        public bool LackOfP1;
 
         /// <summary>
         /// 根据观测值名称索引

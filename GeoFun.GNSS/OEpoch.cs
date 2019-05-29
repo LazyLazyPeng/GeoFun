@@ -27,6 +27,24 @@ namespace GeoFun.GNSS
         public int Flag { get; set; } = 0;
 
         /// <summary>
+        /// 是否发生钟跳
+        /// </summary>
+        public bool ClockJump { get; set; } = false;
+
+        /// <summary>
+        /// 钟跳类型 
+        /// 0 仅时标阶跃 伪距相位连续 2 时标伪距阶跃 相位连续 3 时标相位连续 伪距阶跃 4 时标连续 伪距相位均阶跃
+        /// 见 郭斐.《GPS精密单点定位质量控制与分析的相关理论与方法研究》
+        /// </summary>
+        public int ClockJumpType { get; set; } = -1;
+
+        /// <summary>
+        /// 钟跳值(微秒)
+        /// The value of clock jump(unit:us)
+        /// </summary>
+        public int ClockJumpValue { get; set; } = 0;
+
+        /// <summary>
         /// 卫星数
         /// </summary>
         public int SatNum

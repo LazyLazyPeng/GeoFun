@@ -900,11 +900,6 @@ namespace GeoFun
             }
         }
 
-        private static int Min(int cnt1, int cnt2)
-        {
-            return cnt1 < cnt2 ? cnt1 : cnt2;
-        }
-
         public static string Mode2Str(enumFourMode mode)
         {
             switch (mode)

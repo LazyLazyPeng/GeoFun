@@ -15,7 +15,7 @@ namespace GeoFun.GNSS
         /// </summary>
         /// <param name="pct">通用时</param>
         /// <returns>通用时一秒之内的小数部分，单位：皮秒</returns>
-        public static Day  CommonToMJD(CommonT dt)
+        public static Day CommonToMJD(CommonT dt)
         {
             int y, m;
             int temp;
@@ -45,7 +45,7 @@ namespace GeoFun.GNSS
             temp += dt.Day;
             temp += -679019;
 
-            mjd.Days = (int)temp;
+            mjd.Days = temp;
 
             mjd.Seconds = dt.Hour * 3600 + dt.Minute * 60 + (double)dt.Second;
 
@@ -122,7 +122,7 @@ namespace GeoFun.GNSS
             int weeks;
             double sow;
 
-            MJDToGPS(mjd,out weeks, out sow);
+            MJDToGPS(mjd, out weeks, out sow);
 
             return new Week(weeks, sow);
         }
@@ -146,7 +146,7 @@ namespace GeoFun.GNSS
 
             CommonToGPS(out week, out sow, dt);
 
-            return new Week(week,sow);
+            return new Week(week, sow);
         }
 
         /// <summary>
@@ -156,13 +156,13 @@ namespace GeoFun.GNSS
         /// <param name="sow"></param>
         /// <param name="days"></param>
         /// <param name="sod"></param>
-        public static void GPSToMJD(int weeks,double sow,out int days, out double sod)
+        public static void GPSToMJD(int weeks, double sow, out int days, out double sod)
         {
             int dow;
             sod = sow;
 
             // 防止出现负数
-            if(sow<0)
+            if (sow < 0)
             {
                 sow += SecondsPerWeek;
                 weeks--;
@@ -192,12 +192,12 @@ namespace GeoFun.GNSS
         /// <param name="hour"></param>
         /// <param name="minute"></param>
         /// <param name="second"></param>
-        public static void GPSToCommon(int weeks,double sow, out int year,out int month, out int day, out int hour, out int minute,out decimal second)
+        public static void GPSToCommon(int weeks, double sow, out int year, out int month, out int day, out int hour, out int minute, out decimal second)
         {
             int days;
             double sod;
 
-            GPSToMJD(weeks,sow,out days,out sod);
+            GPSToMJD(weeks, sow, out days, out sod);
             MJDToCommon(days, sod, out year, out month, out day, out hour, out minute, out second);
         }
         public static CommonT GPSToCommon(Week gpsWeek)
@@ -207,7 +207,7 @@ namespace GeoFun.GNSS
 
             GPSToCommon(gpsWeek.Weeks, gpsWeek.Seconds, out year, out month, out day, out hour, out minute, out second);
 
-             return new CommonT(year, month, day, hour, minute, second);
+            return new CommonT(year, month, day, hour, minute, second);
         }
     }
 }

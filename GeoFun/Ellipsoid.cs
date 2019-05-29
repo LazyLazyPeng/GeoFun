@@ -69,7 +69,6 @@ namespace GeoFun
             isFME = true,
             fmeName = "KRASOV",
         };
-
         public static readonly Ellipsoid ELLIP_WGS84 = new Ellipsoid(a: 6378137d, f: 298.257223563);
 
         /// <summary>
