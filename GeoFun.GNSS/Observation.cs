@@ -123,6 +123,11 @@ namespace GeoFun.GNSS
         {
             if (epoches is null || epoches.Count < 1) return;
 
+            // 测量噪声(m）
+            double sigma = 3;
+            double k1 = 1e-3 * Common.C0 - 3 * sigma;
+            double k2 = 1e-4 * Common.C0;
+
             // 当前历元的观测值
             double curL1 = 0d, curL2 = 0d, curP1 = 0d, curP2 = 0d, curC1 = 0d;
             // 上一历元的观测值
@@ -160,9 +165,15 @@ namespace GeoFun.GNSS
                 // 历元不连续
                 if (epoches[i].Epoch - epoches[i - 1].Epoch > (interval + 1e-14)) continue;
 
+                validSatNum = 0;
+                jumpSatNumMs = 0;
+                jumpSatNumUs = 0;
+                jumpAllSatMs = 0d;
+                jumpAllSatUs = 0d;
                 foreach (var prn in epoches[i].PRNList)
                 {
                     if (!prn.StartsWith("G")) continue;
+                    if (!epoches[i - 1].PRNList.Contains(prn)) continue;
 
                     if (!epoches[i][prn].SatData.TryGetValue("L1", out curL1)) continue;
                     if (!epoches[i][prn].SatData.TryGetValue("L2", out curL2)) continue;
@@ -170,45 +181,44 @@ namespace GeoFun.GNSS
                     if (!epoches[i][prn].SatData.TryGetValue("P1", out curP1) &&
                         !epoches[i][prn].SatData.TryGetValue("C1", out curP1)) continue;
 
-                    if (!epoches[i - 1][prn].SatData.TryGetValue("L1", out curL1)) continue;
-                    if (!epoches[i - 1][prn].SatData.TryGetValue("L2", out curL2)) continue;
-                    if (!epoches[i - 1][prn].SatData.TryGetValue("P2", out curP2)) continue;
-                    if (!epoches[i - 1][prn].SatData.TryGetValue("P1", out curP1) &&
-                        !epoches[i - 1][prn].SatData.TryGetValue("C1", out curP1)) continue;
+                    if (!epoches[i - 1][prn].SatData.TryGetValue("L1", out lstL1)) continue;
+                    if (!epoches[i - 1][prn].SatData.TryGetValue("L2", out lstL2)) continue;
+                    if (!epoches[i - 1][prn].SatData.TryGetValue("P2", out lstP2)) continue;
+                    if (!epoches[i - 1][prn].SatData.TryGetValue("P1", out lstP1) &&
+                        !epoches[i - 1][prn].SatData.TryGetValue("C1", out lstP1)) continue;
 
-                    if (Math.Abs(curL1) > 1e-13
-                     || Math.Abs(curL2) > 1e-13
-                     || Math.Abs(curP1) > 1e-13
-                     || Math.Abs(curP2) > 1e-13) continue;
+                    if (Math.Abs(curL1) < 1e-13
+                     || Math.Abs(curL2) < 1e-13
+                     || Math.Abs(curP1) < 1e-13
+                     || Math.Abs(curP2) < 1e-13) continue;
 
                     dP = curP1 - lstP1;
                     dL = curL1 * Common.GPS_L1 - lstL1 * Common.GPS_L1;
 
                     dP4 = (curP1 - curP2) - (lstP1 - lstP2);
-                    dL4 = (curL1 - curL2) - (lstL1 - lstL2);
+                    dL4 = (curL1 * Common.GPS_L1 - curL2 * Common.GPS_L2) - (lstL1 * Common.GPS_L1 - lstL2 * Common.GPS_L2);
 
                     // GF对周跳敏感，对钟跳不敏感，用来剔除周跳的情况
                     // 排除周跳，以免影响钟跳探测
-                    if (dL4 < 0.15)
+                    if (dL4 > 0.15) continue;
+
+                    validSatNum++;
+
+                    // 毫秒级钟跳
+                    if (Math.Abs(dP - dL) > k1)
                     {
-                        validSatNum++;
+                        jumpAllSatMs += dP - dL;
 
-                        // 毫秒级钟跳
-                        if (Math.Abs(dP - dL) > 0.001 * Common.SPEED_OF_LIGHT)
-                        {
-                            jumpAllSatMs += dP - dL;
+                        jumpSatNumMs++;
+                    }
 
-                            jumpSatNumMs++;
-                        }
+                    // 微妙级钟跳
+                    else if (Math.Abs(dP - dL) > 0.000001 * Common.SPEED_OF_LIGHT &&
+                        Math.Abs(dP - dL) < k1)
+                    {
+                        jumpAllSatUs += dP - dL;
 
-                        // 微妙级钟跳
-                        if (Math.Abs(dP - dL) > 0.000001 * Common.SPEED_OF_LIGHT &&
-                            Math.Abs(dP - dL) < 0.001 * Common.SPEED_OF_LIGHT)
-                        {
-                            jumpAllSatUs += dP - dL;
-
-                            jumpSatNumUs++;
-                        }
+                        jumpSatNumUs++;
                     }
                 }
 
@@ -220,11 +230,13 @@ namespace GeoFun.GNSS
                     jumpPerSatDec = jumpAllSatMs / jumpSatNumMs / Common.C0 * 1000;
                     jumpPerSatInt = Math.Round(jumpPerSatDec);
 
-                    if (Math.Abs(jumpPerSatDec - jumpPerSatInt) < 0.05)
+                    if (Math.Abs(jumpPerSatDec - jumpPerSatInt) < k2)
                     {
                         epoches[i].ClockJump = true;
                         epoches[i].ClockJumpType = 2;
                         epoches[i].ClockJumpValue = (int)(jumpPerSatInt * 1e3);
+
+                        Console.WriteLine("发生钟跳(毫秒级),历元:{0},大小:{1}", i, jumpPerSatInt);
 
                         // 单位转换成s
                         jumpPerSatInt *= 1e-3;
@@ -239,6 +251,8 @@ namespace GeoFun.GNSS
                     // 每颗卫星的钟跳(us)
                     jumpPerSatDec = jumpAllSatUs / jumpSatNumUs / Common.C0 * 1e6;
                     jumpPerSatInt = Math.Round(jumpPerSatDec);
+
+                    Console.WriteLine("发生钟跳(微秒级),历元:{0},大小:{1}", i, jumpPerSatInt);
 
                     epoches[i].ClockJumpValue = (int)jumpPerSatInt;
 
