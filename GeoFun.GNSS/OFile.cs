@@ -255,7 +255,6 @@ namespace GeoFun.GNSS
 
             return true;
         }
-
         public string ReadLine(StreamReader sr)
         {
             string line = sr.ReadLine();
@@ -265,6 +264,20 @@ namespace GeoFun.GNSS
             }
 
             return line;
+        }
+
+        public static OFile Read(string path)
+        {
+            OFile file = new OFile(path);
+
+            if(file.TryRead())
+            {
+                return file;
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

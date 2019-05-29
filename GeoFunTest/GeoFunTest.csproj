@@ -51,6 +51,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ObservationTests.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitTest2.cs" />
@@ -70,283 +71,292 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\rinex\30900700.11o">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Data\cod17484.sp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\fjpt1930.13o">
+    <None Include="Data\rinex\bis21000.11o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpatch.cpg">
+    <None Include="Data\rinex\fjpt1930.13o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpatch.dbf">
+    <None Include="Data\rinex\ista1000.11o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpatch.prj">
+    <None Include="Data\shp\mpatch.cpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpatch.sbn">
+    <None Include="Data\shp\mpatch.dbf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpatch.sbx">
+    <None Include="Data\shp\mpatch.prj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpatch.shp">
+    <None Include="Data\shp\mpatch.sbn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpatch.shx">
+    <None Include="Data\shp\mpatch.sbx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpoint.cpg">
+    <None Include="Data\shp\mpatch.shp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpoint.dbf">
+    <None Include="Data\shp\mpatch.shx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpoint.prj">
+    <None Include="Data\shp\mpoint.cpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpoint.sbn">
+    <None Include="Data\shp\mpoint.dbf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpoint.sbx">
+    <None Include="Data\shp\mpoint.prj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpoint.shp">
+    <None Include="Data\shp\mpoint.sbn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpoint.shx">
+    <None Include="Data\shp\mpoint.sbx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpointm.cpg">
+    <None Include="Data\shp\mpoint.shp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpointm.dbf">
+    <None Include="Data\shp\mpoint.shx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpointm.prj">
+    <None Include="Data\shp\mpointm.cpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpointm.sbn">
+    <None Include="Data\shp\mpointm.dbf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpointm.sbx">
+    <None Include="Data\shp\mpointm.prj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpointm.shp">
+    <None Include="Data\shp\mpointm.sbn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpointm.shx">
+    <None Include="Data\shp\mpointm.sbx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpointz.cpg">
+    <None Include="Data\shp\mpointm.shp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpointz.dbf">
+    <None Include="Data\shp\mpointm.shx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpointz.prj">
+    <None Include="Data\shp\mpointz.cpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpointz.sbn">
+    <None Include="Data\shp\mpointz.dbf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpointz.sbx">
+    <None Include="Data\shp\mpointz.prj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpointz.shp">
+    <None Include="Data\shp\mpointz.sbn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\mpointz.shx">
+    <None Include="Data\shp\mpointz.sbx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\point.cpg">
+    <None Include="Data\shp\mpointz.shp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\point.dbf">
+    <None Include="Data\shp\mpointz.shx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\point.prj">
+    <None Include="Data\shp\point.cpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\point.sbn">
+    <None Include="Data\shp\point.dbf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\point.sbx">
+    <None Include="Data\shp\point.prj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\point.shp">
+    <None Include="Data\shp\point.sbn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\point.shx">
+    <None Include="Data\shp\point.sbx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\pointm.CPG">
+    <None Include="Data\shp\point.shp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\pointm.dbf">
+    <None Include="Data\shp\point.shx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\pointm.prj">
+    <None Include="Data\shp\pointm.CPG">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\pointm.sbn">
+    <None Include="Data\shp\pointm.dbf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\pointm.sbx">
+    <None Include="Data\shp\pointm.prj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\pointm.shp">
+    <None Include="Data\shp\pointm.sbn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\pointm.shx">
+    <None Include="Data\shp\pointm.sbx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\pointzm.cpg">
+    <None Include="Data\shp\pointm.shp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\pointzm.dbf">
+    <None Include="Data\shp\pointm.shx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\pointzm.prj">
+    <None Include="Data\shp\pointzm.cpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\pointzm.sbn">
+    <None Include="Data\shp\pointzm.dbf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\pointzm.sbx">
+    <None Include="Data\shp\pointzm.prj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\pointzm.shp">
+    <None Include="Data\shp\pointzm.sbn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\pointzm.shx">
+    <None Include="Data\shp\pointzm.sbx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polygon.cpg">
+    <None Include="Data\shp\pointzm.shp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polygon.dbf">
+    <None Include="Data\shp\pointzm.shx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polygon.prj">
+    <None Include="Data\shp\polygon.cpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polygon.sbn">
+    <None Include="Data\shp\polygon.dbf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polygon.sbx">
+    <None Include="Data\shp\polygon.prj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polygon.shp">
+    <None Include="Data\shp\polygon.sbn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polygon.shx">
+    <None Include="Data\shp\polygon.sbx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polygonm.cpg">
+    <None Include="Data\shp\polygon.shp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polygonm.dbf">
+    <None Include="Data\shp\polygon.shx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polygonm.prj">
+    <None Include="Data\shp\polygonm.cpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polygonm.sbn">
+    <None Include="Data\shp\polygonm.dbf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polygonm.sbx">
+    <None Include="Data\shp\polygonm.prj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polygonm.shp">
+    <None Include="Data\shp\polygonm.sbn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polygonm.shx">
+    <None Include="Data\shp\polygonm.sbx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polygonz.cpg">
+    <None Include="Data\shp\polygonm.shp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polygonz.dbf">
+    <None Include="Data\shp\polygonm.shx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polygonz.prj">
+    <None Include="Data\shp\polygonz.cpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polygonz.sbn">
+    <None Include="Data\shp\polygonz.dbf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polygonz.sbx">
+    <None Include="Data\shp\polygonz.prj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polygonz.shp">
+    <None Include="Data\shp\polygonz.sbn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polygonz.shx">
+    <None Include="Data\shp\polygonz.sbx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polyline.cpg">
+    <None Include="Data\shp\polygonz.shp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polyline.dbf">
+    <None Include="Data\shp\polygonz.shx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polyline.prj">
+    <None Include="Data\shp\polyline.cpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polyline.sbn">
+    <None Include="Data\shp\polyline.dbf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polyline.sbx">
+    <None Include="Data\shp\polyline.prj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polyline.shp">
+    <None Include="Data\shp\polyline.sbn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polyline.shx">
+    <None Include="Data\shp\polyline.sbx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polylinem.cpg">
+    <None Include="Data\shp\polyline.shp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polylinem.dbf">
+    <None Include="Data\shp\polyline.shx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polylinem.prj">
+    <None Include="Data\shp\polylinem.cpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polylinem.sbn">
+    <None Include="Data\shp\polylinem.dbf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polylinem.sbx">
+    <None Include="Data\shp\polylinem.prj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polylinem.shp">
+    <None Include="Data\shp\polylinem.sbn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polylinem.shx">
+    <None Include="Data\shp\polylinem.sbx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polylinez.cpg">
+    <None Include="Data\shp\polylinem.shp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polylinez.dbf">
+    <None Include="Data\shp\polylinem.shx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polylinez.prj">
+    <None Include="Data\shp\polylinez.cpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polylinez.sbn">
+    <None Include="Data\shp\polylinez.dbf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polylinez.sbx">
+    <None Include="Data\shp\polylinez.prj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polylinez.shp">
+    <None Include="Data\shp\polylinez.sbn">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\SHP\polylinez.shx">
+    <None Include="Data\shp\polylinez.sbx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\shp\polylinez.shp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\shp\polylinez.shx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />

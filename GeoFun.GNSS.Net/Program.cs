@@ -20,7 +20,8 @@ namespace GeoFun.GNSS.Net
             //Downloader.DownloadSp3(1748, 6, @"E:\Data\Typhoon\Case\201307_Soulik", center: "IGS");
             //Downloader.DownloadClk(1748, 5,center:"IGS");
             //Downloader.DownloadN(2013, 193);
-            Downloader.DownloadDCB(2013, 9,"P1P2",@"E:\Data\Typhoon\Case\201307_Soulik");
+            Downloader.DownloadO(2011, 100, "ista");
+            //Downloader.DownloadDCB(2013, 9,"P1P2",@"E:\Data\Typhoon\Case\201307_Soulik");
             //Downloader.DownloadDCB(2013, 9,"P1C1",@"E:\Data\Typhoon\Case\201307_Soulik");
         }
     }

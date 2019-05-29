@@ -19,7 +19,7 @@ namespace GeoFunTest
             CommonT dt1, dt2;
             Week week1, week2;
 
-            dt1 = new CommonT(2002, 1, 1, 3, 59, 60-1e-11);
+            dt1 = new CommonT(2002, 1, 1, 3, 59, 60 - 1e-11);
             week1 = Time.CommonToGPS(dt1);
 
             dt2 = Time.GPSToCommon(week1);
@@ -48,13 +48,11 @@ namespace GeoFunTest
         {
             //DCBFile dcbF = new DCBFile(@"E:\Data\Typhoon\201307_Soulik\P1C11307.DCB");
         }
-
-
         [TestMethod]
         public void TestSHPFile_Point()
         {
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\2000_pt.shp");
-            SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory+"\\Data\\SHP\\point.shp", @"C: \Users\niuni\Desktop\新建文件夹\point_after.shp");
+            SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory + "\\Data\\SHP\\point.shp", @"C: \Users\niuni\Desktop\新建文件夹\point_after.shp");
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\Z坐标转换\54shp\grid_54_xy114_line.shp");
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\Z坐标转换\54shp\grid_54_xy114_point.shp");
             shpF.OpenRead();
@@ -70,7 +68,7 @@ namespace GeoFunTest
                     records = shpF.ReadRecords(readNum);
                     Console.WriteLine("读取1000条数据...");
                     writeNum = shpF.WriteRecords(records);
-                    Console.WriteLine(string.Format("写入{0}条数据...",writeNum));
+                    Console.WriteLine(string.Format("写入{0}条数据...", writeNum));
                 } while (records.Count == 10000);
             }
             shpF.CloseRead();
@@ -83,7 +81,7 @@ namespace GeoFunTest
         public void TestSHPFile_PointM()
         {
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\2000_pt.shp");
-            SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory+"\\Data\\SHP\\pointm.shp", @"C: \Users\niuni\Desktop\新建文件夹\pointm_after.shp");
+            SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory + "\\Data\\SHP\\pointm.shp", @"C: \Users\niuni\Desktop\新建文件夹\pointm_after.shp");
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\Z坐标转换\54shp\grid_54_xy114_line.shp");
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\Z坐标转换\54shp\grid_54_xy114_point.shp");
             shpF.OpenRead();
@@ -99,7 +97,7 @@ namespace GeoFunTest
                     records = shpF.ReadRecords(readNum);
                     Console.WriteLine("读取1000条数据...");
                     writeNum = shpF.WriteRecords(records);
-                    Console.WriteLine(string.Format("写入{0}条数据...",writeNum));
+                    Console.WriteLine(string.Format("写入{0}条数据...", writeNum));
                 } while (records.Count == 10000);
             }
             shpF.CloseRead();
@@ -113,7 +111,7 @@ namespace GeoFunTest
         {
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\2000_pt.shp");
             //SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory+"\\Data\\SHP\\pointzm.shp", @"C: \Users\niuni\Desktop\新建文件夹\pointzm_after.shp");
-            SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory+"\\Data\\SHP\\pointzm.shp", @"C: \Users\niuni\Desktop\新建文件夹\pointzm_after.shp");
+            SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory + "\\Data\\SHP\\pointzm.shp", @"C: \Users\niuni\Desktop\新建文件夹\pointzm_after.shp");
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\Z坐标转换\54shp\grid_54_xy114_line.shp");
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\Z坐标转换\54shp\grid_54_xy114_point.shp");
             shpF.OpenRead();
@@ -129,7 +127,7 @@ namespace GeoFunTest
                     records = shpF.ReadRecords(readNum);
                     Console.WriteLine("读取1000条数据...");
                     writeNum = shpF.WriteRecords(records);
-                    Console.WriteLine(string.Format("写入{0}条数据...",writeNum));
+                    Console.WriteLine(string.Format("写入{0}条数据...", writeNum));
                 } while (records.Count == 10000);
             }
             shpF.CloseRead();
@@ -142,7 +140,7 @@ namespace GeoFunTest
         public void TestSHPFile_MPoint()
         {
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\2000_pt.shp");
-            SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory+"\\Data\\SHP\\mpoint.shp", @"C: \Users\niuni\Desktop\新建文件夹\mpoint_after.shp");
+            SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory + "\\Data\\SHP\\mpoint.shp", @"C: \Users\niuni\Desktop\新建文件夹\mpoint_after.shp");
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\Z坐标转换\54shp\grid_54_xy114_line.shp");
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\Z坐标转换\54shp\grid_54_xy114_point.shp");
             shpF.OpenRead();
@@ -158,7 +156,7 @@ namespace GeoFunTest
                     records = shpF.ReadRecords(readNum);
                     Console.WriteLine("读取1000条数据...");
                     writeNum = shpF.WriteRecords(records);
-                    Console.WriteLine(string.Format("写入{0}条数据...",writeNum));
+                    Console.WriteLine(string.Format("写入{0}条数据...", writeNum));
                 } while (records.Count == 10000);
             }
             shpF.CloseRead();
@@ -171,7 +169,7 @@ namespace GeoFunTest
         public void TestSHPFile_MPointM()
         {
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\2000_pt.shp");
-            SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory+"\\Data\\SHP\\mpointm.shp", @"C: \Users\niuni\Desktop\新建文件夹\mpointm_after.shp");
+            SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory + "\\Data\\SHP\\mpointm.shp", @"C: \Users\niuni\Desktop\新建文件夹\mpointm_after.shp");
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\Z坐标转换\54shp\grid_54_xy114_line.shp");
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\Z坐标转换\54shp\grid_54_xy114_point.shp");
             shpF.OpenRead();
@@ -187,7 +185,7 @@ namespace GeoFunTest
                     records = shpF.ReadRecords(readNum);
                     Console.WriteLine("读取1000条数据...");
                     writeNum = shpF.WriteRecords(records);
-                    Console.WriteLine(string.Format("写入{0}条数据...",writeNum));
+                    Console.WriteLine(string.Format("写入{0}条数据...", writeNum));
                 } while (records.Count == 10000);
             }
             shpF.CloseRead();
@@ -201,7 +199,7 @@ namespace GeoFunTest
         {
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\2000_pt.shp");
             //SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory+"\\Data\\SHP\\pointzm.shp", @"C: \Users\niuni\Desktop\新建文件夹\pointzm_after.shp");
-            SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory+"\\Data\\SHP\\mpointz.shp", @"C: \Users\niuni\Desktop\新建文件夹\mpointz_after.shp");
+            SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory + "\\Data\\SHP\\mpointz.shp", @"C: \Users\niuni\Desktop\新建文件夹\mpointz_after.shp");
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\Z坐标转换\54shp\grid_54_xy114_line.shp");
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\Z坐标转换\54shp\grid_54_xy114_point.shp");
             shpF.OpenRead();
@@ -217,7 +215,7 @@ namespace GeoFunTest
                     records = shpF.ReadRecords(readNum);
                     Console.WriteLine("读取1000条数据...");
                     writeNum = shpF.WriteRecords(records);
-                    Console.WriteLine(string.Format("写入{0}条数据...",writeNum));
+                    Console.WriteLine(string.Format("写入{0}条数据...", writeNum));
                 } while (records.Count == 10000);
             }
             shpF.CloseRead();
@@ -230,7 +228,7 @@ namespace GeoFunTest
         public void TestSHPFile_Polyline()
         {
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\2000_pt.shp");
-            SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory+"\\Data\\SHP\\polyline.shp", @"C: \Users\niuni\Desktop\新建文件夹\polyline_after.shp");
+            SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory + "\\Data\\SHP\\polyline.shp", @"C: \Users\niuni\Desktop\新建文件夹\polyline_after.shp");
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\Z坐标转换\54shp\grid_54_xy114_line.shp");
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\Z坐标转换\54shp\grid_54_xy114_point.shp");
             shpF.OpenRead();
@@ -246,7 +244,7 @@ namespace GeoFunTest
                     records = shpF.ReadRecords(readNum);
                     Console.WriteLine("读取1000条数据...");
                     writeNum = shpF.WriteRecords(records);
-                    Console.WriteLine(string.Format("写入{0}条数据...",writeNum));
+                    Console.WriteLine(string.Format("写入{0}条数据...", writeNum));
                 } while (records.Count == 10000);
             }
             shpF.CloseRead();
@@ -259,7 +257,7 @@ namespace GeoFunTest
         public void TestSHPFile_PolyLineM()
         {
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\2000_pt.shp");
-            SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory+"\\Data\\SHP\\polylinem.shp", @"C: \Users\niuni\Desktop\新建文件夹\polylinem_after.shp");
+            SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory + "\\Data\\SHP\\polylinem.shp", @"C: \Users\niuni\Desktop\新建文件夹\polylinem_after.shp");
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\Z坐标转换\54shp\grid_54_xy114_line.shp");
             //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\Z坐标转换\54shp\grid_54_xy114_point.shp");
             shpF.OpenRead();
@@ -275,7 +273,7 @@ namespace GeoFunTest
                     records = shpF.ReadRecords(readNum);
                     Console.WriteLine("读取1000条数据...");
                     writeNum = shpF.WriteRecords(records);
-                    Console.WriteLine(string.Format("写入{0}条数据...",writeNum));
+                    Console.WriteLine(string.Format("写入{0}条数据...", writeNum));
                 } while (records.Count == 10000);
             }
             shpF.CloseRead();
@@ -287,7 +285,7 @@ namespace GeoFunTest
         [TestMethod]
         public void TestSHPFile_PolyLineZ()
         {
-            SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory+"\\Data\\SHP\\polylinez.shp", @"C: \Users\niuni\Desktop\新建文件夹\polylinez_after.shp");
+            SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory + "\\Data\\SHP\\polylinez.shp", @"C: \Users\niuni\Desktop\新建文件夹\polylinez_after.shp");
 
             shpF.OpenRead();
             shpF.OpenWrite();
@@ -302,7 +300,7 @@ namespace GeoFunTest
                     records = shpF.ReadRecords(readNum);
                     Console.WriteLine("读取1000条数据...");
                     writeNum = shpF.WriteRecords(records);
-                    Console.WriteLine(string.Format("写入{0}条数据...",writeNum));
+                    Console.WriteLine(string.Format("写入{0}条数据...", writeNum));
                 } while (records.Count == 10000);
             }
             shpF.CloseRead();
@@ -395,7 +393,7 @@ namespace GeoFunTest
         [TestMethod]
         public void TestSHPFile_BigData()
         {
-            SHPFile shpF = new SHPFile(@"E:\Data\Shanxi\T图件转换\大数据\test\test.shp",@"C: \Users\niuni\Desktop\新建文件夹\big.shp");
+            SHPFile shpF = new SHPFile(@"E:\Data\Shanxi\T图件转换\大数据\test\test.shp", @"C: \Users\niuni\Desktop\新建文件夹\big.shp");
 
             shpF.OpenRead();
             shpF.OpenWrite();

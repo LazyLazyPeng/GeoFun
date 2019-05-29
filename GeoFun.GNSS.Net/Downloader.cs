@@ -252,8 +252,95 @@ namespace GeoFun.GNSS.Net
             return true;
         }
 
-        public void DonwloadO()
-        { }
+        public static bool DownloadO(int year,int doy,string station, string outPath = "temp",string center="IGS")
+        {
+            int year2 = 0;
+            int year4 = 0;
+
+            if (year < 50)
+            {
+                year2 = year;
+                year4 = year + 2000;
+            }
+            else if (year >= 50 && year < 100)
+            {
+                year2 = year;
+                year4 = year + 1900;
+            }
+            else
+            {
+                year4 = year;
+                if (year4 < 2000) year2 = year4 - 1900;
+                else year2 = year4 - 2000;
+            }
+
+            string productName = center + "_OBS";
+
+            // ftp全路径
+            string remoteFullPath;
+            if (!Common.URL.TryGetValue(productName, out remoteFullPath)) return false;
+            remoteFullPath = remoteFullPath.Replace("%Y", "{0}").Replace("%n", "{1}").Replace("%y", "{2:D2}").Replace("%s",station);
+            remoteFullPath = string.Format(remoteFullPath, year4, doy, year2);
+
+            // ftp主机名和相对路径
+            string host = UrlHelper.GetHost(remoteFullPath);
+            string remoteRelPath = UrlHelper.GetRelPath(remoteFullPath);
+            if (string.IsNullOrWhiteSpace(remoteRelPath)) return false;
+
+            /// 文件名
+            string name = UrlHelper.GetFileName(remoteFullPath);//string.Format("brdc{0}0.{1}n.Z", doy, year2);
+
+            // 本地路径,压缩后
+            string localPathZ = Path.Combine(Path.GetFullPath(outPath), name);
+            // 本地路径,解压后
+            string localPath = localPathZ.Substring(0, localPathZ.Length - 2);
+
+            // 本地缓存路径
+            string localTempPath = Path.Combine(Common.TEMP_DIR, "daily", year4.ToString(), doy.ToString(), year2.ToString("D2") + "n", name);
+
+            // 下载文件到临时目录
+            string cmd = "";
+            CMDHelper cmdH = new CMDHelper();
+            if (!File.Exists(localTempPath))
+            {
+                cmd = string.Format("\"{0}\\wget.exe\" -P\"{1}\" \"{2}\" --ftp-user={3} --ftp-password={4} &exit", AppDomain.CurrentDomain.BaseDirectory, Path.GetDirectoryName(localTempPath), remoteFullPath, ANONY_USER, ANONY_PSSD); ;
+                cmdH.Execute(cmd);
+            }
+            if (!File.Exists(localTempPath)) return false;
+
+            try
+            {
+                File.Copy(localTempPath, localPathZ, true);
+            }
+            catch (Exception ex)
+            {
+                throw new IOException("无法复制到路径", ex);
+            }
+            if (!File.Exists(localPathZ))
+            {
+                throw new IOException("无法复制到路径,原因未知");
+            }
+
+            // 解压文件
+            cmd = string.Format("\"{0}7z.exe\" x \"{1}\" -y -o\"{2}\" &exit", AppDomain.CurrentDomain.BaseDirectory, localPathZ, Path.GetDirectoryName(localPathZ));
+            cmdH.Execute(cmd);
+
+            if (!File.Exists(localPath))
+            {
+                throw new Exception("解压失败,路径为:" + localPathZ);
+            }
+
+            cmd = string.Format("\"{0}crx2rnx.exe\" \"{1}\" &exit",AppDomain.CurrentDomain.BaseDirectory,localPath);
+            cmdH.Execute(cmd);
+
+            try
+            {
+                File.Delete(localPathZ);
+            }
+            catch
+            { }
+            return true;
+        }
 
         public static bool DownloadDCB(int year, int month, string code = "P1C1", string outPath = "temp")
         {
