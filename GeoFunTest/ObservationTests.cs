@@ -39,7 +39,7 @@ namespace GeoFun.GNSS.Tests
         [TestMethod()]
         public void DetectClockJumpAndRepairTest()
         {
-            OFile ofile = OFile.Read(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"Data","rinex","ista1000.11o"));
+            OFile ofile = OFile.Read(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"Data","rinex","30900700.11o"));
             Assert.IsNotNull(ofile,"读取文件失败!");
 
             Console.WriteLine(ofile.Path);

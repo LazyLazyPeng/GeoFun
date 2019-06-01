@@ -11,6 +11,7 @@ namespace GeoFun.GNSS.Net
     {
         static void Main(string[] args)
         {
+            var len = Encoding.Default.GetBytes("我1");
             var options = ArgumentParser<Options>.Parse(args);
             Console.WriteLine(options.list);
             Console.WriteLine(options.output);

@@ -54,6 +54,8 @@
     <Compile Include="Angle.cs" />
     <Compile Include="ArrayHelper.cs" />
     <Compile Include="ByteHelper.cs" />
+    <Compile Include="Coor2.cs" />
+    <Compile Include="Coor3.cs" />
     <Compile Include="Coordinate.cs" />
     <Compile Include="CoordinateSystem\CoordinateSystem.cs" />
     <Compile Include="CoordinateSystem\Datum.cs" />
@@ -86,6 +88,7 @@
     <Compile Include="StringG.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringHelper.cs" />
+    <Compile Include="Swaper.cs" />
     <Compile Include="Sys\CMDHelper.cs" />
     <Compile Include="Trans.cs" />
   </ItemGroup>
