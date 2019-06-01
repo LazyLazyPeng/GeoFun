@@ -92,6 +92,8 @@ namespace GeoFun.GNSS
                 // 逐卫星探测
                 foreach (var prn in epoches[i].PRNList)
                 {
+                    if (!prn.StartsWith("G")) continue;
+
                     if (!epoches[i][prn].SatData.TryGetValue("L1", out curL1)) continue;
                     if (!epoches[i][prn].SatData.TryGetValue("L2", out curL2)) continue;
                     if (!epoches[i][prn].SatData.TryGetValue("P2", out curP2)) continue;
@@ -112,6 +114,14 @@ namespace GeoFun.GNSS
                     // 构造检验量
                     double TMW = (LWL - PNL) / Common.GPS_Lw;
                     double TGF = curL1 * Common.GPS_L1 - curL2 * Common.GPS_L2;
+
+                    double bMW = 2d;
+                    double bGF = 0.15d;
+
+                    if (TMW > bMW && TGF > bGF)
+                    {
+                        epoches[i][prn].CycleSlip = true;
+                    }
                 }
             }
         }
@@ -124,7 +134,7 @@ namespace GeoFun.GNSS
             if (epoches is null || epoches.Count < 1) return;
 
             // 测量噪声(m）
-            double sigma = 3;
+            double sigma = 5;
             double k1 = 1e-3 * Common.C0 - 3 * sigma;
             double k2 = 1e-4 * Common.C0;
 
