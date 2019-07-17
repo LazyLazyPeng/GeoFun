@@ -107,7 +107,7 @@ namespace GeoFun.GNSS
                         !epoches[i - 1][prn].SatData.TryGetValue("C1", out curP1)) continue;
 
                     // 窄巷伪距值
-                    double PNL = (Common.GPS_F1 * curP1 + Common.GPS_F2 * curP2) / (Common.GPS_L1 + Common.GPS_L2);
+                    double PNL = (Common.GPS_F1 * curP1 + Common.GPS_F2 * curP2) / (Common.GPS_F1 + Common.GPS_F2);
                     // 宽巷相位值
                     double LWL = (Common.GPS_F1 * curL1 - Common.GPS_F2 * curL2) / (Common.GPS_L1 - Common.GPS_L2);
 

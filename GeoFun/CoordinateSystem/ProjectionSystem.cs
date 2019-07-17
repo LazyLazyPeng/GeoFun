@@ -198,52 +198,13 @@ namespace GeoFun.CoordinateSystem
         /// <returns></returns>
         public string ToFMEString()
         {
-            return string.Format(FME_STR, Name, GeoCS.Datum.FMEName, centerMeridian.DD, OriginLat.DD, XOff, YOff);
+            return string.Format(FME_STR, FMEName, GeoCS.Datum.FMEName, centerMeridian.DD, OriginLat.DD, XOff, YOff);
         }
 
         override
         public string ToString()
         {
-            string pjstr =
-             "|" + (int)CSType
-            + "|" + Name
-            + "|" + ArcGISName
-            + "|" + ArcGISPyName
-            + "|" + FMEName
-            + "|" + IsArcGIS
-            + "|" + IsFME
-
-            + "|" + GeoCS.Name
-            + "|" + GeoCS.ArcGISName
-            + "|" + GeoCS.ArcGISPyName
-            + "|" + GeoCS.FMEName
-            + "|" + GeoCS.IsArcGIS
-            + "|" + GeoCS.IsFME
-
-            + "|" + Datum.Name
-            + "|" + Datum.ArcGISName
-            + "|" + Datum.FMEName
-            + "|" + Datum.IsArcGIS
-            + "|" + Datum.IsFME
-
-            + "|" + Ellipsoid.Name
-            + "|" + Ellipsoid.ArcGISName
-            + "|" + Ellipsoid.FMEName
-            + "|" + Ellipsoid.IsArcGIS
-            + "|" + Ellipsoid.IsFME
-            + "|" + Ellipsoid.A.ToString()
-            + "|" + Ellipsoid.F.ToString()
-
-            + "|" + centerMeridian.DD.ToString("f12")
-            + "|" + OriginLat.DD.ToString("f12")
-            + "|" + H0
-            + "|" + XOff
-            + "|" + YOff
-            + "|" + (int)BandType
-            + "|" + BandNum
-            + "|";
-
-            return pjstr;
+            return string.Format("p_{0}_{1}_{2}_{3}_{4}",Ellipsoid.A*1000,Ellipsoid.F*1e10,centerMeridian.DD*1e10m,XOff*1000,YOff*1000);
         }
 
         public void WritePrj(string path)

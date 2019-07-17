@@ -173,8 +173,98 @@ namespace GeoFun.IO
 
             if (!File.Exists(pathDst))
             {
-                throw new IOException(string.Format("无法复制文件到路径,源文件为:{0},目标文件为:{1}", pathSrc, pathDst), ex);
+                throw new IOException(string.Format("无法复制文件到路径,源文件为:{0},目标文件为:{1}", pathSrc, pathDst));
             }
+        }
+
+        /// <summary>
+        /// 扫描文件夹下所有指定后缀名的文件
+        /// </summary>
+        /// <param name="folder">文件夹</param>
+        /// <param name="exts">后缀列表</param>
+        /// <param name="option">搜索选项，默认会搜索子文件夹</param>
+        /// <returns></returns>
+        public static List<FileInfo> ScanFilesOfExtension(string folder, List<string> exts, SearchOption option = SearchOption.AllDirectories)
+        {
+            if (string.IsNullOrWhiteSpace(folder) || !Directory.Exists(folder)) return new List<FileInfo>();
+            if (exts is null || exts.Count() <= 0) return new List<FileInfo>();
+
+            List<FileInfo> files = new List<FileInfo>();
+            try
+            {
+                // 转成小写
+                List<string> extensions = new List<string>();
+                foreach (var ext in exts)
+                {
+                    if (ext is null || ext.Trim() is null)
+                    {
+                        extensions.Add("");
+                    }
+
+                    if (!ext.StartsWith("."))
+                    {
+                        extensions.Add("." + ext.ToLower());
+                    }
+                    else
+                    {
+                        extensions.Add(ext.ToLower());
+                    }
+                }
+
+
+                DirectoryInfo dir = new DirectoryInfo(folder);
+                foreach (var file in dir.GetFiles("*", option))
+                {
+                    string ext = file.Extension;
+                    if (!extensions.Contains(ext)) continue;
+
+                    files.Add(file);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+
+            return files;
+        }
+
+        /// <summary>
+        /// 扫描文件夹及子文件夹下所有指定后缀名的文件
+        /// </summary>
+        /// <param name="folder">文件夹</param>
+        /// <param name="ext">后缀列表</param>
+        /// <param name="option">搜索选项，默认会搜索子文件夹</param>
+        /// <returns></returns>
+        public static List<FileInfo> ScanFilesOfExtension(string folder, string ext, SearchOption option = SearchOption.AllDirectories)
+        {
+            if (string.IsNullOrWhiteSpace(folder) || !Directory.Exists(folder)) return new List<FileInfo>();
+
+            if (ext is null) ext = "";
+            else if (string.IsNullOrWhiteSpace(ext.Trim())) ext = "";
+            else ext = ext.ToLower();
+
+            List<FileInfo> files = new List<FileInfo>();
+            try
+            {
+                DirectoryInfo dir = new DirectoryInfo(folder);
+                foreach (var file in dir.GetFiles("*", option))
+                {
+                    string fileExt = file.Extension;
+                    if (!string.IsNullOrWhiteSpace(fileExt))
+                    {
+                        fileExt = fileExt.ToLower();
+                    }
+
+                    if (fileExt == ext) continue;
+
+                    files.Add(file);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+
+            return files;
         }
     }
 }

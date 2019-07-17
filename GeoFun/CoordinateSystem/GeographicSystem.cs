@@ -13,18 +13,18 @@ namespace GeoFun.CoordinateSystem
             + "\r\nDESC_NM  \"Test Coordinate System\"  \\"
             + "\r\nDT_NAME {1}                \\"
             + "\r\nSOURCE  \"PowerMap\"       \\"
-            + "\r\nGROUP: LL   \\"
-            + "\r\nMAP_SCL: 1  \\"
-            + "\r\nMAX_LAT: 55.583333333333336 \\"
-            + "\r\nMAX_LNG: 136.85  \\"
-            + "\r\nMIN_LAT: 16.033333333333335 \\"
-            + "\r\nMIN_LNG: 71.666666666666667 \\"
-            + "\r\nPROJ: LL \\"
-            + "\r\nQUAD: 1  \\"
-            + "\r\nSCL_RED: 1    \\"
-            + "\r\nUNIT: Degree  \\"
-            + "\r\nZERO_X: 1e-12 \\"
-            + "\r\nZERO_Y: 1e-12";
+            + "\r\nGROUP LL   \\"
+            + "\r\nMAP_SCL 1  \\"
+            + "\r\nMAX_LAT 55.583333333333336 \\"
+            + "\r\nMAX_LNG 136.85  \\"
+            + "\r\nMIN_LAT 16.033333333333335 \\"
+            + "\r\nMIN_LNG 71.666666666666667 \\"
+            + "\r\nPROJ LL \\"
+            + "\r\nQUAD 1  \\"
+            + "\r\nSCL_RED 1    \\"
+            + "\r\nUNIT Degree  \\"
+            + "\r\nZERO_X 1e-12 \\"
+            + "\r\nZERO_Y 1e-12";
 
         public static readonly Dictionary<string, string> FME_NAME = new Dictionary<string, string>
         {
@@ -113,7 +113,7 @@ namespace GeoFun.CoordinateSystem
         /// <returns></returns>
         public string ToFMEString()
         {
-            return string.Format(FME_STR,Name,Datum.Name);
+            return string.Format(FME_STR,fmeName,Datum.FMEName);
         }
 
         override

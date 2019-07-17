@@ -19,6 +19,7 @@ namespace GeoFun
             if (string.IsNullOrWhiteSpace(path) || string.IsNullOrWhiteSpace(append)) return path;
 
             return string.Format("{0}\\{1}{2}{3}",Path.GetDirectoryName(path),Path.GetFileNameWithoutExtension(path),append,Path.GetExtension(path));
+            //return Path.Combine(Path.GetDirectoryName(path), Path.GetFileNameWithoutExtension(path) + append, Path.GetExtension(path));
         }
 
         /// <summary>

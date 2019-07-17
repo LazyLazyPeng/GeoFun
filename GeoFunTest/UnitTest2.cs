@@ -51,10 +51,7 @@ namespace GeoFunTest
         [TestMethod]
         public void TestSHPFile_Point()
         {
-            //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\2000_pt.shp");
             SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory + "\\Data\\SHP\\point.shp", @"C: \Users\niuni\Desktop\新建文件夹\point_after.shp");
-            //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\Z坐标转换\54shp\grid_54_xy114_line.shp");
-            //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\Z坐标转换\54shp\grid_54_xy114_point.shp");
             shpF.OpenRead();
             shpF.OpenWrite();
             if (shpF.ReadHeader())
@@ -67,6 +64,28 @@ namespace GeoFunTest
                 {
                     records = shpF.ReadRecords(readNum);
                     Console.WriteLine("读取1000条数据...");
+
+                    double x = 0d, y = 0d;
+                    for(int i =0; i < records.Count; i++)
+                    {
+                        if (records[i].Feature is null) continue;
+
+                        for(int j = 0; j < records[i].Feature.NumPoints;j++)
+                        {
+                            try
+                            {
+                                records[i].Feature.GetPointAt(j, out x, out y);
+                                x += 500;
+                                y += 500;
+                                records[i].Feature.SetPointAt(j, x, y);
+                            }
+                            catch
+                            {
+                                continue;
+                            }
+                        }
+                    }
+
                     writeNum = shpF.WriteRecords(records);
                     Console.WriteLine(string.Format("写入{0}条数据...", writeNum));
                 } while (records.Count == 10000);
@@ -299,6 +318,28 @@ namespace GeoFunTest
                 {
                     records = shpF.ReadRecords(readNum);
                     Console.WriteLine("读取1000条数据...");
+
+                    double x = 0d, y = 0d;
+                    for (int i = 0; i < records.Count; i++)
+                    {
+                        if (records[i].Feature is null) continue;
+
+                        for (int j = 0; j < records[i].Feature.NumPoints; j++)
+                        {
+                            try
+                            {
+                                records[i].Feature.GetPointAt(j, out x, out y);
+                                x += 500;
+                                y += 500;
+                                records[i].Feature.SetPointAt(j, x, y);
+                            }
+                            catch
+                            {
+                                continue;
+                            }
+                        }
+                    }
+
                     writeNum = shpF.WriteRecords(records);
                     Console.WriteLine(string.Format("写入{0}条数据...", writeNum));
                 } while (records.Count == 10000);
@@ -310,10 +351,7 @@ namespace GeoFunTest
         [TestMethod]
         public void TestSHPFile_Polygon()
         {
-            //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\2000_pt.shp");
             SHPFile shpF = new SHPFile(AppDomain.CurrentDomain.BaseDirectory + "\\Data\\SHP\\polygon.shp", @"C: \Users\niuni\Desktop\新建文件夹\polygon_after.shp");
-            //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\Z坐标转换\54shp\grid_54_xy114_line.shp");
-            //SHPFile shpF = new SHPFile(@"E:\Data\ShenZhen\Z坐标转换\54shp\grid_54_xy114_point.shp");
             shpF.OpenRead();
             shpF.OpenWrite();
             if (shpF.ReadHeader())
@@ -326,6 +364,28 @@ namespace GeoFunTest
                 {
                     records = shpF.ReadRecords(readNum);
                     Console.WriteLine("读取1000条数据...");
+
+                    double x = 0d, y = 0d;
+                    for (int i = 0; i < records.Count; i++)
+                    {
+                        if (records[i].Feature is null) continue;
+
+                        for (int j = 0; j < records[i].Feature.NumPoints; j++)
+                        {
+                            try
+                            {
+                                records[i].Feature.GetPointAt(j, out x, out y);
+                                x += 500;
+                                y += 500;
+                                records[i].Feature.SetPointAt(j, x, y);
+                            }
+                            catch
+                            {
+                                continue;
+                            }
+                        }
+                    }
+
                     writeNum = shpF.WriteRecords(records);
                     Console.WriteLine(string.Format("写入{0}条数据...", writeNum));
                 } while (records.Count == 10000);
@@ -382,6 +442,28 @@ namespace GeoFunTest
                 {
                     records = shpF.ReadRecords(readNum);
                     Console.WriteLine("读取1000条数据...");
+
+                    double x = 0d, y = 0d;
+                    for (int i = 0; i < records.Count; i++)
+                    {
+                        if (records[i].Feature is null) continue;
+
+                        for (int j = 0; j < records[i].Feature.NumPoints; j++)
+                        {
+                            try
+                            {
+                                records[i].Feature.GetPointAt(j, out x, out y);
+                                x += 500;
+                                y += 500;
+                                records[i].Feature.SetPointAt(j, x, y);
+                            }
+                            catch
+                            {
+                                continue;
+                            }
+                        }
+                    }
+
                     writeNum = shpF.WriteRecords(records);
                     Console.WriteLine(string.Format("写入{0}条数据...", writeNum));
                 } while (records.Count == 10000);

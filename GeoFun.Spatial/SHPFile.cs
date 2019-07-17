@@ -44,7 +44,7 @@ namespace GeoFun.Spatial
         /// </summary>
         public BinaryWriter Writer = null;
 
-        public static List<string> FileAppends = new List<string>() {"shp", "cpg", "dbf", "prj", "sbn", "sbx", "shx" };
+        public static List<string> FileAppends = new List<string>() { "shp", "shp.xml", "cpg", "dbf", "prj", "sbn", "sbx", "shx" };
 
         public SHPFile(string pathSrc = "", string pathDst = "")
         {
@@ -93,7 +93,7 @@ namespace GeoFun.Spatial
             { }
         }
 
-        private void CopyOtherFiles(string pathSrc, string pathDst)
+        public static void CopyOtherFiles(string pathSrc, string pathDst)
         {
             string path1, path2;
             for (int i = 0; i < FileAppends.Count; i++)
@@ -104,11 +104,11 @@ namespace GeoFun.Spatial
                     path1 = pathSrc.Substring(0, pathSrc.Length - 4) + "." + FileAppends[i];
                     path2 = pathDst.Substring(0, pathDst.Length - 4) + "." + FileAppends[i];
 
-                    if(File.Exists(path1))
+                    if (File.Exists(path1))
                     {
                         FileInfo info = new FileInfo(path1);
 
-                        info.CopyTo(path2);
+                        info.CopyTo(path2, true);
                     }
 
                     //path1 = pathSrc.Substring(0, pathSrc.Length - 4) + "." + OtherFiles[i].ToUpper();
@@ -128,7 +128,7 @@ namespace GeoFun.Spatial
             }
         }
 
-        public static void Copy(string pathSrc,string pathDst)
+        public static void Copy(string pathSrc, string pathDst)
         {
             string path1, path2;
             for (int i = 0; i < FileAppends.Count; i++)
@@ -143,6 +143,32 @@ namespace GeoFun.Spatial
                         FileInfo info = new FileInfo(path1);
 
                         info.CopyTo(path2);
+                    }
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+        }
+
+        public static void Rename(string pathSrc, string pathDst)
+        {
+            if (pathSrc == pathDst) return;
+
+            string path1, path2;
+            for (int i = 0; i < FileAppends.Count; i++)
+            {
+                try
+                {
+                    path1 = pathSrc.Substring(0, pathSrc.Length - 4) + "." + FileAppends[i];
+                    path2 = pathDst.Substring(0, pathDst.Length - 4) + "." + FileAppends[i];
+
+                    if (File.Exists(path1))
+                    {
+                        FileInfo info = new FileInfo(path1);
+
+                        info.MoveTo(path2);
                     }
                 }
                 catch
