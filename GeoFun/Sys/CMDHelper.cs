@@ -5,6 +5,7 @@ using System.Text;
 
 using System.Threading;
 using System.Diagnostics;
+using System.IO;
 
 namespace GeoFun.Sys
 {
@@ -83,11 +84,15 @@ namespace GeoFun.Sys
             //string output = p.StandardOutput.ReadToEnd(); 这句可以用来获取执行命令的输出结果
         }
 
-        public virtual void ExecuteExe(string path)
+        public virtual void ExecuteExe(string path,string workingDir = null)
         {
             //调用外部程序导cmd命令行
             Process p = new Process();
             p.StartInfo.FileName =path;
+            if (!string.IsNullOrWhiteSpace(workingDir))
+            {
+                p.StartInfo.WorkingDirectory = workingDir;
+            }
             p.Start();
         }
 

@@ -78,7 +78,10 @@
     <Compile Include="FileAttr.cs" />
     <Compile Include="FourPara.cs" />
     <Compile Include="CoordinateSystem\IFMEEllipsoid.cs" />
+    <Compile Include="IO\FileChangeInformation.cs" />
+    <Compile Include="IO\FileChangeType.cs" />
     <Compile Include="IO\FileHelper.cs" />
+    <Compile Include="IO\FileWatcher.cs" />
     <Compile Include="MatrixHelper.cs" />
     <Compile Include="Number.cs" />
     <Compile Include="PathHelper.cs" />

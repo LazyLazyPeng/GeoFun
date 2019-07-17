@@ -12,6 +12,41 @@ namespace GeoFun.Spatial
         bool HasM { get; set; }
 
         /// <summary>
+        /// 所有点的数量
+        /// </summary>
+        int NumPoints { get; set; }
+
+        /// <summary>
+        /// 获取点
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        Point GetPointAt(int index);
+
+        /// <summary>
+        /// 获取点的xy坐标
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        void GetPointAt(int index, out double x, out double y);
+
+        /// <summary>
+        /// 设置点
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="pt"></param>
+        void SetPointAt(int index, Point pt);
+
+        /// <summary>
+        /// 设置点的xy坐标
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        void SetPointAt(int index, double x, double y);
+
+        /// <summary>
         /// Size in bytes
         /// </summary>
         //int Size { get; }
