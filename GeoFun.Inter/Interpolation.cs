@@ -109,5 +109,10 @@ namespace GeoFun.Inter
                     lt * (b - minb) * (maxl - l) + rt * (b - minb) * (l - minl))
                     / (maxb - minb) / (maxl - minl);
         }
+        
+        public static decimal Lagrange(int degree,List<double> x, List<double> y,double x0)
+        {
+            return 0m;
+        }
     }
 }

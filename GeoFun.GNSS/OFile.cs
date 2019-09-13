@@ -9,6 +9,10 @@ namespace GeoFun.GNSS
 {
     public class OFile
     {
+        public int Year { get; set; }
+        public int DayOfYear { get; set; }
+        public int DOY { get; set; }
+
         /// <summary>
         /// 文件路径
         /// </summary>
@@ -23,6 +27,16 @@ namespace GeoFun.GNSS
         /// 观测结束时间
         /// </summary>
         public GPST EndTime;
+
+        /// <summary>
+        /// 第一个历元的索引
+        /// </summary>
+        public int StartIndex = -1;
+
+        /// <summary>
+        /// 最后一个历元的索引
+        /// </summary>
+        public int EndIndex = -1;
 
         /// <summary>
         /// 文件头
@@ -43,7 +57,7 @@ namespace GeoFun.GNSS
         {
             StreamReader sr = new StreamReader(Path);
             Header = new OHeader();
-            Header.StartIndex = AllEpoch.Count;
+            //Header.StartIndex = AllEpoch.Count;
             string line = sr.ReadLine();  //一行数据
             //读取头
             while (line != "" && line != null)

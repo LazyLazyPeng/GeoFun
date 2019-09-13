@@ -61,11 +61,14 @@
     <Compile Include="NFile.cs" />
     <Compile Include="NHeader.cs" />
     <Compile Include="NSat.cs" />
+    <Compile Include="OArc.cs" />
     <Compile Include="Observation.cs" />
     <Compile Include="OEpoch.cs" />
     <Compile Include="OFile.cs" />
     <Compile Include="OHeader.cs" />
     <Compile Include="OSat.cs" />
+    <Compile Include="OStation.cs" />
+    <Compile Include="PRNCode.cs" />
     <Compile Include="program.cs" />
     <Compile Include="Smoother.cs" />
     <Compile Include="SP3Epoch.cs" />

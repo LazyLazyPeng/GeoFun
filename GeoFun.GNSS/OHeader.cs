@@ -101,9 +101,5 @@ namespace GeoFun.GNSS
         /// 终止时间
         /// </summary>
         public GPST endTime;
-        /// <summary>
-        /// 衔接索引，该天数据的起始观测数据索引
-        /// </summary>
-        public int StartIndex;
     }
 }
