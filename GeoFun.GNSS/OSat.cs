@@ -75,15 +75,19 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 该历元是否发生周跳
         /// </summary>
-        public bool CycleSlip;
+        public bool CycleSlip = false;
+        /// <summary>
+        /// 是否粗差
+        /// </summary>
+        public bool Outlier = false;
         /// <summary>
         /// 伪距是否被平滑过
         /// </summary>
-        public bool CodePhased;
+        public bool CodePhased = false;
         /// <summary>
         /// 是否缺少P1
         /// </summary>
-        public bool LackOfP1;
+        public bool LackOfP1 = false;
 
         /// <summary>
         /// 根据观测值名称索引

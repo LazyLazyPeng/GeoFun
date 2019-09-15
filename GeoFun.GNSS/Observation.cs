@@ -72,14 +72,35 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 探测周跳
         /// </summary>
-        public static void DetectCycleSlip(List<OEpoch> epoches, int interval = 30)
+        /// <remarks>
+        /// GPS周跳探测与修复的算法研究与实现.彭秀英.2004
+        /// </remarks>
+        public static void DetectCycleSlip(List<OEpoch> epoches, string prn, int interval = 30)
         {
             if (epoches is null || epoches.Count <= 1) return;
 
             // 当前历元的观测值
             double curL1 = 0d, curL2 = 0d, curP1 = 0d, curP2 = 0d, curC1 = 0d;
-            // 上一历元的观测值
-            double lstL1 = 0d, lstL2 = 0d, lstP1 = 0d, lstP2 = 0d, lstC1 = 0d;
+
+            if (!epoches[0][prn].SatData.TryGetValue("L1", out curL1)) return;
+            if (!epoches[0][prn].SatData.TryGetValue("L2", out curL2)) return;
+            if (!epoches[0][prn].SatData.TryGetValue("P2", out curP2)) return;
+            if (!epoches[0][prn].SatData.TryGetValue("P1", out curP1) &&
+                !epoches[0][prn].SatData.TryGetValue("C1", out curC1)) return;
+
+            // 宽巷模糊度
+            double NW = 0d, NW_est = 0d;
+            // 宽巷模糊度精度
+            double cur_delta = 0d, lst_delta = 0d;
+
+            NW = (1 / (Common.GPS_F1 - Common.GPS_F2) * (Common.GPS_F1 * curL1 * Common.DELTA_L1 - Common.GPS_F2 * curL2 * Common.DELTA_L2) -
+                 1 / (Common.GPS_F1 + Common.GPS_F2) * (Common.GPS_F1 * curP1 + Common.GPS_F2 * curP2)) / Common.GPS_Lw;
+            cur_delta = 1 / Math.Pow(Common.GPS_F1 - Common.GPS_F2, 2) * (Math.Pow(Common.GPS_F1 * Common.DELTA_L1, 2) +
+                Math.Pow(Common.GPS_F2 * Common.DELTA_L2, 2)) + 1 / Math.Pow(Common.GPS_F1 + Common.GPS_F2, 2) * (Math.Pow(Common.GPS_F1 * Common.DELTA_P1, 2) +
+                Math.Pow(Common.GPS_F2 * Common.DELTA_P2, 2));
+
+            NW_est = NW;
+            lst_delta = cur_delta;
 
             for (int i = 1; i < epoches.Count; i++)
             {
@@ -89,40 +110,30 @@ namespace GeoFun.GNSS
                     continue;
                 }
 
-                // 逐卫星探测
-                foreach (var prn in epoches[i].PRNList)
+                if (!prn.StartsWith("G")) continue;
+
+                if (!epoches[i][prn].SatData.TryGetValue("L1", out curL1)) continue;
+                if (!epoches[i][prn].SatData.TryGetValue("L2", out curL2)) continue;
+                if (!epoches[i][prn].SatData.TryGetValue("P2", out curP2)) continue;
+                if (!epoches[i][prn].SatData.TryGetValue("P1", out curP1) &&
+                    !epoches[i][prn].SatData.TryGetValue("C1", out curC1)) continue;
+
+                NW = (1 / (Common.GPS_F1 - Common.GPS_F2) * (Common.GPS_F1 * curL1 * Common.DELTA_L1 - Common.GPS_F2 * curL2 * Common.DELTA_L2) -
+                     1 / (Common.GPS_F1 + Common.GPS_F2) * (Common.GPS_F1 * curP1 + Common.GPS_F2 * curP2)) / Common.GPS_Lw;
+                cur_delta = 1 / Math.Pow(Common.GPS_F1 - Common.GPS_F2, 2) * (Math.Pow(Common.GPS_F1 * Common.DELTA_L1, 2) +
+                    Math.Pow(Common.GPS_F2 * Common.DELTA_L2, 2)) + 1 / Math.Pow(Common.GPS_F1 + Common.GPS_F2, 2) * (Math.Pow(Common.GPS_F1 * Common.DELTA_P1, 2) +
+                    Math.Pow(Common.GPS_F2 * Common.DELTA_P2, 2));
+
+                if (Math.Abs(NW - NW_est) > 4 * Math.Sqrt(lst_delta))
                 {
-                    if (!prn.StartsWith("G")) continue;
-
-                    if (!epoches[i][prn].SatData.TryGetValue("L1", out curL1)) continue;
-                    if (!epoches[i][prn].SatData.TryGetValue("L2", out curL2)) continue;
-                    if (!epoches[i][prn].SatData.TryGetValue("P2", out curP2)) continue;
-                    if (!epoches[i][prn].SatData.TryGetValue("P1", out curP1) &&
-                        !epoches[i][prn].SatData.TryGetValue("C1", out curP1)) continue;
-
-                    if (!epoches[i - 1][prn].SatData.TryGetValue("L1", out curL1)) continue;
-                    if (!epoches[i - 1][prn].SatData.TryGetValue("L2", out curL2)) continue;
-                    if (!epoches[i - 1][prn].SatData.TryGetValue("P2", out curP2)) continue;
-                    if (!epoches[i - 1][prn].SatData.TryGetValue("P1", out curP1) &&
-                        !epoches[i - 1][prn].SatData.TryGetValue("C1", out curP1)) continue;
-
-                    // 窄巷伪距值
-                    double PNL = (Common.GPS_F1 * curP1 + Common.GPS_F2 * curP2) / (Common.GPS_F1 + Common.GPS_F2);
-                    // 宽巷相位值
-                    double LWL = (Common.GPS_F1 * curL1 - Common.GPS_F2 * curL2) / (Common.GPS_L1 - Common.GPS_L2);
-
-                    // 构造检验量
-                    double TMW = (LWL - PNL) / Common.GPS_Lw;
-                    double TGF = curL1 * Common.GPS_L1 - curL2 * Common.GPS_L2;
-
-                    double bMW = 2d;
-                    double bGF = 0.15d;
-
-                    if (TMW > bMW && TGF > bGF)
-                    {
-                        epoches[i][prn].CycleSlip = true;
-                    }
+                    epoches[i][prn].CycleSlip = true;
                 }
+
+                lst_delta = cur_delta * i / (i + 1) + Math.Pow(NW - NW_est, 2) / i + 1;
+                NW_est = NW_est * i / (i + 1) + NW / (i + 1);
+
+                // 构造检验量
+                double curTGF = curL1 * Common.GPS_L1 - curL2 * Common.GPS_L2;
             }
         }
 
@@ -351,6 +362,11 @@ namespace GeoFun.GNSS
                 else if (!epoches[i][prn].SatData.ContainsKey("P1")
                        && !epoches[i][prn].SatData.ContainsKey("C1")) flag = false;
                 else if (epoches[i].Flag > 0) flag = false;
+
+                // 发生周跳
+                else if (epoches[i][prn].CycleSlip) flag = false;
+                // 粗差
+                else if (epoches[i][prn].Outlier) flag = false;
 
                 if (!flag)
                 {

@@ -31,10 +31,31 @@ namespace GeoFun.GNSS
         }
 
         /// <summary>
-        /// 用L4平滑P4
+        /// 用L4观测值平滑P4观测值
         /// </summary>
-        public static void SmoothP4ByL4(ref List<OEpoch> epoches, string prn)
+        /// <param name="epoches"></param>
+        /// <param name="prn"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        public static void SmoothP4ByL4(ref List<OEpoch> epoches, string prn,int start = 0,int end = -1)
         {
+            if (epoches is null) return;
+            if (prn is null) return;
+            if (start >= epoches.Count) return;
+            if (start < 0) return;
+            if (end < start) return;
+            if (end >= epoches.Count) end = epoches.Count;
+
+            double power = 1;
+            // P4预报值
+            double p4_est = 0d;
+            for (int i = start+1;i<end; i++)
+            {
+                power = power - DEC_POWER;
+                p4_est = epoches[i - 1][prn]["P4"] + epoches[i][prn]["L4"] - epoches[i - 1][prn]["L4"];
+
+                epoches[i][prn]["P4"] =epoches[i][prn]["P4"] * power + (1 - power) * p4_est;
+            }
 
         }
 
