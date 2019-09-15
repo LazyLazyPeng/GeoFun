@@ -18,7 +18,16 @@ namespace GeoFun.GNSS.Tests
             sta.Name = "bjfs";
             sta.ReadAllObs(@"\\Mac\Home\Documents\Data\bjfs");
             sta.SortObs();
-            Observation.DetectCycleSlip(sta.Epoches,"G01");
+            sta.Preprocess();
+            foreach(var prn in sta.Arcs.Keys)
+            {
+                Console.WriteLine(prn+"*******************");
+                for(int i = 0; i < sta.Arcs[prn].Count; i++)
+                {
+                    Console.WriteLine(string.Format("{0} {1} {2} {3}",i+1,sta.Arcs[prn][i].Length,sta.Arcs[prn][i].StartIndex,sta.Arcs[prn][i].EndIndex));
+                }
+            }
+            //Observation.DetectCycleSlip(sta.Epoches,"G01");
         }
     }
 }

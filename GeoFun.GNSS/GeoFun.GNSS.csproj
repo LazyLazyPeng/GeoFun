@@ -66,6 +66,7 @@
     <Compile Include="OEpoch.cs" />
     <Compile Include="OFile.cs" />
     <Compile Include="OHeader.cs" />
+    <Compile Include="Options.cs" />
     <Compile Include="OSat.cs" />
     <Compile Include="OStation.cs" />
     <Compile Include="PRNCode.cs" />

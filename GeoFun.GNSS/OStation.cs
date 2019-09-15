@@ -27,7 +27,7 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 测站上所有卫星的所有观测弧段
         /// </summary>
-        public Dictionary<string,List<OArc>> Arcs { get; set; }
+        public Dictionary<string, List<OArc>> Arcs { get; set; } = new Dictionary<string, List<OArc>>();
 
         /// <summary>
         /// 将读取到的O文件按照时间顺序排列
@@ -55,7 +55,7 @@ namespace GeoFun.GNSS
 
             //// 将观测历元合并到一个大的数组
             Epoches = new List<OEpoch>(OFiles.Sum(o => o.AllEpoch.Count));
-            foreach(var o in OFiles)
+            foreach (var o in OFiles)
             {
                 o.StartIndex = Epoches.Count;
                 Epoches.AddRange(o.AllEpoch);
@@ -69,24 +69,24 @@ namespace GeoFun.GNSS
         public void ReadAllObs(DirectoryInfo dir)
         {
             var files = dir.GetFiles(string.Format("{0}???*.??o", Name));
-            foreach(var file in files)
+            foreach (var file in files)
             {
                 try
                 {
                     OFile oFile = new OFile(file.FullName);
-                    if(oFile.TryRead())
+                    if (oFile.TryRead())
                     {
                         OFiles.Add(oFile);
                     }
-                        else 
+                    else
                     {
-                        Console.WriteLine("文件读取失败,路径为:"+file.FullName);
+                        Console.WriteLine("文件读取失败,路径为:" + file.FullName);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Console.WriteLine(string.Format("文件读取失败！\n路径为:{0}\n 原因是:{1}",
-                        file.FullName,ex.ToString()));
+                        file.FullName, ex.ToString()));
                     //// todo:读取失败
                 }
             }
@@ -100,13 +100,104 @@ namespace GeoFun.GNSS
 
         public void DetectArcs()
         {
+            if (Epoches is null || Epoches.Count <= 0) return;
+
+            string prn = "";
+            double p1, p2, l1, l2;
+
+            //// 弧段已经开始但尚未结束的卫星编号
+            List<OArc> startedArc = new List<OArc>();
+            List<OArc> endedArc = new List<OArc>();
+
+            bool flag = true;
+            for (int i = 0; i < Epoches.Count; i++)
+            {
+                foreach (var arc in startedArc)
+                {
+                    flag = true;
+
+                    //// Some MEAS missed
+                    if (!Epoches[i].PRNList.Contains(arc.PRN)) flag = false;
+                    else if (!Epoches[i][arc.PRN].SatData.TryGetValue("P2", out p2)) flag = false;
+                    else if (!Epoches[i][arc.PRN].SatData.TryGetValue("L1", out l1)) flag = false;
+                    else if (!Epoches[i][arc.PRN].SatData.TryGetValue("L2", out l2)) flag = false;
+                    else if (!Epoches[i][arc.PRN].SatData.TryGetValue("P1", out p1) &&
+                             !Epoches[i][arc.PRN].SatData.TryGetValue("C1", out p1)) flag = false;
+
+                    //// Cycle slip
+                    else if (Epoches[i][arc.PRN].CycleSlip) flag = false;
+
+                    //// Outlier
+                    else if (Epoches[i][arc.PRN].Outlier) flag = false;
+
+                    //// An arc Ended
+                    if (!flag)
+                    {
+                        arc.EndIndex = i - 1;
+
+                        endedArc.Add(arc);
+                    }
+                }
+
+                foreach (var arc in endedArc)
+                {
+                    startedArc.Remove(arc);
+
+                    if (!Arcs.ContainsKey(arc.PRN))
+                    {
+                        Arcs.Add(arc.PRN, new List<OArc>());
+                    }
+
+                    if (arc.Length >= Options.ARC_MIN_LENGTH)
+                    {
+                        Arcs[arc.PRN].Add(arc);
+                    }
+                }
+
+                endedArc.Clear();
+
+                for (int j = 0; j < Epoches[i].PRNList.Count; j++)
+                {
+                    prn = Epoches[i].PRNList[j];
+
+                    //// Check if some meas missing
+                    if (!Epoches[i][prn].SatData.TryGetValue("P2", out p2)) continue;
+                    if (!Epoches[i][prn].SatData.TryGetValue("L1", out l1)) continue;
+                    if (!Epoches[i][prn].SatData.TryGetValue("L2", out l2)) continue;
+                    if (!Epoches[i][prn].SatData.TryGetValue("P1", out p1) &&
+                        !Epoches[i][prn].SatData.TryGetValue("C1", out p1)) continue;
+
+                    //// A new arc start
+                    if (!startedArc.Any(o => o.PRN == prn))
+                    {
+                        OArc arc = new OArc();
+                        arc.StartIndex = i;
+                        arc.PRN = prn;
+                        arc.Station = this;
+                        startedArc.Add(arc);
+                    }
+                }
+            }
+        }
+
+        public void DetectCycleSlip()
+        {
 
         }
+
+        public void DetectClockJump() { }
+
+        public void DetectOutlier() { }
 
         /// <summary>
         /// 预处理(周跳，钟跳探测)
         /// </summary>
         public void Preprocess()
-        { }
+        {
+            DetectArcs();
+            DetectClockJump();
+            DetectCycleSlip();
+            DetectOutlier();
+        }
     }
 }
