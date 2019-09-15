@@ -8,7 +8,7 @@ namespace GeoFun.GNSS
     /// <summary>
     /// GPS时间
     /// </summary>
-    public sealed class GPST
+    public sealed class GPST:IComparable<GPST>
     {
         private Week week;
         /// <summary>
@@ -154,6 +154,14 @@ namespace GeoFun.GNSS
                     CommonT.Hour, CommonT.Minute, commonT.second);
             }
             return "";
+        }
+
+        public int CompareTo(GPST other)
+        {
+            if (other is null) throw new Exception("无法比较null的大小");
+            if (Math.Abs(MJD.Seconds - other.MJD.Seconds) < 1e-12) return 0;
+            else if (MJD.Seconds - other.MJD.Seconds > 0) return 1;
+            else return -1;
         }
 
         /// <summary>

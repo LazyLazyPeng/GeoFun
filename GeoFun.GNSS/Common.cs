@@ -88,5 +88,14 @@ namespace GeoFun.GNSS
         public static readonly double GAL_L5a = SPEED_OF_LIGHT / GAL_F5a;
         public static readonly double GAL_L5b = SPEED_OF_LIGHT / GAL_F5b;
         public static readonly double GAL_L5 = SPEED_OF_LIGHT / GAL_F5;
+
+        /// <summary>
+        /// 各种观测值的测量精度(m)
+        /// </summary>
+        public static readonly double DELTA_C1 = 2.9d;
+        public static readonly double DELTA_P1 = 0.29d;
+        public static readonly double DELTA_P2 = 0.29d;
+        public static readonly double DELTA_L1 = 0.2d;
+        public static readonly double DELTA_L2 = 0.24d;
     }
 }

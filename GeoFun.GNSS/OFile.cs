@@ -7,11 +7,27 @@ using System.Linq;
 
 namespace GeoFun.GNSS
 {
-    public class OFile
+    public class OFile:IComparable<OFile>
     {
+        /// <summary>
+        /// 观测时间,年
+        /// </summary>
         public int Year { get; set; }
-        public int DayOfYear { get; set; }
+        /// <summary>
+        /// 观测时间,年积日
+        /// </summary>
         public int DOY { get; set; }
+
+        /// <summary>
+        /// 采样率(s)
+        /// </summary>
+        public double Interval
+        {
+            get
+            {
+                return Header.interval;
+            }
+        }
 
         /// <summary>
         /// 文件路径
@@ -21,7 +37,22 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 观测开始时间
         /// </summary>
-        public GPST StartTime;
+        public GPST StartTime
+        {
+            get
+            {
+                if (Header is null) return null;
+                else if (Header.startTime is null)
+                {
+                    if (AllEpoch is null || AllEpoch.Count == 0) return null;
+                    else return AllEpoch[0].Epoch;
+                }
+                else
+                {
+                    return StartTime;
+                }
+            }
+        }
 
         /// <summary>
         /// 观测结束时间
@@ -292,6 +323,11 @@ namespace GeoFun.GNSS
             {
                 return null;
             }
+        }
+
+        public int CompareTo(OFile other)
+        {
+            return StartTime.CompareTo(other.StartTime);
         }
     }
 }
