@@ -37,10 +37,10 @@ namespace GeoFun.GNSS
             if (OFiles.Count <= 0) return;
 
             /// 初步检查数据时间是否一致
-            else if (OFiles.Min(o => o.Year) != OFiles.Max(o => o.Year))
-            {
-                throw new Exception("测站数据跨年，暂时无法处理，测站为:" + OFiles[0].Header.markName);
-            }
+            //else if (OFiles.Min(o => o.Year) != OFiles.Max(o => o.Year))
+            //{
+            //    throw new Exception("测站数据跨年，暂时无法处理，测站为:" + OFiles[0].Header.markName);
+            //}
 
             //// 检查数据采样率是否一致
             else if (Math.Abs(OFiles.Min(o => o.Interval) - OFiles.Max(o => o.Interval)) > 0.001)
@@ -118,11 +118,6 @@ namespace GeoFun.GNSS
 
                     //// Some MEAS missed
                     if (!Epoches[i].PRNList.Contains(arc.PRN)) flag = false;
-                    else if (!Epoches[i][arc.PRN].SatData.TryGetValue("P2", out p2)) flag = false;
-                    else if (!Epoches[i][arc.PRN].SatData.TryGetValue("L1", out l1)) flag = false;
-                    else if (!Epoches[i][arc.PRN].SatData.TryGetValue("L2", out l2)) flag = false;
-                    else if (!Epoches[i][arc.PRN].SatData.TryGetValue("P1", out p1) &&
-                             !Epoches[i][arc.PRN].SatData.TryGetValue("C1", out p1)) flag = false;
 
                     //// Cycle slip
                     else if (Epoches[i][arc.PRN].CycleSlip) flag = false;
@@ -130,7 +125,22 @@ namespace GeoFun.GNSS
                     //// Outlier
                     else if (Epoches[i][arc.PRN].Outlier) flag = false;
 
-                    //// An arc Ended
+                    if (!Epoches[i][arc.PRN].SatData.TryGetValue("P2", out p2)) flag = false;
+                    if (!Epoches[i][arc.PRN].SatData.TryGetValue("L1", out l1)) flag = false;
+                    if (!Epoches[i][arc.PRN].SatData.TryGetValue("L2", out l2)) flag = false;
+
+                    if (!Epoches[i][arc.PRN].SatData.TryGetValue("P1", out p1)) flag = false;
+                    else if (Math.Abs(p1) < 0.001)
+                    {
+                        if (!Epoches[i][arc.PRN].SatData.TryGetValue("C1", out p1)) flag = false;
+                    }
+
+                    if (Math.Abs(p1) < 1e-3) flag = false;
+                    if (Math.Abs(p2) < 1e-3) flag = false;
+                    if (Math.Abs(l1) < 1e-3) flag = false;
+                    if (Math.Abs(l2) < 1e-3) flag = false;
+
+                    //// An arc is end
                     if (!flag)
                     {
                         arc.EndIndex = i - 1;
@@ -143,13 +153,13 @@ namespace GeoFun.GNSS
                 {
                     startedArc.Remove(arc);
 
-                    if (!Arcs.ContainsKey(arc.PRN))
-                    {
-                        Arcs.Add(arc.PRN, new List<OArc>());
-                    }
-
                     if (arc.Length >= Options.ARC_MIN_LENGTH)
                     {
+                        if (!Arcs.ContainsKey(arc.PRN))
+                        {
+                            Arcs.Add(arc.PRN, new List<OArc>());
+                        }
+
                         Arcs[arc.PRN].Add(arc);
                     }
                 }
@@ -160,21 +170,32 @@ namespace GeoFun.GNSS
                 {
                     prn = Epoches[i].PRNList[j];
 
+                    if (!prn.StartsWith("G")) continue;
+
                     //// Check if some meas missing
                     if (!Epoches[i][prn].SatData.TryGetValue("P2", out p2)) continue;
                     if (!Epoches[i][prn].SatData.TryGetValue("L1", out l1)) continue;
                     if (!Epoches[i][prn].SatData.TryGetValue("L2", out l2)) continue;
-                    if (!Epoches[i][prn].SatData.TryGetValue("P1", out p1) &&
-                        !Epoches[i][prn].SatData.TryGetValue("C1", out p1)) continue;
+
+                    if (!Epoches[i][prn].SatData.TryGetValue("P1", out p1)) flag = false;
+                    else if (Math.Abs(p1) < 0.001)
+                    {
+                        if (!Epoches[i][prn].SatData.TryGetValue("C1", out p1)) flag = false;
+                    }
+
+                    if (Math.Abs(p1) < 1e-3) flag = false;
+                    else if (Math.Abs(p2) < 1e-3) flag = false;
+                    else if (Math.Abs(l1) < 1e-3) flag = false;
+                    else if (Math.Abs(l2) < 1e-3) flag = false;
 
                     //// A new arc start
                     if (!startedArc.Any(o => o.PRN == prn))
                     {
-                        OArc arc = new OArc();
-                        arc.StartIndex = i;
-                        arc.PRN = prn;
-                        arc.Station = this;
-                        startedArc.Add(arc);
+                            OArc arc = new OArc();
+                            arc.StartIndex = i;
+                            arc.PRN = prn;
+                            arc.Station = this;
+                            startedArc.Add(arc);
                     }
                 }
             }
@@ -182,13 +203,81 @@ namespace GeoFun.GNSS
 
         public void DetectCycleSlip()
         {
-
         }
 
         public void DetectClockJump() { }
 
-        public void DetectOutlier() 
-        { }
+        public void DetectOutlier()
+        {
+            if (Arcs is null) return;
+
+            double c1 = 0d, p1 = 0d, p2 = 0d;
+            foreach (var prn in Arcs.Keys)
+            {
+                for (int i = 0; i < Arcs[prn].Count; i++)
+                {
+                    for (int j = 0; j < Arcs[prn][i].Length; j++)
+                    {
+                        //// 检查P1P2
+                        if (Arcs[prn][i][j].SatData.TryGetValue("P1", out p1) && Arcs[prn][i][j].SatData.TryGetValue("P2", out p2))
+                        {
+                            if (Math.Abs(p1 - p2) > Options.OUTLIER_P1P2) Arcs[prn][i][j].Outlier = true;
+                        }
+
+                        //// 检查P1C1
+                        else if (Arcs[prn][i][j].SatData.TryGetValue("P1", out p1) && Arcs[prn][i][j].SatData.TryGetValue("C1", out c1))
+                        {
+                            if (Math.Abs(p1 - c1) > Options.OUTLIER_P1P2) Arcs[prn][i][j].Outlier = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        public void CalP4L4()
+        {
+            OArc arc = null;
+            foreach (var prn in Arcs.Keys)
+            {
+                for (int i = 0; i < Arcs[prn].Count; i++)
+                {
+                    // 取某颗卫星的一个观测弧段
+                    arc = Arcs[prn][i];
+
+                    for (int j = 0; j < arc.Length; j++)
+                    {
+                        arc[j].SatData.Add("P4", arc[j]["P1"] - arc[j]["P2"]);
+                        arc[j].SatData.Add("L4", arc[j]["L1"] - arc[j]["L2"]);
+                    }
+                }
+            }
+        }
+
+        public void SmoothP4()
+        {
+            OArc arc = null;
+            foreach (var prn in Arcs.Keys)
+            {
+                for (int i = 0; i < Arcs[prn].Count; i++)
+                {
+                    // 取某颗卫星的一个观测弧段
+                    arc = Arcs[prn][i];
+
+                    // 整个弧段P4+L4的均值<P4+L4>
+                    double p4l4 = arc[0]["P4"];
+                    for (int j = 1; j < arc.Length; j++)
+                    {
+                        p4l4 = p4l4 * j / (j + 1) + arc[j]["P4"] / (j + 1);
+                    }
+
+                    // 平滑P4
+                    for (int j = 0; j < arc.Length; j++)
+                    {
+                        arc[j].SatData.Add("SP4", arc[j]["P4"] + p4l4);
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// 预处理(周跳，钟跳探测)
@@ -199,6 +288,9 @@ namespace GeoFun.GNSS
             DetectClockJump();
             DetectCycleSlip();
             DetectOutlier();
+            DetectArcs();
+            CalP4L4();
+            SmoothP4();
         }
     }
 }

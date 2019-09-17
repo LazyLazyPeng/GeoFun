@@ -31,5 +31,14 @@ namespace GeoFun.GNSS
         /// 电离层建模类型(0-球谐 1-多项式 2-球冠谐)
         /// </summary>
         public static int IONOSPHERE_MODEL = 0;
+
+        /// <summary>
+        /// 伪距粗差探测阈值(m)
+        /// </summary>
+        /// <remarks>
+        /// 张小红, 郭斐, 李盼, et al. GNSS精密单点定位中的实时质量控制[J]. 武汉大学学报·信息科学版, 2012, 37(8): 940-944. ZHANG Xiaohong， GUO Fei， LI Pan， ZUO Xiang. Real-time Quality Control Procedure for GNSS Precise Point Positioning. GEOMATICS AND INFORMATION SCIENCE OF WUHAN UNIVERS, 2012, 37(8):940-944.
+        /// </remarks>
+        public static double OUTLIER_P1C1 = 10;
+        public static double OUTLIER_P1P2 = 30;
     }
 }
