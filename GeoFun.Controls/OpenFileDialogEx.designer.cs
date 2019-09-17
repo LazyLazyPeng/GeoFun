@@ -28,7 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OpenFileDialogEx));
             this.treeNav = new System.Windows.Forms.TreeView();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.btnOK = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.lvFiles = new System.Windows.Forms.ListView();
@@ -48,12 +51,24 @@
             // treeNav
             // 
             this.treeNav.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeNav.FullRowSelect = true;
+            this.treeNav.ImageIndex = 0;
+            this.treeNav.ImageList = this.imageList1;
             this.treeNav.Location = new System.Drawing.Point(0, 0);
             this.treeNav.Name = "treeNav";
+            this.treeNav.SelectedImageIndex = 0;
             this.treeNav.Size = new System.Drawing.Size(203, 472);
             this.treeNav.TabIndex = 0;
             this.treeNav.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.TreeNav_AfterExpand);
             this.treeNav.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeNav_AfterSelect);
+            // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "folder.png");
+            this.imageList1.Images.SetKeyName(1, "desktop1.png");
+            this.imageList1.Images.SetKeyName(2, "driver.png");
             // 
             // btnOK
             // 
@@ -119,7 +134,7 @@
             // columnHeader3
             // 
             this.columnHeader3.Text = "类型";
-            this.columnHeader3.Width = 50;
+            this.columnHeader3.Width = 49;
             // 
             // columnHeader4
             // 
@@ -145,9 +160,9 @@
             this.cbxFilter.Items.AddRange(new object[] {
             "所有文件(*.*)|*.*",
             "shp文件(*.shp)|*.shp"});
-            this.cbxFilter.Location = new System.Drawing.Point(491, 484);
+            this.cbxFilter.Location = new System.Drawing.Point(428, 484);
             this.cbxFilter.Name = "cbxFilter";
-            this.cbxFilter.Size = new System.Drawing.Size(170, 22);
+            this.cbxFilter.Size = new System.Drawing.Size(233, 22);
             this.cbxFilter.TabIndex = 5;
             this.cbxFilter.SelectedIndexChanged += new System.EventHandler(this.CbxFilter_SelectedIndexChanged);
             // 
@@ -157,7 +172,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxSelectedFile.Location = new System.Drawing.Point(4, 484);
             this.tbxSelectedFile.Name = "tbxSelectedFile";
-            this.tbxSelectedFile.Size = new System.Drawing.Size(481, 23);
+            this.tbxSelectedFile.Size = new System.Drawing.Size(418, 23);
             this.tbxSelectedFile.TabIndex = 6;
             // 
             // OpenFileDialogEx
@@ -172,6 +187,7 @@
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.btnOK);
             this.Font = new System.Drawing.Font("SimSun", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimizeBox = false;
             this.Name = "OpenFileDialogEx";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -198,5 +214,6 @@
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.TextBox tbxSelectedFile;
+        private System.Windows.Forms.ImageList imageList1;
     }
 }

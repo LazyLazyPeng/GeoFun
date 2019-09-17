@@ -128,6 +128,43 @@ namespace GeoFun.Spatial
             }
         }
 
+        public static void CopyOtherFilesExceptPrj(string pathSrc, string pathDst)
+        {
+            string path1, path2;
+            for (int i = 0; i < FileAppends.Count; i++)
+            {
+                if (FileAppends[i] == "shp" || FileAppends[i]=="prj") continue;
+                try
+                {
+                    path1 = pathSrc.Substring(0, pathSrc.Length - 4) + "." + FileAppends[i];
+                    path2 = pathDst.Substring(0, pathDst.Length - 4) + "." + FileAppends[i];
+
+                    if (File.Exists(path1))
+                    {
+                        FileInfo info = new FileInfo(path1);
+
+                        info.CopyTo(path2, true);
+                    }
+
+                    //path1 = pathSrc.Substring(0, pathSrc.Length - 4) + "." + OtherFiles[i].ToUpper();
+                    //path2 = pathDst.Substring(0, pathDst.Length - 4) + "." + OtherFiles[i].ToUpper();
+
+                    //if(File.Exists(path1))
+                    //{
+                    //    FileInfo info = new FileInfo(path1);
+
+                    //    info.CopyTo(path2);
+                    //}
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+        }
+
+
+
         public static void Copy(string pathSrc, string pathDst)
         {
             string path1, path2;

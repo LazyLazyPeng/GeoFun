@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -43,10 +44,21 @@ namespace GeoFun.GNSS
                 Observation.CalP4(ref ofile.AllEpoch);
                 Observation.CalL4(ref ofile.AllEpoch);
 
+                StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < ofile.AllEpoch.Count; i++)
                 {
                     var epoch = ofile.AllEpoch[i];
                     Console.WriteLine(string.Format(epoch.Epoch.ToRinexString()));
+
+                    if (epoch.PRNList.Contains("G01"))
+                    {
+                        sb.AppendFormat("{0} {1}\n", epoch["G01"]["P4"], epoch["G01"]["L4"]);
+                    }
+                    else
+                    {
+                        sb.Append("0 0\n");
+                    }
+
 
                     foreach (var prn in epoch.PRNList)
                     {
@@ -60,12 +72,12 @@ namespace GeoFun.GNSS
                         if (epoch[prn].SatData.TryGetValue("C1", out c1) &&
                            epoch[prn].SatData.TryGetValue("P1", out p1))
                         {
-                            Console.Write(" P1-C2:{0,7:f3}", p1 - c1);
+                            Console.Write(" P1-C1:{0,7:f3}", p1 - c1);
                         }
                         Console.Write(" P1-P2(P4):{0,7:f3}", epoch[prn]["P4"]);
                         Console.Write(" L1-L2(L4):{0,13:f3}", epoch[prn]["L4"]);
-                        if (i>0&&
-                            ofile.AllEpoch[i - 1].PRNList.Contains(prn)&& 
+                        if (i > 0 &&
+                            ofile.AllEpoch[i - 1].PRNList.Contains(prn) &&
                             ofile.AllEpoch[i - 1][prn].SatData.ContainsKey("L4"))
                         {
                             Console.Write(" L4(i)-L4(i-1):{0}", ofile.AllEpoch[i][prn]["L4"] - ofile.AllEpoch[i - 1][prn]["L4"]);
@@ -76,6 +88,8 @@ namespace GeoFun.GNSS
                     }
                     Console.WriteLine();
                 }
+
+                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "test\\test.txt", sb.ToString());
             }
 
             Console.ReadKey();

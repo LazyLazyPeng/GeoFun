@@ -9,6 +9,8 @@ namespace GeoFun.Controls
 {
     public class OpenFolderDialog
     {
+        private FolderBrowserDialog fbd = new FolderBrowserDialog();
+
         /// <summary>
         /// 记录的历史路径的最多数量
         /// </summary>
@@ -19,8 +21,6 @@ namespace GeoFun.Controls
         /// </summary>
         public static List<string> HISTORY_PATH = new List<string>();
 
-        private FolderBrowserDialog fbd = new FolderBrowserDialog();
-
         /// <summary>
         /// 选中的文件夹
         /// </summary>
@@ -29,6 +29,10 @@ namespace GeoFun.Controls
             get
             {
                 return fbd.SelectedPath;
+            }
+            set
+            {
+                fbd.SelectedPath = value;
             }
         }
 

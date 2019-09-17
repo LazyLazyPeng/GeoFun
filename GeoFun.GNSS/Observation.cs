@@ -332,9 +332,9 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 探测卫星的弧段
         /// </summary>
-        /// <param name="epoches"></param>
-        /// <param name="prn"></param>
-        /// <param name="minArcLen"></param>
+        /// <param name="epoches">观测历元</param>
+        /// <param name="prn">要探测的卫星编号</param>
+        /// <param name="minArcLen">探测出来的弧段最短的历元数</param>
         /// <returns></returns>
         public static List<int[]> DetectArc(ref List<OEpoch> epoches, string prn, int interval = 30, int minArcLen = 80)
         {
@@ -415,6 +415,21 @@ namespace GeoFun.GNSS
             }
 
             return arcs;
+        }
+
+        public static void EliminateSatellites(ref List<OEpoch> epoches)
+        {
+            if (epoches is null||epoches.Count<=0) return;
+            foreach(var epoch in epoches)
+            {
+                for(int i =epoch.SatNum - 1; i > -1; i--)
+                {
+                    if(!epoch[i].SatPRN.StartsWith("G"))
+                    {
+                        epoch.AllSat.Remove(epoch[i].SatPRN);
+                    }
+                }
+            }
         }
     }
 }
