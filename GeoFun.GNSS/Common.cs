@@ -8,17 +8,17 @@ namespace GeoFun.GNSS
     public class Common
     {
         /// <summary>
-        /// 地球半径
+        /// 地球半径(m)
         /// </summary>
         public static readonly double EARTH_RADIUS1 = 6378137d;
 
         /// <summary>
-        /// 地球平均半径
+        /// 地球平均半径(m)
         /// </summary>
         public static readonly double EARTH_RADIUS2 = 6371000d;
 
         /// <summary>
-        /// 电离层单层模型高度
+        /// 电离层单层模型高度(m)
         /// </summary>
         public static readonly double IONO_HIGH = 450000d;
 
@@ -39,7 +39,7 @@ namespace GeoFun.GNSS
         public static readonly double GEOMAGENTIC_POLE_LON = 291d * Angle.D2R;
 
         /// <summary>
-        /// GPS基频
+        /// GPS基频(Hz)
         /// </summary>
         public static readonly double GPS_F0 = 10.23e6;
 
@@ -60,14 +60,14 @@ namespace GeoFun.GNSS
         public static readonly int GAL_MF6 = 125;
 
         /// <summary>
-        /// GPS频率
+        /// GPS频率(hz)
         /// </summary>
         public static readonly double GPS_F1 = GPS_MF1 * GPS_F0;
         public static readonly double GPS_F2 = GPS_MF2 * GPS_F0;
         public static readonly double GPS_F5 = GPS_MF5 * GPS_F0;
         public static readonly double GPS_Fw = GPS_MFw * GPS_F0;
         /// <summary>
-        /// GAL频率
+        /// GAL频率(Hz)
         /// </summary>
         public static readonly double GAL_F1 = GAL_MF1 * GPS_F0;
         public static readonly double GAL_F5a = GAL_MF5a * GPS_F0;
@@ -75,27 +75,20 @@ namespace GeoFun.GNSS
         public static readonly double GAL_F5 = GAL_MF5 * GPS_F0;
 
         /// <summary>
-        /// GPS波长
+        /// GPS波长(m)
         /// </summary>
         public static readonly double GPS_L1 = SPEED_OF_LIGHT / GPS_F1;
         public static readonly double GPS_L2 = SPEED_OF_LIGHT / GPS_F2;
         public static readonly double GPS_L5 = SPEED_OF_LIGHT / GPS_F5;
         public static readonly double GPS_Lw = SPEED_OF_LIGHT / GPS_Fw;
         /// <summary>
-        /// GAL波长
+        /// GAL波长(m)
         /// </summary>
         public static readonly double GAL_L1 = SPEED_OF_LIGHT / GAL_F1;
         public static readonly double GAL_L5a = SPEED_OF_LIGHT / GAL_F5a;
         public static readonly double GAL_L5b = SPEED_OF_LIGHT / GAL_F5b;
         public static readonly double GAL_L5 = SPEED_OF_LIGHT / GAL_F5;
 
-        /// <summary>
-        /// 各种观测值的测量精度(m)
-        /// </summary>
-        public static readonly double DELTA_C1 = 2.9d;
-        public static readonly double DELTA_P1 = 0.29d;
-        public static readonly double DELTA_P2 = 0.29d;
-        public static readonly double DELTA_L1 = 0.2d;
-        public static readonly double DELTA_L2 = 0.24d;
+
     }
 }
