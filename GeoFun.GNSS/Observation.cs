@@ -93,11 +93,11 @@ namespace GeoFun.GNSS
             // 宽巷模糊度精度
             double cur_delta = 0d, lst_delta = 0d;
 
-            NW = (1 / (Common.GPS_F1 - Common.GPS_F2) * (Common.GPS_F1 * curL1 * Common.DELTA_L1 - Common.GPS_F2 * curL2 * Common.DELTA_L2) -
-                 1 / (Common.GPS_F1 + Common.GPS_F2) * (Common.GPS_F1 * curP1 + Common.GPS_F2 * curP2)) / Common.GPS_Lw;
-            cur_delta = 1 / Math.Pow(Common.GPS_F1 - Common.GPS_F2, 2) * (Math.Pow(Common.GPS_F1 * Common.DELTA_L1, 2) +
-                Math.Pow(Common.GPS_F2 * Common.DELTA_L2, 2)) + 1 / Math.Pow(Common.GPS_F1 + Common.GPS_F2, 2) * (Math.Pow(Common.GPS_F1 * Common.DELTA_P1, 2) +
-                Math.Pow(Common.GPS_F2 * Common.DELTA_P2, 2));
+            //NW = (1 / (Common.GPS_F1 - Common.GPS_F2) * (Common.GPS_F1 * curL1 * Common.DELTA_L1 - Common.GPS_F2 * curL2 * Common.DELTA_L2) -
+            //     1 / (Common.GPS_F1 + Common.GPS_F2) * (Common.GPS_F1 * curP1 + Common.GPS_F2 * curP2)) / Common.GPS_Lw;
+            //cur_delta = 1 / Math.Pow(Common.GPS_F1 - Common.GPS_F2, 2) * (Math.Pow(Common.GPS_F1 * Common.DELTA_L1, 2) +
+            //    Math.Pow(Common.GPS_F2 * Common.DELTA_L2, 2)) + 1 / Math.Pow(Common.GPS_F1 + Common.GPS_F2, 2) * (Math.Pow(Common.GPS_F1 * Common.DELTA_P1, 2) +
+            //    Math.Pow(Common.GPS_F2 * Common.DELTA_P2, 2));
 
             NW_est = NW;
             lst_delta = cur_delta;
@@ -118,11 +118,11 @@ namespace GeoFun.GNSS
                 if (!epoches[i][prn].SatData.TryGetValue("P1", out curP1) &&
                     !epoches[i][prn].SatData.TryGetValue("C1", out curC1)) continue;
 
-                NW = (1 / (Common.GPS_F1 - Common.GPS_F2) * (Common.GPS_F1 * curL1 * Common.DELTA_L1 - Common.GPS_F2 * curL2 * Common.DELTA_L2) -
-                     1 / (Common.GPS_F1 + Common.GPS_F2) * (Common.GPS_F1 * curP1 + Common.GPS_F2 * curP2)) / Common.GPS_Lw;
-                cur_delta = 1 / Math.Pow(Common.GPS_F1 - Common.GPS_F2, 2) * (Math.Pow(Common.GPS_F1 * Common.DELTA_L1, 2) +
-                    Math.Pow(Common.GPS_F2 * Common.DELTA_L2, 2)) + 1 / Math.Pow(Common.GPS_F1 + Common.GPS_F2, 2) * (Math.Pow(Common.GPS_F1 * Common.DELTA_P1, 2) +
-                    Math.Pow(Common.GPS_F2 * Common.DELTA_P2, 2));
+                //NW = (1 / (Common.GPS_F1 - Common.GPS_F2) * (Common.GPS_F1 * curL1 * Common.DELTA_L1 - Common.GPS_F2 * curL2 * Common.DELTA_L2) -
+                //     1 / (Common.GPS_F1 + Common.GPS_F2) * (Common.GPS_F1 * curP1 + Common.GPS_F2 * curP2)) / Common.GPS_Lw;
+                //cur_delta = 1 / Math.Pow(Common.GPS_F1 - Common.GPS_F2, 2) * (Math.Pow(Common.GPS_F1 * Common.DELTA_L1, 2) +
+                //    Math.Pow(Common.GPS_F2 * Common.DELTA_L2, 2)) + 1 / Math.Pow(Common.GPS_F1 + Common.GPS_F2, 2) * (Math.Pow(Common.GPS_F1 * Common.DELTA_P1, 2) +
+                //    Math.Pow(Common.GPS_F2 * Common.DELTA_P2, 2));
 
                 if (Math.Abs(NW - NW_est) > 4 * Math.Sqrt(lst_delta))
                 {

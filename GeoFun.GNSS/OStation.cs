@@ -187,7 +187,8 @@ namespace GeoFun.GNSS
 
         public void DetectClockJump() { }
 
-        public void DetectOutlier() { }
+        public void DetectOutlier() 
+        { }
 
         /// <summary>
         /// 预处理(周跳，钟跳探测)
