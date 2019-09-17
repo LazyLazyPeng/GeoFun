@@ -15,8 +15,8 @@ namespace GeoFun.GNSS.Tests
         public void ReadAllObsDirTest()
         {
             OStation sta = new OStation();
-            sta.Name = "fjpt";
-            sta.ReadAllObs(@"C: \Users\niuni\Desktop");
+            sta.Name = "fjxp";
+            sta.ReadAllObs(@"C:\Users\Administrator\Desktop\soulik");
             sta.SortObs();
             sta.Preprocess();
             foreach(var prn in sta.Arcs.Keys)
