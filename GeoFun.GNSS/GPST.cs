@@ -74,7 +74,7 @@ namespace GeoFun.GNSS
         {
             get
             {
-                return SecondsOfDay * 24m * 3600m + SecondsOfDay;
+                return DayOfYear * 24m * 3600m + SecondsOfDay;
             }
         }
 

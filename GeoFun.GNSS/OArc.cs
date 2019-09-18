@@ -36,6 +36,28 @@ namespace GeoFun.GNSS
         public int EndIndex { get; set; } = -1;
 
         /// <summary>
+        /// 弧段开始时间
+        /// </summary>
+        public GPST StartTime
+        {
+            get
+            {
+                return Station.Epoches[StartIndex].Epoch;
+            }
+        }
+
+        /// <summary>
+        /// 弧段结束时间
+        /// </summary>
+        public GPST EndTime
+        {
+            get
+            {
+                return Station.Epoches[EndIndex].Epoch;
+            }
+        }
+
+        /// <summary>
         /// 该观测弧段对应的测站
         /// </summary>
         public OStation Station { get; set; }
@@ -46,6 +68,27 @@ namespace GeoFun.GNSS
             {
                 return Station.Epoches[StartIndex + index][PRN];
             }
+        }
+
+        /// <summary>
+        /// 将弧段以index为界分为2段,index为第2段的起始索引
+        /// </summary>
+        /// <param name="index">第二段开始的索引</param>
+        /// <returns></returns>
+        public OArc Split(int index)
+        {
+            if (index < 0 || index >= Length) return null;
+
+            // 第2段[index,end]
+            OArc arc = new OArc();
+            arc.Station = Station;
+            arc.PRN = PRN;
+            arc.StartIndex = StartIndex+index;
+            arc.EndIndex = EndIndex;
+
+            EndIndex = StartIndex + (index - 1 < 0 ? 0 : index - 1);
+
+            return arc;
         }
     }
 }
