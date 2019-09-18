@@ -75,65 +75,88 @@ namespace GeoFun.GNSS
         /// <remarks>
         /// GPS周跳探测与修复的算法研究与实现.彭秀英.2004
         /// </remarks>
-        public static void DetectCycleSlip(List<OEpoch> epoches, string prn, int interval = 30)
+        public static void DetectCycleSlip(ref OArc arc)
         {
-            if (epoches is null || epoches.Count <= 1) return;
+            // i-1历元宽巷模糊度估计值
+            double NW1 = 0d;
+            // i历元宽巷模糊度估计值
+            double NW2 = 0d;
+            // i+1历元宽巷模糊度估计值
+            double NW3 = 0d;
 
-            // 当前历元的观测值
-            double curL1 = 0d, curL2 = 0d, curP1 = 0d, curP2 = 0d, curC1 = 0d;
+            // i-1历元宽巷模糊度估计值精度
+            double delta1 = 0d;
+            // i历元宽巷模糊度估计值精度
+            double delta2 = 0d;
 
-            if (!epoches[0][prn].SatData.TryGetValue("L1", out curL1)) return;
-            if (!epoches[0][prn].SatData.TryGetValue("L2", out curL2)) return;
-            if (!epoches[0][prn].SatData.TryGetValue("P2", out curP2)) return;
-            if (!epoches[0][prn].SatData.TryGetValue("P1", out curP1) &&
-                !epoches[0][prn].SatData.TryGetValue("C1", out curC1)) return;
+            // GPS L1频率(Hz)
+            double f1 = Common.GPS_F1;
+            // GPS L2频率(Hz)
+            double f2 = Common.GPS_F2;
 
-            // 宽巷模糊度
-            double NW = 0d, NW_est = 0d;
-            // 宽巷模糊度精度
-            double cur_delta = 0d, lst_delta = 0d;
+            // GPS L1波长(m)
+            double l1 = Common.GPS_L1;
+            // GPS L2波长(m)
+            double l2 = Common.GPS_L2;
 
-            //NW = (1 / (Common.GPS_F1 - Common.GPS_F2) * (Common.GPS_F1 * curL1 * Common.DELTA_L1 - Common.GPS_F2 * curL2 * Common.DELTA_L2) -
-            //     1 / (Common.GPS_F1 + Common.GPS_F2) * (Common.GPS_F1 * curP1 + Common.GPS_F2 * curP2)) / Common.GPS_Lw;
-            //cur_delta = 1 / Math.Pow(Common.GPS_F1 - Common.GPS_F2, 2) * (Math.Pow(Common.GPS_F1 * Common.DELTA_L1, 2) +
-            //    Math.Pow(Common.GPS_F2 * Common.DELTA_L2, 2)) + 1 / Math.Pow(Common.GPS_F1 + Common.GPS_F2, 2) * (Math.Pow(Common.GPS_F1 * Common.DELTA_P1, 2) +
-            //    Math.Pow(Common.GPS_F2 * Common.DELTA_P2, 2));
+            // L1精度(m)
+            double dL1 = Common.DELTA_L1;
+            // L2精度(m)
+            double dL2 = Common.DELTA_L2;
+            // P1精度(m)
+            double dP1 = Common.DELTA_P1;
+            // P2精度(m)
+            double dP2 = Common.DELTA_P2;
 
-            NW_est = NW;
-            lst_delta = cur_delta;
+            // 初始化NW(i-1)
+            NW1 = (1 / (f1 - f2) *
+                  (f1 * arc[0]["L1"] * l1 - f2 * arc[0]["L2"] * l2) -
+                  1 / (f1 + f2) *
+                  (f1 * arc[0]["P1"] + f2 * arc[0]["P2"])) / Common.GPS_Lw;
+            // 初始化NW(i)
+            NW2 = (1 / (f1 - f2) *
+                  (f1 * arc[1]["L1"] * l1 - f2 * arc[1]["L2"] * l2) -
+                  1 / (f1 + f2) *
+                  (f1 * arc[1]["P1"] + f2 * arc[1]["P2"])) / Common.GPS_Lw;
 
-            for (int i = 1; i < epoches.Count; i++)
+            // 初始化δ(i-1)
+            delta1 = Math.Sqrt(
+                1 / Math.Pow(f1 - f2, 2) * (f1 * f1 * dL1 + f2 * f2 * dL2) +
+                1 / Math.Pow(f1 + f2, 2) * (f1 * f1 * dP1 + f2 * f2 + dP2)
+                );
+
+            int arcLen = arc.Length - 1;
+            for (int i = 1; i < arcLen; i++)
             {
-                // 数据缺失
-                if (epoches[i].Epoch - epoches[i - 1].Epoch > (interval + 1e-14))
+
+                NW3 = (1 / (f1 - f2) *
+                      (f1 * arc[i + 1]["L1"] * l1 - f2 * arc[i + 1]["L2"] * l2) -
+                      1 / (f1 + f2) *
+                      (f1 * arc[i + 1]["P1"] + f2 * arc[i + 1]["P2"])) / Common.GPS_Lw;
+
+                delta2 = Math.Sqrt(delta1 * delta1 * i / (i + 1) + Math.Pow(NW2 - NW1, 2) / (i + 1));
+
+                if (Math.Abs(NW2 - NW1) > 4 * delta1)
                 {
-                    continue;
+                    if (Math.Abs(NW3 - NW2) < 1)
+                    {
+                        arc[i].CycleSlip = true;
+                    }
+                    else
+                    {
+                        arc[i].Outlier = true;
+                    }
+
+                    // 有周跳，分割成新弧段
+                    OArc newArc = arc.Split(i + 1);
+                    arc.Station.Arcs[arc.PRN].Add(newArc);
+
+                    break;
                 }
 
-                if (!prn.StartsWith("G")) continue;
-
-                if (!epoches[i][prn].SatData.TryGetValue("L1", out curL1)) continue;
-                if (!epoches[i][prn].SatData.TryGetValue("L2", out curL2)) continue;
-                if (!epoches[i][prn].SatData.TryGetValue("P2", out curP2)) continue;
-                if (!epoches[i][prn].SatData.TryGetValue("P1", out curP1) &&
-                    !epoches[i][prn].SatData.TryGetValue("C1", out curC1)) continue;
-
-                //NW = (1 / (Common.GPS_F1 - Common.GPS_F2) * (Common.GPS_F1 * curL1 * Common.DELTA_L1 - Common.GPS_F2 * curL2 * Common.DELTA_L2) -
-                //     1 / (Common.GPS_F1 + Common.GPS_F2) * (Common.GPS_F1 * curP1 + Common.GPS_F2 * curP2)) / Common.GPS_Lw;
-                //cur_delta = 1 / Math.Pow(Common.GPS_F1 - Common.GPS_F2, 2) * (Math.Pow(Common.GPS_F1 * Common.DELTA_L1, 2) +
-                //    Math.Pow(Common.GPS_F2 * Common.DELTA_L2, 2)) + 1 / Math.Pow(Common.GPS_F1 + Common.GPS_F2, 2) * (Math.Pow(Common.GPS_F1 * Common.DELTA_P1, 2) +
-                //    Math.Pow(Common.GPS_F2 * Common.DELTA_P2, 2));
-
-                if (Math.Abs(NW - NW_est) > 4 * Math.Sqrt(lst_delta))
-                {
-                    epoches[i][prn].CycleSlip = true;
-                }
-
-                lst_delta = cur_delta * i / (i + 1) + Math.Pow(NW - NW_est, 2) / i + 1;
-                NW_est = NW_est * i / (i + 1) + NW / (i + 1);
-
-                // 构造检验量
-                double curTGF = curL1 * Common.GPS_L1 - curL2 * Common.GPS_L2;
+                NW1 = NW1 * i / (i + 1) + NW2 / (i + 1);
+                NW2 = NW3;
+                delta1 = delta2;
             }
         }
 
@@ -419,12 +442,12 @@ namespace GeoFun.GNSS
 
         public static void EliminateSatellites(ref List<OEpoch> epoches)
         {
-            if (epoches is null||epoches.Count<=0) return;
-            foreach(var epoch in epoches)
+            if (epoches is null || epoches.Count <= 0) return;
+            foreach (var epoch in epoches)
             {
-                for(int i =epoch.SatNum - 1; i > -1; i--)
+                for (int i = epoch.SatNum - 1; i > -1; i--)
                 {
-                    if(!epoch[i].SatPRN.StartsWith("G"))
+                    if (!epoch[i].SatPRN.StartsWith("G"))
                     {
                         epoch.AllSat.Remove(epoch[i].SatPRN);
                     }

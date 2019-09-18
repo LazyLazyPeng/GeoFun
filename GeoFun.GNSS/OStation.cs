@@ -112,6 +112,8 @@ namespace GeoFun.GNSS
             bool flag = true;
             for (int i = 0; i < Epoches.Count; i++)
             {
+                if (Epoches[i].Epoch.SecondsOfYear < Options.START_TIME.SecondsOfYear || Epoches[i].Epoch.SecondsOfYear > Options.END_TIME.SecondsOfYear) continue;
+
                 foreach (var arc in startedArc)
                 {
                     flag = true;
@@ -119,26 +121,29 @@ namespace GeoFun.GNSS
                     //// Some MEAS missed
                     if (!Epoches[i].PRNList.Contains(arc.PRN)) flag = false;
 
-                    //// Cycle slip
-                    else if (Epoches[i][arc.PRN].CycleSlip) flag = false;
-
-                    //// Outlier
-                    else if (Epoches[i][arc.PRN].Outlier) flag = false;
-
-                    if (!Epoches[i][arc.PRN].SatData.TryGetValue("P2", out p2)) flag = false;
-                    if (!Epoches[i][arc.PRN].SatData.TryGetValue("L1", out l1)) flag = false;
-                    if (!Epoches[i][arc.PRN].SatData.TryGetValue("L2", out l2)) flag = false;
-
-                    if (!Epoches[i][arc.PRN].SatData.TryGetValue("P1", out p1)) flag = false;
-                    else if (Math.Abs(p1) < 0.001)
+                    else
                     {
-                        if (!Epoches[i][arc.PRN].SatData.TryGetValue("C1", out p1)) flag = false;
-                    }
+                        //// Cycle slip
+                        if (Epoches[i][arc.PRN].CycleSlip) flag = false;
 
-                    if (Math.Abs(p1) < 1e-3) flag = false;
-                    if (Math.Abs(p2) < 1e-3) flag = false;
-                    if (Math.Abs(l1) < 1e-3) flag = false;
-                    if (Math.Abs(l2) < 1e-3) flag = false;
+                        //// Outlier
+                        else if (Epoches[i][arc.PRN].Outlier) flag = false;
+
+                        if (!Epoches[i][arc.PRN].SatData.TryGetValue("P2", out p2)) flag = false;
+                        if (!Epoches[i][arc.PRN].SatData.TryGetValue("L1", out l1)) flag = false;
+                        if (!Epoches[i][arc.PRN].SatData.TryGetValue("L2", out l2)) flag = false;
+
+                        if (!Epoches[i][arc.PRN].SatData.TryGetValue("P1", out p1)) flag = false;
+                        else if (Math.Abs(p1) < 0.001)
+                        {
+                            if (!Epoches[i][arc.PRN].SatData.TryGetValue("C1", out p1)) flag = false;
+                        }
+
+                        if (Math.Abs(p1) < 1e-3) flag = false;
+                        if (Math.Abs(p2) < 1e-3) flag = false;
+                        if (Math.Abs(l1) < 1e-3) flag = false;
+                        if (Math.Abs(l2) < 1e-3) flag = false;
+                    }
 
                     //// An arc is end
                     if (!flag)
@@ -191,11 +196,11 @@ namespace GeoFun.GNSS
                     //// A new arc start
                     if (!startedArc.Any(o => o.PRN == prn))
                     {
-                            OArc arc = new OArc();
-                            arc.StartIndex = i;
-                            arc.PRN = prn;
-                            arc.Station = this;
-                            startedArc.Add(arc);
+                        OArc arc = new OArc();
+                        arc.StartIndex = i;
+                        arc.PRN = prn;
+                        arc.Station = this;
+                        startedArc.Add(arc);
                     }
                 }
             }
@@ -203,6 +208,14 @@ namespace GeoFun.GNSS
 
         public void DetectCycleSlip()
         {
+            foreach(var prn in Arcs.Keys)
+            {
+                for(int i = 0; i < Arcs[prn].Count; i++)
+                {
+                    OArc arc = Arcs[prn][i];
+                    Observation.DetectCycleSlip(ref arc);
+                }
+            }
         }
 
         public void DetectClockJump() { }
@@ -246,8 +259,23 @@ namespace GeoFun.GNSS
 
                     for (int j = 0; j < arc.Length; j++)
                     {
-                        arc[j].SatData.Add("P4", arc[j]["P1"] - arc[j]["P2"]);
-                        arc[j].SatData.Add("L4", arc[j]["L1"] - arc[j]["L2"]);
+                        if (!arc[j].SatData.ContainsKey("P4"))
+                        {
+                            arc[j].SatData.Add("P4", arc[j]["P1"] - arc[j]["P2"]);
+                        }
+                        else
+                        {
+                            arc[j]["P4"] = arc[j]["P1"] - arc[j]["P2"];
+                        }
+
+                        if (!arc[j].SatData.ContainsKey("L4"))
+                        {
+                            arc[j].SatData.Add("L4", arc[j]["L1"] - arc[j]["L2"]);
+                        }
+                        else
+                        {
+                            arc[j]["L4"] = arc[j]["L1"] - arc[j]["L2"];
+                        }
                     }
                 }
             }

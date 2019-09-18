@@ -89,6 +89,36 @@ namespace GeoFun.GNSS
         public static readonly double GAL_L5b = SPEED_OF_LIGHT / GAL_F5b;
         public static readonly double GAL_L5 = SPEED_OF_LIGHT / GAL_F5;
 
+        /// <summary>
+        /// L1观测值精度(周)
+        /// </summary>
+        public static readonly double DELTA_F1 = 0.01; 
+        /// <summary>
+        /// L2观测值精度(周)
+        /// </summary>
+        public static readonly double DELTA_F2 = 0.01;
 
+        /// <summary>
+        /// L1观测值精度(米)
+        /// </summary>
+        public static readonly double DELTA_L1 = DELTA_F1 * GPS_L1;
+        /// <summary>
+        /// L2观测值精度(米)
+        /// </summary>
+        public static readonly double DELTA_L2 = DELTA_F2 * GPS_L2;
+
+        /// <summary>
+        /// P1观测值精度(米)
+        /// </summary>
+        public static readonly double DELTA_P1 = 0.29;
+        /// <summary>
+        /// P2观测值精度(米)
+        /// </summary>
+        public static readonly double DELTA_P2 = 0.29;
+
+        /// <summary>
+        /// C1观测值精度(米)
+        /// </summary>
+        public static readonly double DELTA_C1 = 2.9;
     }
 }
