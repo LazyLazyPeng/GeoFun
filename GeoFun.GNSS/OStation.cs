@@ -17,9 +17,20 @@ namespace GeoFun.GNSS
         /// </summary>
         public double Interval { get; set; } = 30;
 
+        /// <summary>
+        /// 观测数据开始时间
+        /// </summary>
         public GPST StartTime { get; set; }
 
+        /// <summary>
+        /// 测站名称
+        /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// 概略位置
+        /// </summary>
+        public Coor3 ApproxLoc { get; set; } = new Coor3();
 
         public List<OFile> OFiles = new List<OFile>();
         public List<OEpoch> Epoches = new List<OEpoch>(2880 * 2);
@@ -281,6 +292,10 @@ namespace GeoFun.GNSS
             }
         }
 
+        /// <summary>
+        /// 计算相位平滑伪距值
+        /// 对于30s采样率的
+        /// </summary>
         public void SmoothP4()
         {
             OArc arc = null;
@@ -301,7 +316,7 @@ namespace GeoFun.GNSS
                     // 平滑P4
                     for (int j = 0; j < arc.Length; j++)
                     {
-                        arc[j].SatData.Add("SP4", arc[j]["P4"] + p4l4);
+                        arc[j].SatData.Add("SP4", p4l4-arc[j]["P4"]);
                     }
                 }
             }

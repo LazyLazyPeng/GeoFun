@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MathNet.Numerics;
-using MathNet.Numerics.LinearAlgebra;
+﻿using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
+using System;
+using System.Collections.Generic;
 
 namespace GeoFun.MathGeo
 {
     /// <summary>
     /// 球谐函数模型
     /// </summary>
-    public class SphericalHamonicModel
+    public class SphericalHamonicIonoModel
     {
         public uint Degree { get; set; } = 0;
         public uint Order { get; set; } = 0;
@@ -30,7 +27,7 @@ namespace GeoFun.MathGeo
         /// <param name="lon">经度(弧度)</param>
         /// <param name="vtec">VTEC(TECU)</param>
         /// <returns></returns>
-        public static SphericalHamonicModel CalculateModel(uint degree, uint order,
+        public static SphericalHamonicIonoModel CalculateModel(uint degree, uint order,
             List<double> lat, List<double> lon, List<double> vtec)
         {
             if (degree != order) throw new Exception("球谐函数阶数!=次数,暂时无法计算");
@@ -67,7 +64,7 @@ namespace GeoFun.MathGeo
             //// 求解
             Vector<double> x = (B.Transpose() * B).Inverse() * (B.Transpose() * L);
 
-            SphericalHamonicModel model = new SphericalHamonicModel();
+            SphericalHamonicIonoModel model = new SphericalHamonicIonoModel();
             model.Degree = degree;
             model.Order = order;
             model.Factor = x;
