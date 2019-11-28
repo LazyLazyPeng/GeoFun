@@ -91,5 +91,19 @@ namespace GeoFun.GNSS
                 }
             }
         }
+
+        /// <summary>
+        /// 单站模型
+        /// </summary>
+        public static void SingleStation(OStation station)
+        { }
+
+        /// <summary>
+        /// 多站模型
+        /// </summary>
+        /// <param name="stations"></param>
+        public static void MultiStations(List<OStation> stations)
+        {
+        }
     }
 }
