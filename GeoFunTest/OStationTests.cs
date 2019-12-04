@@ -17,7 +17,7 @@ namespace GeoFun.GNSS.Tests
         {
             string path = @"C:\Users\Administrator\Desktop\1";
             OStation sta = new OStation();
-            sta.Name = "fjxp";
+            sta.Name = "fjpt";
             sta.ReadAllObs(@"C:\Users\Administrator\Desktop\soulik");
             sta.SortObs();
             sta.Preprocess();

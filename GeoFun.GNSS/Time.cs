@@ -209,5 +209,31 @@ namespace GeoFun.GNSS
 
             return new CommonT(year, month, day, hour, minute, second);
         }
+
+        public static CommonT DOYToCommon(int year,int doy)
+        {
+            int[] dayNum = {31,28,31,30,31,30,31,31,30,31,30,31};
+            if(DateTime.IsLeapYear(year))
+            {
+                dayNum[1] = 29;
+            }
+
+            int sum = 0;
+            int month = 0;
+            int dayOfMonth = 0;
+            for(int i = 0; i < 12; i++)
+            {
+                if (doy <= dayNum[i])
+                {
+                    month = i + 1;
+                    dayOfMonth = doy;
+                    break;
+                }
+
+                doy -= dayNum[i];
+            }
+
+            return new CommonT(year, month, dayOfMonth, 0, 0, 0m);
+        }
     }
 }

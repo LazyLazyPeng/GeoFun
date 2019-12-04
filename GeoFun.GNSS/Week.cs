@@ -24,6 +24,16 @@ namespace GeoFun.GNSS
         /// 一周之内的小数秒
         /// </summary>
         public double Seconds { get; set; }
+        /// <summary>
+        /// 一周之内的第几天
+        /// </summary>
+        public int DayOfWeek
+        {
+            get
+            {
+                return (int)Math.Floor(Seconds/Time.SecondsPerDay+1e-13);
+            }
+        }
 
         /// <summary>
         /// 总的周数

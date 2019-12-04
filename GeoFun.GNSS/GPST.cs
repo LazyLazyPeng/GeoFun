@@ -120,6 +120,13 @@ namespace GeoFun.GNSS
 
         }
 
+        public GPST(int year, int doy)
+        {
+            CommonT = Time.DOYToCommon(year, doy);
+            mjd = Time.CommonToMJD(CommonT);
+            Week = Time.CommonToGPS(CommonT);
+        }
+
         /// <summary>
         /// 解码时间字符串,以空格分割
         /// </summary>
