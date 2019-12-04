@@ -1,11 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GeoFun.GNSS;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
+using System.Text;
 
 namespace GeoFun.GNSS.Tests
 {
@@ -15,9 +11,10 @@ namespace GeoFun.GNSS.Tests
         [TestMethod()]
         public void ReadAllObsDirTest()
         {
-            string path = @"C:\Users\Administrator\Desktop\1";
+            //string path = @"C:\Users\Administrator\Desktop\1";
+            string path = AppDomain.CurrentDomain.BaseDirectory + "\\Data\\rinex";
             OStation sta = new OStation();
-            sta.Name = "fjpt";
+            sta.Name = "fjxp";
             sta.ReadAllObs(@"C:\Users\Administrator\Desktop\soulik");
             sta.SortObs();
             sta.Preprocess();

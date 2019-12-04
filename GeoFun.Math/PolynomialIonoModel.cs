@@ -5,9 +5,9 @@ using System.Text;
 
 namespace GeoFun.MathGeo
 {
-    public class PolynomialModel
+    public class PolynomialIonoModel
     {
-        public static PolynomialModel CalculateModel(uint degree, uint order,
+        public static PolynomialIonoModel CalculateModel(uint degree, uint order,
             List<double> lat, List<double> lon, List<double> vtec)
         {
             return null;
