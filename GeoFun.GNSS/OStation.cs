@@ -208,9 +208,9 @@ namespace GeoFun.GNSS
 
         public void DetectCycleSlip()
         {
-            foreach(var prn in Arcs.Keys)
+            foreach (var prn in Arcs.Keys)
             {
-                for(int i = 0; i < Arcs[prn].Count; i++)
+                for (int i = 0; i < Arcs[prn].Count; i++)
                 {
                     OArc arc = Arcs[prn][i];
                     Observation.DetectCycleSlip(ref arc);
@@ -283,6 +283,9 @@ namespace GeoFun.GNSS
 
         public void SmoothP4()
         {
+            double f1 = Common.GPS_F1;
+            double f2 = Common.GPS_F2;
+
             OArc arc = null;
             foreach (var prn in Arcs.Keys)
             {
@@ -292,7 +295,7 @@ namespace GeoFun.GNSS
                     arc = Arcs[prn][i];
 
                     // 整个弧段P4+L4的均值<P4+L4>
-                    double p4l4 = arc[0]["P4"];
+                    double p4l4 = 0;
                     for (int j = 1; j < arc.Length; j++)
                     {
                         p4l4 = p4l4 * j / (j + 1) + arc[j]["P4"] / (j + 1);
@@ -301,7 +304,7 @@ namespace GeoFun.GNSS
                     // 平滑P4
                     for (int j = 0; j < arc.Length; j++)
                     {
-                        arc[j].SatData.Add("SP4", arc[j]["P4"] + p4l4);
+                        arc[j].SatData.Add("SP4", f1 * f1 * f2 * f2 / 40.28 / (f1 * f1 - f2 * f2)*(arc[j]["P4"] + p4l4));
                     }
                 }
             }
@@ -314,9 +317,8 @@ namespace GeoFun.GNSS
         {
             DetectArcs();
             DetectClockJump();
-            DetectCycleSlip();
+            //DetectCycleSlip();
             DetectOutlier();
-            DetectArcs();
             CalP4L4();
             SmoothP4();
         }
