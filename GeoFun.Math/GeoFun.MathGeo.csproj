@@ -56,5 +56,11 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GeoFun.GNSS\GeoFun.GNSS.csproj">
+      <Project>{b8d64a98-4a98-4811-8e01-f9783209aaf0}</Project>
+      <Name>GeoFun.GNSS</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
