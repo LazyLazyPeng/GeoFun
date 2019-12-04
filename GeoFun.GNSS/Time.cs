@@ -68,7 +68,6 @@ namespace GeoFun.GNSS
         {
             int a, b, c, d, e;
             double seconds = 0d;
-            double secondsDouble = 0d;
 
             a = (int)(days + sod / 86400 + 2400000.5 + 0.5);
             b = a + 1537;

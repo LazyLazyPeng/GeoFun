@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace GeoFun.GNSS
 {
-    public class OEpoch:IEnumerable<KeyValuePair<string,OSat>>
+    public class OEpoch : IEnumerable<KeyValuePair<string, OSat>>
     {
         /// <summary>
         /// 历元
@@ -79,7 +79,14 @@ namespace GeoFun.GNSS
         {
             get
             {
-                return AllSat[prn];
+                if (PRNList.Contains(prn))
+                {
+                    return AllSat[prn];
+                }
+                else
+                {
+                    return null;
+                }
             }
             set
             {
