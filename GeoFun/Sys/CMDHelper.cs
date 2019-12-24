@@ -16,6 +16,51 @@ namespace GeoFun.Sys
         public event EventHandler<DataReceivedEventArgs> OnOutputDataReceived;
         public event EventHandler<DataReceivedEventArgs> OnErrorDataReceived;
 
+        public static void ExecuteThenWait(string cmd)
+        {
+            using (Process proc = new Process())
+            {
+                //// 程序名称
+                proc.StartInfo.FileName = "cmd.exe";
+                //// 程序参数 /C 表示执行完后立即退出
+                proc.StartInfo.Arguments = "/C "+cmd;
+                //// 必须禁用操作系统外壳程序
+                proc.StartInfo.UseShellExecute = false;
+                //// 不显示命令行窗口
+                proc.StartInfo.CreateNoWindow = true;
+                //// 重定向输入
+                proc.StartInfo.RedirectStandardInput = true;
+                //// 重定向输出
+                proc.StartInfo.RedirectStandardOutput = true;
+                //// 重定向错误输出
+                proc.StartInfo.RedirectStandardError = true;
+
+                if (proc.Start())
+                {
+                    //proc.StandardInput.WriteLine(cmd);
+                    string outStr = proc.StandardOutput.ReadToEnd();
+                    proc.Close();
+                }
+            }
+
+        }
+        public static void ExecuteNotWait(string cmd)
+        {
+            //调用外部程序导cmd命令行
+            Process p = new Process();
+            p.StartInfo.FileName = "cmd.exe";
+            //// 必须禁用操作系统外壳程序
+            p.StartInfo.UseShellExecute = false;
+            //// 不显示命令行窗口
+            p.StartInfo.CreateNoWindow = true;
+            p.StartInfo.RedirectStandardInput = true;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.Start();
+            p.StandardInput.WriteLine(cmd);
+            //cmd又调用了ociuldr.ex
+            //string output = p.StandardOutput.ReadToEnd(); 这句可以用来获取执行命令的输出结果
+        }
+
         /// <summary>
         /// 异步执行命令
         /// </summary>
