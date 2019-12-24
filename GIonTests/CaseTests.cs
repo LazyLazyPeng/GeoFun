@@ -48,5 +48,24 @@ namespace GIon.Tests
             case1.GetStationDOY();
             Assert.IsFalse(case1.CheckDOY());
         }
+
+        [TestMethod()]
+        public void DownloadTest()
+        {
+            Case case1 = new Case(@"C:\Users\Administrator\Desktop\新建文件夹");
+            case1.SearchObsFiles();
+            case1.GetStationDOY();
+            case1.Download();
+        }
+
+        [TestMethod()]
+        public void ReadFilesTest()
+        {
+            Case case1 = new Case(@"C:\Users\Administrator\Desktop\新建文件夹");
+            case1.SearchObsFiles();
+            case1.GetStationDOY();
+            case1.Download();
+            case1.ReadFiles();
+        }
     }
 }

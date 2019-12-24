@@ -23,7 +23,7 @@ namespace GeoFun.Sys
                 //// 程序名称
                 proc.StartInfo.FileName = "cmd.exe";
                 //// 程序参数 /C 表示执行完后立即退出
-                proc.StartInfo.Arguments = "/C "+cmd;
+                //proc.StartInfo.Arguments = "/C ";
                 //// 必须禁用操作系统外壳程序
                 proc.StartInfo.UseShellExecute = false;
                 //// 不显示命令行窗口
@@ -37,7 +37,7 @@ namespace GeoFun.Sys
 
                 if (proc.Start())
                 {
-                    //proc.StandardInput.WriteLine(cmd);
+                    proc.StandardInput.WriteLine(cmd);
                     string outStr = proc.StandardOutput.ReadToEnd();
                     proc.Close();
                 }

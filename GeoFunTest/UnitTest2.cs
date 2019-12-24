@@ -28,6 +28,14 @@ namespace GeoFunTest
         }
 
         [TestMethod]
+        public void TestMethod2()
+        {
+            GPST time = new GPST(2019, 365);
+            Assert.IsTrue(time.Week.Weeks ==2086);
+            Assert.IsTrue(time.Week.DayOfWeek ==2);
+        }
+
+        [TestMethod]
         public void TestSP3File()
         {
             SP3File sp3 = new SP3File(@"E:\Data\Typhoon\201307_Soulik\cod17484.sp3");
