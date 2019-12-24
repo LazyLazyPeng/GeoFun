@@ -12,10 +12,165 @@ namespace GeoFun.GNSS.Net
 {
     public class Downloader
     {
+        /// <summary>
+        /// ftp匿名登陆用户名(通用)
+        /// </summary>
         public static string ANONY_USER = "anonymous";
+        /// <summary>
+        /// ftp匿名登陆密码(通用)
+        /// </summary>
         public static string ANONY_PSSD = "landwill@163.com";
 
-        public static bool DownloadSp3(int week, int day, string outPath = "temp", string center = "IGS")
+        public static bool DownloadSp3DOY(int year,int doy, string outPath = "temp", string center = "IGS",bool overwrite = false)
+        {
+            GPST time = new GPST(year, doy);
+            int week = time.Week.Weeks;
+            int day = time.Week.DayOfWeek;
+
+            string productName = center + "_EPH";
+
+            // ftp全路径
+            string remoteFullPath;
+            if (!Common.URL.TryGetValue(productName, out remoteFullPath)) return false;
+            remoteFullPath = remoteFullPath.Replace("%W", "{0}").Replace("%D", "{1}");
+            remoteFullPath = string.Format(remoteFullPath, week, day);
+
+            // ftp主机名和相对路径
+            string host = UrlHelper.GetHost(remoteFullPath);
+            string remoteRelPath = UrlHelper.GetRelPath(remoteFullPath);
+            if (string.IsNullOrWhiteSpace(remoteRelPath)) return false;
+
+            /// 本地路径
+            string name = UrlHelper.GetFileName(remoteFullPath);//string.Format("{0}{1}{2}.sp3.Z", center.ToLower(), week, day);
+            string localPathZ = Path.Combine(Path.GetFullPath(outPath), name);
+            string localPath = localPathZ.Substring(0, localPathZ.Length - 2);
+            if (File.Exists(localPath) && !overwrite) return true;
+
+            // 本地缓存路径
+            string localTempPath = Path.Combine(Common.TEMP_DIR, "weekly", week.ToString(), name);
+
+            string cmd = "";
+            CMDHelper cmdH = new CMDHelper();
+            if (!File.Exists(localTempPath))
+            {
+                cmd = string.Format("\"{0}\\wget.exe\" -P\"{1}\" \"{2}\" --ftp-user={3} --ftp-password={4} &exit", AppDomain.CurrentDomain.BaseDirectory, Path.GetDirectoryName(localTempPath), remoteFullPath, ANONY_USER, ANONY_PSSD); ;
+                cmdH = new CMDHelper();
+                cmdH.Execute(cmd);
+            }
+            if (!File.Exists(localTempPath)) return false;
+
+            try
+            {
+                File.Copy(localTempPath, localPathZ, true);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("无法复制到路径:" + localPathZ, ex);
+            }
+            if (!File.Exists(localPathZ))
+            {
+                throw new Exception("无法复制到路径:" + localPathZ + "!原因未知");
+            }
+
+            // 解压文件
+            cmd = string.Format("\"{0}\\7z.exe\" x \"{1}\" -y -o\"{2}\" &exit", AppDomain.CurrentDomain.BaseDirectory, localPathZ, Path.GetDirectoryName(localPathZ));
+            CMDHelper.ExecuteThenWait(cmd);
+
+            if (!File.Exists(localPath))
+            {
+                throw new Exception("解压失败,路径为:" + localPathZ);
+            }
+
+            try
+            {
+                File.Delete(localPathZ);
+            }
+            catch
+            { }
+            return true;
+
+        }
+        public static bool DownloadClkDOY(int year, int doy, string outPath = "temp", string center = "IGS",bool overwrite = false)
+        {
+            GPST time = new GPST(year, doy);
+            int week = time.Week.Weeks;
+            int day = time.Week.DayOfWeek;
+
+            string productName = center + "_CLK";
+
+            // ftp全路径
+            string remoteFullPath;
+            if (!Common.URL.TryGetValue(productName, out remoteFullPath)) return false;
+            remoteFullPath = remoteFullPath.Replace("%W", "{0}").Replace("%D", "{1}");
+            remoteFullPath = string.Format(remoteFullPath, week, day);
+
+            // ftp主机名和相对路径
+            string host = UrlHelper.GetHost(remoteFullPath);
+            string remoteRelPath = UrlHelper.GetRelPath(remoteFullPath);
+            if (string.IsNullOrWhiteSpace(remoteRelPath)) return false;
+
+            /// 本地路径
+            string name = string.Format("{0}{1}{2}.clk.Z", center.ToLower(), week, day);
+            string localPathZ = Path.Combine(Path.GetFullPath(outPath), name);
+            string localPath = localPathZ.Substring(0, localPathZ.Length - 2);
+            if (File.Exists(localPath) && !overwrite) return true;
+
+            // 本地缓存路径
+            string cmd = "";
+            CMDHelper cmdH = new CMDHelper();
+            string localTempPath = Path.Combine(Common.TEMP_DIR, "weekly", week.ToString(), name);
+
+            if (!File.Exists(localTempPath))
+            {
+                //FtpClient client = new FtpClient(host, ANONY_USER, ANONY_PSSD);
+                //client.Connect();
+
+                //try
+                //{
+                //    client.DownloadFile(localTempPath, remoteRelPath);
+                //}
+                //catch
+                //{
+                //    return false;
+                //}
+                cmd = string.Format("\"{0}\\wget.exe\" -P\"{1}\" \"{2}\" --ftp-user={3} --ftp-password={4} &exit", AppDomain.CurrentDomain.BaseDirectory, Path.GetDirectoryName(localTempPath), remoteFullPath, ANONY_USER, ANONY_PSSD); ;
+                cmdH.Execute(cmd);
+            }
+            if (!File.Exists(localTempPath)) return false;
+
+            try
+            {
+                File.Copy(localTempPath, localPathZ, true);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("无法复制到路径:" + localPathZ, ex);
+            }
+            if (!File.Exists(localPathZ))
+            {
+                throw new Exception("无法复制到路径:" + localPathZ + "!原因未知");
+            }
+
+            // 解压文件
+            cmd = string.Format("\"{0}\\7z.exe\" x \"{1}\" -y -o\"{2}\" &exit", AppDomain.CurrentDomain.BaseDirectory, localPathZ, Path.GetDirectoryName(localPathZ));
+            cmdH.Execute(cmd);
+
+            if (!File.Exists(localPath))
+            {
+                throw new Exception("解压失败,路径为:" + localPathZ);
+            }
+
+            try
+            {
+                File.Delete(localPathZ);
+            }
+            catch
+            { }
+
+            return true;
+        }
+
+        public static bool DownloadSp3(int week, int day, string outPath = "temp", string center = "IGS",bool overwrite = false)
         {
             string productName = center + "_EPH";
 
@@ -34,6 +189,7 @@ namespace GeoFun.GNSS.Net
             string name = UrlHelper.GetFileName(remoteFullPath);//string.Format("{0}{1}{2}.sp3.Z", center.ToLower(), week, day);
             string localPathZ = Path.Combine(Path.GetFullPath(outPath), name);
             string localPath = localPathZ.Substring(0, localPathZ.Length - 2);
+            if (File.Exists(localPath) && !overwrite) return true;
 
             // 本地缓存路径
             string localTempPath = Path.Combine(Common.TEMP_DIR, "weekly", week.ToString(), name);
@@ -73,7 +229,7 @@ namespace GeoFun.GNSS.Net
             }
 
             // 解压文件
-            cmd = string.Format("\"{0}7z.exe\" x \"{1}\" -y -o\"{2}\" &exit", AppDomain.CurrentDomain.BaseDirectory, localPathZ, Path.GetDirectoryName(localPathZ));
+            cmd = string.Format("\"{0}\\7z.exe\" x \"{1}\" -y -o\"{2}\" &exit", AppDomain.CurrentDomain.BaseDirectory, localPathZ, Path.GetDirectoryName(localPathZ));
             cmdH.Execute(cmd);
 
             if (!File.Exists(localPath))
@@ -89,8 +245,7 @@ namespace GeoFun.GNSS.Net
             { }
             return true;
         }
-
-        public static bool DownloadClk(int week, int day, string outPath = "temp", string center = "IGS")
+        public static bool DownloadClk(int week, int day, string outPath = "temp", string center = "IGS",bool overwrite = false)
         {
             string productName = center + "_CLK";
 
@@ -109,6 +264,7 @@ namespace GeoFun.GNSS.Net
             string name = string.Format("{0}{1}{2}.clk.Z", center.ToLower(), week, day);
             string localPathZ = Path.Combine(Path.GetFullPath(outPath), name);
             string localPath = localPathZ.Substring(0, localPathZ.Length - 2);
+            if (File.Exists(localPath) && !overwrite) return true;
 
             // 本地缓存路径
             string cmd = "";
@@ -147,7 +303,7 @@ namespace GeoFun.GNSS.Net
             }
 
             // 解压文件
-            cmd = string.Format("\"{0}7z.exe\" x \"{1}\" -y -o\"{2}\" &exit", AppDomain.CurrentDomain.BaseDirectory, localPathZ, Path.GetDirectoryName(localPathZ));
+            cmd = string.Format("\"{0}\\7z.exe\" x \"{1}\" -y -o\"{2}\" &exit", AppDomain.CurrentDomain.BaseDirectory, localPathZ, Path.GetDirectoryName(localPathZ));
             cmdH.Execute(cmd);
 
             if (!File.Exists(localPath))
@@ -235,7 +391,7 @@ namespace GeoFun.GNSS.Net
             }
 
             // 解压文件
-            cmd = string.Format("\"{0}7z.exe\" x \"{1}\" -y -o\"{2}\" &exit", AppDomain.CurrentDomain.BaseDirectory, localPathZ, Path.GetDirectoryName(localPathZ));
+            cmd = string.Format("\"{0}\\7z.exe\" x \"{1}\" -y -o\"{2}\" &exit", AppDomain.CurrentDomain.BaseDirectory, localPathZ, Path.GetDirectoryName(localPathZ));
             cmdH.Execute(cmd);
 
             if (!File.Exists(localPath))
@@ -251,7 +407,6 @@ namespace GeoFun.GNSS.Net
             { }
             return true;
         }
-
         public static bool DownloadO(int year,int doy,string station, string outPath = "temp",string center="IGS")
         {
             int year2 = 0;
@@ -330,7 +485,7 @@ namespace GeoFun.GNSS.Net
                 throw new Exception("解压失败,路径为:" + localPathZ);
             }
 
-            cmd = string.Format("\"{0}crx2rnx.exe\" \"{1}\" &exit",AppDomain.CurrentDomain.BaseDirectory,localPath);
+            cmd = string.Format("\"{0}\\crx2rnx.exe\" \"{1}\" &exit",AppDomain.CurrentDomain.BaseDirectory,localPath);
             cmdH.Execute(cmd);
 
             try
@@ -342,7 +497,7 @@ namespace GeoFun.GNSS.Net
             return true;
         }
 
-        public static bool DownloadDCB(int year, int month, string code = "P1C1", string outPath = "temp")
+        public static bool DownloadDCB(int year, int month, string code = "P1C1", string outPath = "temp",bool overwrite = false)
         {
             int year2 = 0;
             int year4 = 0;
@@ -381,6 +536,7 @@ namespace GeoFun.GNSS.Net
             string name = string.Format("{0}{1,2:00}{2,2:00}.DCB.Z", code.ToUpper(), year2, month);
             string localPathZ = Path.Combine(Path.GetFullPath(outPath), name);
             string localPath = localPathZ.Substring(0, localPathZ.Length - 2);
+            if (File.Exists(localPath) && !overwrite) return true;
 
             // 本地缓存路径
             string localTempPath = Path.Combine(Common.TEMP_DIR, "dcb", name);
@@ -404,7 +560,7 @@ namespace GeoFun.GNSS.Net
             }
 
             // 解压文件
-            cmd = string.Format("\"{0}7z.exe\" x \"{1}\" -y -o\"{2}\" &exit", AppDomain.CurrentDomain.BaseDirectory, localPathZ, Path.GetDirectoryName(localPathZ));
+            cmd = string.Format("\"{0}\\7z.exe\" x \"{1}\" -y -o\"{2}\" &exit", AppDomain.CurrentDomain.BaseDirectory, localPathZ, Path.GetDirectoryName(localPathZ));
             cmdH.Execute(cmd);
 
             if (!File.Exists(localPath))
@@ -420,7 +576,6 @@ namespace GeoFun.GNSS.Net
             { }
             return true;
         }
-
         public static bool DownloadI(int year, int doy, string outPath = "temp", string center = "IGS")
         {
             int year2 = 0;
@@ -491,7 +646,7 @@ namespace GeoFun.GNSS.Net
             }
 
             // 解压文件
-            cmd = string.Format("\"{0}7z.exe\" x \"{1}\" -y -o\"{2}\" &exit", AppDomain.CurrentDomain.BaseDirectory, localPathZ, Path.GetDirectoryName(localPathZ));
+            cmd = string.Format("\"{0}\\7z.exe\" x \"{1}\" -y -o\"{2}\" &exit", AppDomain.CurrentDomain.BaseDirectory, localPathZ, Path.GetDirectoryName(localPathZ));
             cmdH.Execute(cmd);
 
             if (!File.Exists(localPath))

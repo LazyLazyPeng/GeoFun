@@ -7,16 +7,33 @@ using System.Threading.Tasks;
 
 using GeoFun.Sys;
 using GeoFun.GNSS;
+using GeoFun.GNSS.Net;
 using System.Text.RegularExpressions;
 
 namespace GIon
 {
     public class Case
     {
+        /// <summary>
+        /// 观测值文件夹
+        /// </summary>
         private string obsFolder { get; set; } = "";
+        /// <summary>
+        /// 结果输出文件夹
+        /// </summary>
         private string resFolder { get; set; } = "";
+        /// <summary>
+        /// 临时文件夹
+        /// </summary>
         private string tmpFolder { get; set; } = "";
+        /// <summary>
+        /// 星历/轨道/钟差文件夹
+        /// </summary>
         private string orbFolder { get; set; } = "";
+        /// <summary>
+        /// 各种表文件
+        /// </summary>
+        private string tabFolder { get; set; } = "";
 
         public List<string> StationNames { get; set; } = new List<string>();
         public Dictionary<string, List<DOY>> DOYs { get; set; } = new Dictionary<string, List<DOY>>();
@@ -24,7 +41,7 @@ namespace GIon
         /// <summary>
         /// 本次解算设置
         /// </summary>
-        public Options Option { get; set; } = new Options();
+        public GeoFun.GNSS.Options Option { get; set; } = new GeoFun.GNSS.Options();
 
         /// <summary>
         /// 任务路径(文件夹)
@@ -55,10 +72,16 @@ namespace GIon
                   1.2  转换rinex版本(调用gfzrnx程序)
             */
 
+            SearchObsFiles();
+            CheckDOY();
+            Download();
+
             /** 2.读取数据
              *    2.1 读观测文件
              *    2.2 读星历、钟差、dcb
              */
+
+            ReadFiles();
 
             /** 3.误差改正、粗差剔除
                   3.1 粗差探测
@@ -87,6 +110,9 @@ namespace GIon
             resFolder = System.IO.Path.Combine(Path, "out");
             tmpFolder = System.IO.Path.Combine(Path, "tmp");
             orbFolder = System.IO.Path.Combine(Path, "orb");
+            tabFolder = System.IO.Path.Combine(Path, "tab");
+
+            CreateFolders();
         }
 
         /// <summary>
@@ -110,6 +136,18 @@ namespace GIon
             if (!CreateFolder(tmpFolder))
             {
                 Message.Error("创建文件夹失败:" + tmpFolder);
+                return false;
+            }
+
+            if (!CreateFolder(orbFolder))
+            {
+                Message.Error("创建文件夹失败:" + orbFolder);
+                return false;
+            }
+
+            if (!CreateFolder(orbFolder))
+            {
+                Message.Error("创建文件夹失败:" + orbFolder);
                 return false;
             }
 
@@ -281,14 +319,75 @@ namespace GIon
 
             return flag;
         }
-
         /// <summary>
         /// 从网上下载必须的数据
         /// </summary>
         /// <returns></returns>
         public bool Download()
         {
+            // 获取数据的起始和结束时间
+            DOY start = null;
+            DOY end = null;
+            foreach (var station in DOYs.Keys)
+            {
+                DOY min = DOYs[station].Min();
+                DOY max = DOYs[station].Max();
+                if (start is null)
+                {
+                    start = min;
+                    end = max;
+                }
+                else
+                {
+                    if (min < start) start = min;
+                    if (max > end) end = max;
+                }
+            }
+
+            // 前一天的星历
+            start.AddDays(-1);
+            // 后一天的星历
+            end.AddDays(1);
+
+            while (start <= end)
+            {
+                Downloader.DownloadSp3DOY(start.Year, start.Day,orbFolder);
+                Downloader.DownloadClk(start.Year, start.Day,orbFolder);
+                Downloader.DownloadI(start.Year, start.Day,orbFolder);
+
+                start.AddDays(1);
+            }
+
             return true;
         }
+
+        public void ReadFiles()
+        {
+            ReadObsFiles();
+            ReadOrbFiles();
+            ReadDCBFiles();
+        }
+
+        /// <summary>
+        /// 读取观测值
+        /// </summary>
+        public void ReadObsFiles() 
+        {
+            foreach(var station in DOYs.Keys)
+            {
+                OStation oSta = new OStation(station);
+                oSta.ReadAllObs(obsFolder);
+                oSta.SortObs();
+                Stations.Add(oSta);
+            }
+        }
+        /// <summary>
+        /// 读取dcb文件
+        /// </summary>
+        public void ReadDCBFiles() { }
+        /// <summary>
+        /// 读取星历
+        /// </summary>
+        public void ReadOrbFiles() { }
     }
 }

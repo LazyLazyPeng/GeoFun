@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace GeoFun.GNSS
 {
-    public class OFile:IComparable<OFile>
+    public class OFile : IComparable<OFile>
     {
         /// <summary>
         /// 观测时间,年
@@ -139,7 +139,19 @@ namespace GeoFun.GNSS
                     case "# / TYPES OF OBSERV":
                         Header.obsTypeNum = Convert.ToInt32(line.Substring(0, 6).Trim());
                         Header.obsTypeList = new List<string>();
-                        for (int i = 0; i < Header.obsTypeNum; i++)
+
+                        int obsTypeNum = Header.obsTypeNum;
+                        while (obsTypeNum > 9)
+                        {
+                            obsTypeNum -= 9;
+                            for (int i = 0; i < 9; i++)
+                            {
+                                Header.obsTypeList.Add(line.Substring(6 + 6 * i, 6).Trim());
+                            }
+                            line = sr.ReadLine();
+                        }
+
+                        for (int i = 0; i < obsTypeNum; i++)
                         {
                             Header.obsTypeList.Add(line.Substring(6 + 6 * i, 6).Trim());
                         }
@@ -198,36 +210,24 @@ namespace GeoFun.GNSS
                     //// 观测到的卫星的数量
                     int prnNum = int.Parse(line.Substring(29, 3).Trim());
 
-                    //// 小于12颗卫星，只需读一行
-                    if (prnNum <= 12)
+                    while (prnNum > 12)
                     {
-                        for (int j = 0; j < prnNum; j++)
-                        {
-                            epoch.PRNList.Add(line.Substring(32 + j * 3, 3).Trim().Replace(' ', '0'));
-                        }
-                        if (line.Split('.').Length == 3)
-                        {
-                            epoch.ClockBias = double.Parse(line.Substring(68, 12).Trim());
-                        }
-                    }
-
-                    //// 大于12颗卫星，需要继续读后面的行
-                    else
-                    {
+                        prnNum -= 12;
                         for (int j = 0; j < 12; j++)
                         {
                             epoch.PRNList.Add(line.Substring(32 + j * 3, 3).Trim().Replace(' ', '0'));
                         }
-                        if (line.Split('.').Length == 3)
-                        {
-                            epoch.ClockBias = double.Parse(line.Substring(68, 12).Trim());
-                        }
-
                         line = sr.ReadLine();
-                        for (int j = 0; j < prnNum - 12; j++)
+                        if(line.Contains("G10R20G32G18G13G27R06R05E14E19E11E12"))
                         {
-                            epoch.PRNList.Add(line.Substring(32 + j * 3, 3).Trim().Replace(' ', '0'));
+                            int b = 0;
                         }
+                    }
+
+                    //// 小于12颗卫星，只需读一行
+                    for (int j = 0; j < prnNum; j++)
+                    {
+                        epoch.PRNList.Add(line.Substring(32 + j * 3, 3).Trim().Replace(' ', '0'));
                     }
 
                     for (int satI = 0; satI < epoch.PRNList.Count; satI++)
@@ -250,6 +250,19 @@ namespace GeoFun.GNSS
                         {
                             line = ReadLine(sr);
                             obsNumPerLine = (Header.obsTypeNum - i * 5) > 5 ? 5 : Header.obsTypeNum - i * 5;
+
+                            if (string.IsNullOrWhiteSpace(line.Trim()))
+                            {
+                                for (int j = 0; j < obsNumPerLine; j++)
+                                {
+                                    oSat.SatData[Header.obsTypeList[obsIndex]] = 0;
+                                    oSat.LLI[Header.obsTypeList[obsIndex]] = 0;
+                                    oSat.SignalStrength[Header.obsTypeList[obsIndex]] = 0;
+                                }
+
+                                continue;
+                            }
+
                             for (int j = 0; j < obsNumPerLine; j++)
                             {
                                 obsIndex = i * 5 + j;
@@ -315,7 +328,7 @@ namespace GeoFun.GNSS
         {
             OFile file = new OFile(path);
 
-            if(file.TryRead())
+            if (file.TryRead())
             {
                 return file;
             }

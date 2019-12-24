@@ -45,6 +45,11 @@ namespace GeoFun.GNSS
         /// </summary>
         public Dictionary<string, List<OArc>> Arcs { get; set; } = new Dictionary<string, List<OArc>>();
 
+        public OStation(string name = "")
+        {
+            Name = name;
+        }
+
         /// <summary>
         /// 将读取到的O文件按照时间顺序排列
         /// </summary>
