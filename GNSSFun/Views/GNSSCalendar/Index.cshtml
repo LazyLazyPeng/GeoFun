@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+
+    <meta name="description" content="This is a GNSS calendar which offers links for the files that are necessary for the GNSS processing in the softwares such as gLAB, Leica Geo Office, Trimble Total Control etc." />
+
+    <script src="~/Scripts/enes_skripta.js"></script>
+    <link href="~/Content/stil.css" rel="stylesheet" type="text/css" />
+
+    <meta property="og:title" content="GNSS Calendar and utility" />
+    <meta property="og:image" content="http://www.gnsscalendar.com/fb.png" />
+    <meta property="og:description" content="This is a GNSS calendar which offers links for the files that are necessary for the GNSS processing in the softwares such as gLAB, Leica Geo Office, Trimble Total Control etc." />
+    <meta property="og:url" content="http://www.gnsscalendar.com/" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <title>GNSS Calendar</title>
+</head>
+<body onLoad="window.focus();">
+
+    <div class="glavni_naslov">GNSS CALENDAR AND UTILITY</div>
+
+    <span id="caldata"></span>
+
+    <script Language="JavaScript">new CalendarSet().Show();</script>
+
+    <div class="tabela_gore_detalji" style="margin-top:0px;">
+        <table class="tabela_gore_detalji" style="margin-top:10px; padding-top:0px;">
+            <tr>
+                <td align="center" style="font-size:13px; font-weight:bold;" colspan="2">Additional useful files</td>
+            </tr>
+            <tr>
+                <td class="naslov">IGS08 Antex file</td>
+                <td class="vrijednost"><a target="new" href="http://igscb.jpl.nasa.gov/igscb/station/general/igs08.atx">Download</a></td>
+            </tr>
+            <tr>
+                <td class="naslov">Receiver type file</td>
+                <td class="vrijednost"><a target="new" href="ftp://sideshow.jpl.nasa.gov/pub/gipsy_products/gipsy_params/GPS_Receiver_Types.gz">Download</a></td>
+            </tr>
+            <tr>
+                <td class="naslov">Rinex converter between rinex versions</td>
+                <td class="vrijednost"><a target="new" href="http://ashgps.com/mirror/20130710/Land%20Survey/GNSS%20Solutions/software/3.80.8/Rinex%20Converter-Beta%20release%204.3.0/Setup-beta%204.3.0/RINEX.msi">Download</a></td>
+            </tr>
+            <tr>
+                <td class="naslov">gLAB - Free software for process and analyse GNSS data.</td>
+                <td class="vrijednost"><a target="new" href="http://www.gage.upc.edu/glab-download">Download</a></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="footer">Copyright &copy; </div>
+</body>
+</html>

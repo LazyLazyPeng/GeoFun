@@ -30,12 +30,12 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 概略位置
         /// </summary>
-        public Coor3 ApproxLoc { get; set; } = new Coor3();
+        public Coor3 ApproxPos { get; set; } = new Coor3();
 
         /// <summary>
-        /// 测站的DCB
+        /// 测站法向量
         /// </summary>
-        public double DCB { get; set; } = 0d;
+        public double[] ApproxPosNEU { get; set; } = new double[3];
 
         public List<OFile> OFiles = new List<OFile>();
         public List<OEpoch> Epoches = new List<OEpoch>(2880 * 2);

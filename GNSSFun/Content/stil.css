@@ -1,0 +1,90 @@
+body{
+	background-color:#FFF; font-family: verdana, arial, helvetica; color: #000000;
+	
+	/* IE10 Consumer Preview */ 
+	background-image: -ms-linear-gradient(bottom, #87BACF 0%, #B0D4E4 100%);
+
+	/* Mozilla Firefox */ 
+	background-image: -moz-linear-gradient(bottom, #87BACF 0%, #B0D4E4 100%);
+
+	/* Opera */ 
+	background-image: -o-linear-gradient(bottom, #87BACF 0%, #B0D4E4 100%);
+
+	/* Webkit (Safari/Chrome 10) */ 
+	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #87BACF), color-stop(1, #B0D4E4));
+
+	/* Webkit (Chrome 11+) */ 
+	background-image: -webkit-linear-gradient(bottom, #87BACF 0%, #B0D4E4 100%);
+
+	/* W3C Markup, IE10 Release Preview */ 
+	background-image: linear-gradient(to top, #87BACF 0%, #B0D4E4 100%);
+}
+a:visited {
+	color:#006699
+}
+a:link {
+	color:#006699
+}
+a:hover {
+	color:#DA2127;
+}
+
+.glavni_naslov {
+	font-size:20px; text-align:center; color:#FFF; font-weight:bold;
+}
+
+.datum_nedelja_dan {
+	font-size:15px; text-align:center; font-weight:bold; padding-bottom:20px;
+}
+
+.tabela_gore_detalji {
+	background-color:#FFF; margin-top:20px; margin-bottom:20px; margin-left:auto; margin-right:auto; color:#1B1B1B; padding-top:5px; padding-bottom:5px; font-size:12px;
+}
+	.tabela_gore_detalji .naslov {
+		padding:10px; font-weight:bold;
+	}
+	.tabela_gore_detalji .vrijednost {
+		padding:10px;
+	}
+
+
+.globalna_tabela_kalendar {
+	background-color:#FFF; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px;
+}
+
+.kalendar_naziv_mjeseca {
+	background-color:#DA2127; padding-top:7px; padding-bottom:7px; color:#FFF; font-size:12px; font-weight:bold; text-transform:capitalize; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px;
+} 
+.kalendar_naziv_dana {
+	font-size:11px; font-weight:bold; padding:5px;
+}
+.kalendar_dan_u_mjesecu {
+	text-align:center; 
+}
+	.kalendar_dan_u_mjesecu a:link, .kalendar_dan_u_mjesecu a:visited {
+		color:#000; display:block; padding:4px; text-align:center; text-decoration:none; font-size:10px; background-color:#E0E0E0;
+	}
+	.kalendar_dan_u_mjesecu a:hover {
+		background-color:#FFFFFF;
+	}
+	.kalendar_dan_u_mjesecu_danasnji a:link, .kalendar_dan_u_mjesecu_danasnji a:visited {
+		color:#FFF; display:block; padding:4px; text-align:center; text-decoration:none; font-size:10px; background-color:#DA2127;
+	}
+	
+.izbor_mjeseci_container {
+	width:650px; overflow:auto; margin-left:auto; margin-right:auto; margin-top:20px; font-size:10px;
+}
+	.izbor_mjeseci_container a.mjesec:link, .izbor_mjeseci_container a.mjesec:visited {
+		display:block; float:left; padding-left:5px; padding-right:5px; padding-top:5px; padding-bottom:5px; background-color:#F2F2F2; margin-right:10px; margin-bottom:10px; text-decoration:none; color:#464646; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px;
+	}
+	.izbor_mjeseci_container a.mjesec:hover {
+		background-color:#D3D3D3;
+	}
+	
+	.izbor_mjeseci_container div.mjesec_aktivni {
+		display:block; float:left; padding-left:5px; padding-right:5px; padding-top:5px; padding-bottom:5px; background-color:#DA2127; margin-right:10px; margin-bottom:10px; text-decoration:none; color:#FFF; -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px;
+	}
+	
+.footer {
+	text-align:center; color:#FFF; font-size:13px;
+}

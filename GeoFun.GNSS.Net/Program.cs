@@ -18,8 +18,21 @@ namespace GeoFun.GNSS.Net
             var options = ArgumentParser<Options>.Parse(args);
             Console.WriteLine(options.list);
             Console.WriteLine(options.output);
-            //Downloader.DownloadI(2013, 193, @"E:\Data\Typhoon\Case\201307_Soulik");
-            //Downloader.DownloadSp3(1748, 4, @"E:\Data\Typhoon\Case\201307_Soulik", center: "IGS");
+            Downloader.DownloadI(2017, 233, @"E:\Data\Typhoon\harvey\GNSS");
+            Downloader.DownloadI(2017, 234, @"E:\Data\Typhoon\harvey\GNSS");
+            Downloader.DownloadI(2017, 235, @"E:\Data\Typhoon\harvey\GNSS");
+            Downloader.DownloadI(2017, 236, @"E:\Data\Typhoon\harvey\GNSS");
+            Downloader.DownloadI(2017, 237, @"E:\Data\Typhoon\harvey\GNSS");
+            Downloader.DownloadI(2017, 238, @"E:\Data\Typhoon\harvey\GNSS");
+            Downloader.DownloadI(2017, 239, @"E:\Data\Typhoon\harvey\GNSS");
+
+            Downloader.DownloadSp3(1963,1, @"E:\Data\Typhoon\harvey\GNSS", center: "IGS");
+            Downloader.DownloadSp3(1963,2, @"E:\Data\Typhoon\harvey\GNSS", center: "IGS");
+            Downloader.DownloadSp3(1963,3, @"E:\Data\Typhoon\harvey\GNSS", center: "IGS");
+            Downloader.DownloadSp3(1963,4, @"E:\Data\Typhoon\harvey\GNSS", center: "IGS");
+            Downloader.DownloadSp3(1963,5, @"E:\Data\Typhoon\harvey\GNSS", center: "IGS");
+            Downloader.DownloadSp3(1963,6, @"E:\Data\Typhoon\harvey\GNSS", center: "IGS");
+            Downloader.DownloadSp3(1964,0, @"E:\Data\Typhoon\harvey\GNSS", center: "IGS");
             //Downloader.DownloadSp3(1748, 5, @"E:\Data\Typhoon\Case\201307_Soulik", center: "IGS");
             //Downloader.DownloadSp3(1748, 6, @"E:\Data\Typhoon\Case\201307_Soulik", center: "IGS");
             //Downloader.DownloadClk(1748, 5,center:"IGS");
