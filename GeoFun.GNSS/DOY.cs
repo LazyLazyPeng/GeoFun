@@ -23,28 +23,37 @@ namespace GeoFun.GNSS
             Day = day;
         }
 
-        public void AddDays(int dayNum)
+        public DOY AddDays(int dayNum)
         {
+            int year = Year;
+            int day = Day;
+
             if (dayNum >= 0)
             {
-                Day += dayNum;
-                while (Day > TotalDaysThisYear)
+                day += dayNum;
+                while (day > Time.DayNumOfYear(year))
                 {
-                    Day -= TotalDaysThisYear;
-                    Year++;
+                    day -= Time.DayNumOfYear(year);
+                    year++;
                 }
             }
             else
             {
-                Day += dayNum;
-                while (Day <= 0)
+                day += dayNum;
+                while (day <= 0)
                 {
-                    Day += TotalDaysThisYear;
-                    Year--;
+                    day += Time.DayNumOfYear(year);
+                    year--;
                 }
             }
+
+            return new DOY(year,day);
         }
 
+        public DOY Copy()
+        {
+            return new DOY(Year, Day);
+        }
 
         public static bool operator ==(DOY doy1, DOY doy2)
         {
@@ -87,8 +96,6 @@ namespace GeoFun.GNSS
         {
             return doy1 > doy2 || doy1 == doy2;
         }
-
-
 
         /// <summary>
         /// 与其他日期进行比较，以便排序

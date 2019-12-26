@@ -10,6 +10,12 @@ namespace GeoFun.GNSS
         public static readonly int SecondsPerDay = 24 * 3600;
         public static readonly int SecondsPerWeek = 7 * 3600;
 
+        public static int DayNumOfYear(int year)
+        {
+            if (DateTime.IsLeapYear(year)) return 366;
+            else return 365;
+        }
+
         /// <summary>
         /// Time 类的静态方法，通用时到儒略日
         /// </summary>
@@ -217,7 +223,6 @@ namespace GeoFun.GNSS
                 dayNum[1] = 29;
             }
 
-            int sum = 0;
             int month = 0;
             int dayOfMonth = 0;
             for(int i = 0; i < 12; i++)
@@ -233,6 +238,30 @@ namespace GeoFun.GNSS
             }
 
             return new CommonT(year, month, dayOfMonth, 0, 0, 0m);
+        }
+
+        /// <summary>
+        /// 年积日转换成年月日
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="doy"></param>
+        /// <param name="month"></param>
+        /// <param name="day"></param>
+        public static void DOY2MonthDay(int year,int doy,out int month, out int day)
+        {
+            int[] dayNum = {31,28,31,30,31,30,31,31,30,31,30,31};
+            if(DateTime.IsLeapYear(year))
+            {
+                dayNum[1] = 29;
+            }
+
+            month = 1;
+            day = 1;
+            while(day>dayNum[month])
+            {
+                day -= dayNum[month];
+                month++;
+            }
         }
     }
 }
