@@ -345,17 +345,17 @@ namespace GIon
             }
 
             // 前一天的星历
-            start.AddDays(-1);
+            start = start.AddDays(-1);
             // 后一天的星历
-            end.AddDays(1);
+            end = end.AddDays(1);
 
             while (start <= end)
             {
-                Downloader.DownloadSp3DOY(start.Year, start.Day,orbFolder);
-                Downloader.DownloadClk(start.Year, start.Day,orbFolder);
-                Downloader.DownloadI(start.Year, start.Day,orbFolder);
+                Downloader.DownloadSp3DOY(start.Year, start.Day, orbFolder);
+                Downloader.DownloadClkDOY(start.Year, start.Day, orbFolder);
+                Downloader.DownloadI(start.Year, start.Day, orbFolder);
 
-                start.AddDays(1);
+                start=start.AddDays(1);
             }
 
             return true;
@@ -371,9 +371,9 @@ namespace GIon
         /// <summary>
         /// 读取观测值
         /// </summary>
-        public void ReadObsFiles() 
+        public void ReadObsFiles()
         {
-            foreach(var station in DOYs.Keys)
+            foreach (var station in DOYs.Keys)
             {
                 OStation oSta = new OStation(station);
                 oSta.ReadAllObs(obsFolder);
