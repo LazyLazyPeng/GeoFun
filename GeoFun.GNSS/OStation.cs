@@ -94,6 +94,10 @@ namespace GeoFun.GNSS
             {
                 try
                 {
+                    if(file.Name == "03652480.18o")
+                    {
+                        int a = 0;
+                    }
                     OFile oFile = new OFile(file.FullName);
                     if (oFile.TryRead())
                     {
