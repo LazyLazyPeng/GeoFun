@@ -71,7 +71,6 @@ namespace GIon
                   1.1 下载星历、钟差、dcb、电离层文件
                   1.2  转换rinex版本(调用gfzrnx程序)
             */
-
             SearchObsFiles();
             CheckDOY();
             Download();
@@ -80,7 +79,6 @@ namespace GIon
              *    2.1 读观测文件
              *    2.2 读星历、钟差、dcb
              */
-
             ReadFiles();
 
             /** 3.误差改正、粗差剔除
@@ -88,6 +86,13 @@ namespace GIon
                   3.2 钟跳探测
                   3.3 周跳探测
              */
+             foreach(var station in Stations)
+            {
+                station.DetectArcs();
+                station.DetectOutlier();
+                station.DetectClockJump();
+                station.DetectCycleSlip();
+            }
 
             /** 4.中间量计算
                   4.1 相位平滑伪距观测值
