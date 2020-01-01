@@ -33,7 +33,9 @@ namespace GeoFun.GNSS.Tests
         [TestMethod()]
         public void DetectCycleSlipTest()
         {
-            Assert.Fail();
+            OStation station = new OStation("fjpt");
+            station.ReadAllObs(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "rinex", "30900700.11o"));
+            station.DetectCycleSlip();
         }
 
         [TestMethod()]

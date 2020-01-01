@@ -94,12 +94,17 @@ namespace GIon
                   4.2 高度角，方位角
              */
 
-            /** 5.列法方程并求解
+            /** 5.列法方程并求解DCB
+                  5.1 列出单天解的法方程
+                  5.2 多天解法方程叠加
              */
 
-            /** 6.将结果写出到文件
-                  6.1 将结果写出到txt文本
-                  6,2 分析结果并绘图
+            /** 6.代入DCB，求解TEC
+             */
+
+            /** 7.将结果写出到文件
+                  7.1 将结果写出到txt文本
+                  7,2 分析结果并绘图
              */
 
         }
@@ -235,7 +240,7 @@ namespace GIon
                     !Regex.IsMatch(file.Name, @"^\S{4}\d{3}\S.\d{2}[Oo]")) continue;
 
                 //// 截取测站名、年份、年积日
-                string stationName = file.Name.Substring(0, 4);
+                string stationName = file.Name.Substring(0, 4).ToLower();
                 int doy = int.Parse(file.Name.Substring(4, 3));
                 int year = int.Parse(file.Name.Substring(9, 2));
                 if (year < 50) year += 2000;

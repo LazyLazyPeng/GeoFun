@@ -61,6 +61,19 @@ namespace GeoFun.GNSS
             }
         }
 
+        public static void GetMeas(ref List<OEpoch> epoches, string measName)
+        {
+            if (measName == "P4")
+            {
+                CalP4(ref epoches);
+            }
+            else if (measName == "L4")
+            {
+                CalL4(ref epoches);
+            }
+            else { }
+        }
+
         /// <summary>
         /// 探测粗差
         /// </summary>
@@ -75,8 +88,10 @@ namespace GeoFun.GNSS
         /// <remarks>
         /// GPS周跳探测与修复的算法研究与实现.彭秀英.2004
         /// </remarks>
-        public static void DetectCycleSlip(ref OArc arc)
+        public static bool DetectCycleSlip(ref OArc arc,out int index)
         {
+            index = -1;
+
             // i-1历元宽巷模糊度估计值
             double NW1 = 0d;
             // i历元宽巷模糊度估计值
@@ -148,16 +163,17 @@ namespace GeoFun.GNSS
                     }
 
                     // 有周跳，分割成新弧段
-                    OArc newArc = arc.Split(i + 1);
-                    arc.Station.Arcs[arc.PRN].Add(newArc);
-
-                    break;
+                    //OArc newArc = arc.Split(i + 1);
+                    //arc.Station.Arcs[arc.PRN].Add(newArc);
+                    index = i + 1;
+                    return true;
                 }
 
                 NW1 = NW1 * i / (i + 1) + NW2 / (i + 1);
                 NW2 = NW3;
                 delta1 = delta2;
             }
+            return false;
         }
 
         /// <summary>

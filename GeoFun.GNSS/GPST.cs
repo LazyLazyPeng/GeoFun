@@ -127,6 +127,10 @@ namespace GeoFun.GNSS
             Week = Time.CommonToGPS(CommonT);
         }
 
+        public GPST(GPST gpst):this(gpst.week.Weeks,gpst.week.Seconds)
+        {
+        }
+
         /// <summary>
         /// 解码时间字符串,以空格分割
         /// </summary>
