@@ -229,13 +229,48 @@ namespace GeoFun.GNSS
 
         public void DetectCycleSlip()
         {
+
             foreach (var prn in Arcs.Keys)
             {
-                for (int i = 0; i < Arcs[prn].Count; i++)
+                //// 旧的弧段
+                Stack<OArc> oldArcs = new Stack<OArc>();
+                //// 探测后新的弧段
+                List<OArc> newArcs = new List<OArc>();
+
+                for (int i = Arcs.Count - 0; i >= 0; i--)
                 {
-                    OArc arc = Arcs[prn][i];
-                    Observation.DetectCycleSlip(ref arc);
+                    oldArcs.Push(Arcs[prn][i].Copy());
                 }
+
+                int index = -1;
+                OArc arc = null;
+                while(oldArcs.Count()>0)
+                {
+                    arc = oldArcs.Pop();
+                    if(Observation.DetectCycleSlip(ref arc,out index))
+                    { 
+                        // 根据返回周跳的索引将弧段分为2段
+                        OArc[] arcs = arc.Split(index);
+
+                        // 前一段加入已检测的列表
+                        if (arcs[0].Length >= Options.ARC_MIN_LENGTH)
+                        {
+                            newArcs.Add(arcs[0]);
+                        }
+
+                        // 后一段加入未检测列表
+                        if(arcs[1].Length>=Options.ARC_MIN_LENGTH)
+                        {
+                            oldArcs.Push(arcs[1]);
+                        }
+                    }
+                    else
+                    {
+                        newArcs.Add(arc);
+                    }
+                }
+
+                Arcs[prn] = newArcs;
             }
         }
 
