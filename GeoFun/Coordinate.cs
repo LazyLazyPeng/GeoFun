@@ -173,6 +173,26 @@ namespace GeoFun
             }
         }
 
+        public static List<BLH> XYZ2BLH(List<XYZ> xyzList,double a, double f)
+        {
+            if (xyzList is null) return null;
+            List<BLH> blhList = new List<BLH>(xyzList.Count);
+
+            double b = 0;double l = 0; double h = 0;
+            foreach(var xyz in xyzList)
+            {
+                XYZ2BLH(xyz.X, xyz.Y, xyz.Z, out b, out l, out h,a,f);
+
+                BLH blh = new BLH();
+                blh.B = b;
+                blh.L = l;
+                blh.H = h;
+                blhList.Add(blh);
+            }
+
+            return blhList;
+        }
+
         public static void CalIPP(double xSat, double ySat, double zSat,
             double xRec, double yRec, double zRec,
             out double x, out double y, out double z,

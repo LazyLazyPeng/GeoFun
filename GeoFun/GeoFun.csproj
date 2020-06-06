@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="Angle.cs" />
     <Compile Include="ArrayHelper.cs" />
+    <Compile Include="BLH.cs" />
     <Compile Include="ByteHelper.cs" />
     <Compile Include="Coor2.cs" />
     <Compile Include="Coor3.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="CoorSystemPara.cs" />
     <Compile Include="DoubleHelper.cs" />
     <Compile Include="Ellipsoid.cs" />
+    <Compile Include="ENU.cs" />
     <Compile Include="enum2DAxis.cs" />
     <Compile Include="enum2DOrientation.cs" />
     <Compile Include="enumAngleFormat.cs" />
@@ -94,6 +96,7 @@
     <Compile Include="Swaper.cs" />
     <Compile Include="Sys\CMDHelper.cs" />
     <Compile Include="Trans.cs" />
+    <Compile Include="XYZ.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
