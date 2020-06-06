@@ -75,6 +75,7 @@
     <Compile Include="OStation.cs" />
     <Compile Include="PRNCode.cs" />
     <Compile Include="program.cs" />
+    <Compile Include="Satellite.cs" />
     <Compile Include="Smoother.cs" />
     <Compile Include="SP3Epoch.cs" />
     <Compile Include="SP3File.cs" />

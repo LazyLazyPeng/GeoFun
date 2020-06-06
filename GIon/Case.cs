@@ -34,6 +34,10 @@ namespace GIon
         /// 各种表文件
         /// </summary>
         private string tabFolder { get; set; } = "";
+        /// <summary>
+        /// 日志文件夹
+        /// </summary>
+        private string logFolder { get; set; } = "";
 
         public List<string> StationNames { get; set; } = new List<string>();
         public Dictionary<string, List<DOY>> DOYs { get; set; } = new Dictionary<string, List<DOY>>();
