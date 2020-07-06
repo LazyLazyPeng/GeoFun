@@ -359,13 +359,13 @@ static serial_t *openserial(const char *path, int mode, char *msg)
     
     if (!(serial=(serial_t *)calloc(1,sizeof(serial_t)))) return NULL;
     
-    if ((p=strchr(path,':'))) {
+    if ((p=(char *)strchr(path,':'))) {
         strncpy(port,path,p-path); port[p-path]='\0';
         sscanf(p,":%d:%d:%c:%d:%s",&brate,&bsize,&parity,&stopb,fctr);
     }
     else strcpy(port,path);
     
-    if ((p=strchr(path,'#'))) {
+    if ((p=(char *)strchr(path,'#'))) {
         sscanf(p,"#%d",&tcp_port);
     }
     for (i=0;i<13;i++) if (br[i]==brate) break;
@@ -581,7 +581,7 @@ static int openfile_(file_t *file, gtime_t time, char *msg)
     if ((file->mode&STR_MODE_W)&&!(file->mode&STR_MODE_R)) {
         createdir(file->openpath);
     }
-    if (file->mode&STR_MODE_R) rw="rb"; else rw="wb";
+    if (file->mode&STR_MODE_R) rw=(char *)"rb"; else rw=(char *)"wb";
     
     if (!(file->fp=fopen(file->openpath,rw))) {
         sprintf(msg,"file open error: %s",file->openpath);
@@ -2350,7 +2350,7 @@ static void *ftpthread(void *arg)
     FILE *fp;
     gtime_t time;
     char remote[1024],local[1024],tmpfile[1024],errfile[1024],*p;
-    char cmd[2048],env[1024]="",opt[1024],*proxyopt="",*proto;
+    char cmd[2048],env[1024]="",opt[1024],*proxyopt=(char *)"",*proto;
     int ret;
     
     tracet(3,"ftpthread:\n");

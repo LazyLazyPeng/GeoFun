@@ -10,6 +10,11 @@ namespace GeoFun.GNSS
     /// </summary>
     public sealed class GPST:IComparable<GPST>
     {
+        /// <summary>
+        /// GPS时起始时刻
+        /// </summary>
+        public static readonly DateTime StartTime = new DateTime(1980,1,6);
+
         private Week week;
         /// <summary>
         /// GPS周
@@ -22,8 +27,8 @@ namespace GeoFun.GNSS
             }
             set
             {
-                commonT = Time.GPSToCommon(week);
-                mjd = Time.GPSToMJD(week);
+                commonT = Time.GPS2Common(week);
+                mjd = Time.GPS2MJD(week);
             }
         }
 
@@ -41,8 +46,8 @@ namespace GeoFun.GNSS
             {
                 commonT = value;
 
-                mjd = Time.CommonToMJD(commonT);
-                week = Time.CommonToGPS(commonT);
+                mjd = Time.Common2MJD(commonT);
+                week = Time.Common2GPS(commonT);
             }
         }
 
@@ -92,8 +97,8 @@ namespace GeoFun.GNSS
             {
                 mjd = value;
 
-                week=Time.MJDToGPS(mjd);
-                commonT = Time.MJDToCommon(mjd);
+                week=Time.MJD2GPS(mjd);
+                commonT = Time.MJD2Common(mjd);
             }
         }
 
@@ -101,16 +106,16 @@ namespace GeoFun.GNSS
         {
             CommonT = new CommonT(year, month, day, hour, minute, second);
 
-            MJD = Time.CommonToMJD(commonT);
-            week = Time.MJDToGPS(MJD);
+            MJD = Time.Common2MJD(commonT);
+            week = Time.MJD2GPS(MJD);
         }
 
         public GPST(int year, int month, int day, int hour, int minute, decimal second)
         {
             CommonT = new CommonT(year, month, day, hour, minute, second);
 
-            MJD = Time.CommonToMJD(commonT);
-            week = Time.CommonToGPS(commonT);
+            MJD = Time.Common2MJD(commonT);
+            week = Time.Common2GPS(commonT);
         }
 
         public GPST(int weeks, double seconds)
@@ -122,9 +127,9 @@ namespace GeoFun.GNSS
 
         public GPST(int year, int doy)
         {
-            CommonT = Time.DOYToCommon(year, doy);
-            mjd = Time.CommonToMJD(CommonT);
-            Week = Time.CommonToGPS(CommonT);
+            CommonT = Time.DOY2Common(year, doy);
+            mjd = Time.Common2MJD(CommonT);
+            Week = Time.Common2GPS(CommonT);
         }
 
         public GPST(GPST gpst):this(gpst.week.Weeks,gpst.week.Seconds)

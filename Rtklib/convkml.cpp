@@ -99,7 +99,7 @@ static int savekml(const char *file, const solbuf_t *solbuf, int tcolor,
     double pos[3];
     int i,qcolor[]={0,1,2,5,4,3,0};
     char *color[]={
-        "ffffffff","ff008800","ff00aaff","ff0000ff","ff00ffff","ffff00ff"
+        (char *)"ffffffff",(char *)"ff008800",(char *)"ff00aaff",(char *)"ff0000ff",(char *)"ff00ffff",(char *)"ffff00ff"
     };
     if (!(fp=fopen(file,"w"))) {
         fprintf(stderr,"file open error : %s\n",file);
@@ -178,7 +178,7 @@ extern int convkml(const char *infile, const char *outfile, gtime_t ts,
         return -3;
     }
     if (!*outfile) {
-        if ((p=strrchr(infile,'.'))) {
+        if ((p=(char *)strrchr(infile,'.'))) {
             strncpy(file,infile,p-infile);
             strcpy(file+(p-infile),".kml");
         }

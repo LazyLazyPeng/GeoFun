@@ -14,6 +14,10 @@ namespace GeoFun.GNSS.Net
     {
         static void Main(string[] args)
         {
+            DateTime dt1 = new DateTime(2015, 7, 30);
+            DateTime dt2 = new DateTime(1980, 1, 6);
+            var ts = dt1 - dt2;
+
             var len = Encoding.Default.GetBytes("我1");
             var options = ArgumentParser<Options>.Parse(args);
             Console.WriteLine(options.list);

@@ -20,9 +20,9 @@ namespace GeoFunTest
             Week week1, week2;
 
             dt1 = new CommonT(2002, 1, 1, 3, 59, 60 - 1e-11);
-            week1 = Time.CommonToGPS(dt1);
+            week1 = Time.Common2GPS(dt1);
 
-            dt2 = Time.GPSToCommon(week1);
+            dt2 = Time.GPS2Common(week1);
 
             Assert.IsTrue(dt1 == dt2, "dt1不等于dt2");
         }

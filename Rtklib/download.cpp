@@ -51,7 +51,7 @@ extern int execcmd_to(const char *cmd)
                        NULL,&si,&info)) return -1;
     
     while (WaitForSingleObject(info.hProcess,10)==WAIT_TIMEOUT) {
-        showmsg("");
+        showmsg((char *)"");
     }
     if (!GetExitCodeProcess(info.hProcess,&stat)) stat=-1;
     CloseHandle(info.hProcess);
@@ -119,7 +119,7 @@ static void remot2local(const char *remot, const char *dir, char *local)
 {
     char *p;
     
-    if ((p=strrchr(remot,'/'))) p++; else p=(char *)remot;
+    if ((p=(char *)strrchr(remot,'/'))) p++; else p=(char *)remot;
     
     sprintf(local,"%s%c%s",dir,FILEPATHSEP,p);
 }
@@ -316,7 +316,7 @@ static int get_list(const path_t *path, const char *usr, const char *pwd,
                     const char *proxy)
 {
     FILE *fp;
-    char cmd[4096],env[1024]="",remot[1024],*opt="",*opt2="",*p;
+    char cmd[4096],env[1024]="",remot[1024],*opt=(char *)"",*opt2=(char *)"",*p;
     int stat;
     
 #ifndef WIN32
@@ -330,7 +330,7 @@ static int get_list(const path_t *path, const char *usr, const char *pwd,
     
     if (*proxy) {
         sprintf(env,"set ftp_proxy=http://%s & ",proxy);
-        opt="--proxy=on ";
+        opt=(char *)"--proxy=on ";
     }
     sprintf(cmd,"%s%s %s --ftp-user=%s --ftp-password=%s --glob=off "
             "--passive-ftp --no-remove-listing -N %s-t 1 -T %d%s\n",
@@ -379,7 +379,7 @@ static int exec_down(const path_t *path, char *remot_p, const char *usr,
                      FILE *fp)
 {
     char dir[1024],errfile[1024],tmpfile[1024],cmd[4096],env[1024]="";
-    char opt[1024]="",*opt2="",*p;
+    char opt[1024]="",*opt2=(char *)"",*p;
     int ret,proto;
     
 #ifndef WIN32
@@ -392,19 +392,19 @@ static int exec_down(const path_t *path, char *remot_p, const char *usr,
     else if (!strncmp(path->remot,"http://",7)) proto=1;
     else {
         trace(2,"exec_down: invalid path %s\n",path->remot);
-        showmsg("STAT=X");
+        showmsg((char *)"STAT=X");
         if (fp) fprintf(fp,"%s ERROR (INVALID PATH)\n",path->remot);
         n[1]++;
         return 0;
     }
     /* test local file existence */
     if (!(opts&DLOPT_FORCE)&&test_file(path->local)) {
-        showmsg("STAT=.");
+        showmsg((char *)"STAT=.");
         if (fp) fprintf(fp,"%s in %s\n",path->remot,dir);
         n[2]++;
         return 0;
     }
-    showmsg("STAT=_");
+    showmsg((char *)"STAT=_");
     
     /* get remote file list */
     if ((p=strrchr(path->remot,'/'))&&
@@ -416,14 +416,14 @@ static int exec_down(const path_t *path, char *remot_p, const char *usr,
     }
     /* test file in listing */
     if (proto==0&&!test_list(path)) {
-        showmsg("STAT=x");
+        showmsg((char *)"STAT=x");
         if (fp) fprintf(fp,"%s NO_FILE\n",path->remot);
         n[1]++;
         return 0;
     }
     /* generate local directory recursively */
     if (!mkdir_r(dir)) {
-        showmsg("STAT=X");
+        showmsg((char *)"STAT=X");
         if (fp) fprintf(fp,"%s -> %s ERROR (LOCAL DIR)\n",path->remot,dir);
         n[3]++;
         return 0;
@@ -455,13 +455,13 @@ static int exec_down(const path_t *path, char *remot_p, const char *usr,
     if ((ret=execcmd_to(cmd))) {
         if ((proto==0&&ret==FTP_NOFILE)||
             (proto==1&&ret==HTTP_NOFILE)) {
-            showmsg("STAT=x");
+            showmsg((char *)"STAT=x");
             if (fp) fprintf(fp," NO_FILE\n");
             n[1]++;
         }
         else {
             trace(2,"exec_down: %s error %d\n",proto==0?"ftp":"http",ret);
-            showmsg("STAT=X");
+            showmsg((char *)"STAT=X");
             if (fp) fprintf(fp," ERROR (%d)\n",ret);
             n[3]++;
         }
@@ -483,13 +483,13 @@ static int exec_down(const path_t *path, char *remot_p, const char *usr,
         }
         else {
             trace(2,"exec_down: uncompress error\n");
-            showmsg("STAT=C");
+            showmsg((char *)"STAT=C");
             if (fp) fprintf(fp," ERROR (UNCOMP)\n");
             n[3]++;
             return 0;
         }
     }
-    showmsg("STAT=o");
+    showmsg((char *)"STAT=o");
     if (fp) fprintf(fp," OK\n");
     n[0]++;
     return 0;
@@ -519,7 +519,7 @@ static int test_local(gtime_t ts, gtime_t te, double ti, const char *path,
         
         fprintf(fp," %s",stat==0?"-":(stat==1?"o":"z"));
         
-        showmsg("STAT=%s",stat==0?"x":(stat==1?"o":"z"));
+        showmsg((char *)"STAT=%s",stat==0?"x":(stat==1?"o":"z"));
         
         (*nt)++; if (stat) (*nc)++;
     }
@@ -711,7 +711,7 @@ extern int dl_exec(gtime_t ts, gtime_t te, double ti, int seqnos, int seqnoe,
     int i,n[4]={0};
     unsigned int tick=tickget();
     
-    showmsg("STAT=_");
+    showmsg((char *)"STAT=_");
     
     /* generate download paths  */
     while (timediff(ts,te)<1E-3) {

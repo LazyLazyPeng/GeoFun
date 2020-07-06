@@ -895,7 +895,7 @@ static void set_index(double ver, int sys, const char *opt,
                       char tobs[MAXOBSTYPE][4], sigind_t *ind)
 {
     const char *p;
-    char str[8],*optstr="";
+    char str[8],*optstr=(char *)"";
     double shift;
     int i,j,k,n;
     
@@ -913,13 +913,13 @@ static void set_index(double ver, int sys, const char *opt,
     }
     /* parse phase shift options */
     switch (sys) {
-        case SYS_GPS: optstr="-GL%2s=%lf"; break;
-        case SYS_GLO: optstr="-RL%2s=%lf"; break;
-        case SYS_GAL: optstr="-EL%2s=%lf"; break;
-        case SYS_QZS: optstr="-JL%2s=%lf"; break;
-        case SYS_SBS: optstr="-SL%2s=%lf"; break;
-        case SYS_CMP: optstr="-CL%2s=%lf"; break;
-        case SYS_IRN: optstr="-IL%2s=%lf"; break;
+        case SYS_GPS: optstr=(char *)"-GL%2s=%lf"; break;
+        case SYS_GLO: optstr=(char *)"-RL%2s=%lf"; break;
+        case SYS_GAL: optstr=(char *)"-EL%2s=%lf"; break;
+        case SYS_QZS: optstr=(char *)"-JL%2s=%lf"; break;
+        case SYS_SBS: optstr=(char *)"-SL%2s=%lf"; break;
+        case SYS_CMP: optstr=(char *)"-CL%2s=%lf"; break;
+        case SYS_IRN: optstr=(char *)"-IL%2s=%lf"; break;
     }
     for (p=opt;p&&(p=strchr(p,'-'));p++) {
         if (sscanf(p,optstr,str,&shift)<2) continue;
@@ -1911,24 +1911,24 @@ extern int outrnxobsh(FILE *fp, const rnxopt_t *opt, const nav_t *nav)
     const char *glo_codes[]={"C1C","C1P","C2C","C2P"};
     double ep[6],pos[3]={0},del[3]={0};
     int i,j,k,n,prn[MAXPRNGLO];
-    char date[32],*sys,*tsys="GPS";
+    char date[32],*sys,*tsys=(char *)"GPS";
     
     trace(3,"outrnxobsh:\n");
     
     timestr_rnx(date);
     
     if (opt->rnxver<=2.99) { /* ver.2 */
-        sys=opt->navsys==SYS_GPS?"G (GPS)":"M (MIXED)";
+        sys=opt->navsys==SYS_GPS?(char *)"G (GPS)":(char *)"M (MIXED)";
     }
     else { /* ver.3 */
-        if      (opt->navsys==SYS_GPS) sys="G: GPS";
-        else if (opt->navsys==SYS_GLO) sys="R: GLONASS";
-        else if (opt->navsys==SYS_GAL) sys="E: Galielo";
-        else if (opt->navsys==SYS_QZS) sys="J: QZSS";   /* ver.3.02 */
-        else if (opt->navsys==SYS_CMP) sys="C: BeiDou"; /* ver.3.02 */
-        else if (opt->navsys==SYS_IRN) sys="I: IRNSS";  /* ver.3.03 */
-        else if (opt->navsys==SYS_SBS) sys="S: SBAS Payload";
-        else sys="M: Mixed";
+        if      (opt->navsys==SYS_GPS) sys=(char *)"G: GPS";
+        else if (opt->navsys==SYS_GLO) sys=(char *)"R: GLONASS";
+        else if (opt->navsys==SYS_GAL) sys=(char *)"E: Galielo";
+        else if (opt->navsys==SYS_QZS) sys=(char *)"J: QZSS";   /* ver.3.02 */
+        else if (opt->navsys==SYS_CMP) sys=(char *)"C: BeiDou"; /* ver.3.02 */
+        else if (opt->navsys==SYS_IRN) sys=(char *)"I: IRNSS";  /* ver.3.03 */
+        else if (opt->navsys==SYS_SBS) sys=(char *)"S: SBAS Payload";
+        else sys=(char *)"M: Mixed";
     }
     fprintf(fp,"%9.2f%-11s%-20s%-20s%-20s\n",opt->rnxver,"","OBSERVATION DATA",
             sys,"RINEX VERSION / TYPE");
@@ -2198,14 +2198,14 @@ extern int outrnxnavh(FILE *fp, const rnxopt_t *opt, const nav_t *nav)
                 "N: GPS NAV DATA","","RINEX VERSION / TYPE");
     }
     else { /* ver.3 */
-        if      (opt->navsys==SYS_GPS) sys="G: GPS";
-        else if (opt->navsys==SYS_GLO) sys="R: GLONASS";
-        else if (opt->navsys==SYS_GAL) sys="E: Galileo";
-        else if (opt->navsys==SYS_QZS) sys="J: QZSS";   /* v.3.02 */
-        else if (opt->navsys==SYS_CMP) sys="C: BeiDou"; /* v.3.02 */
-        else if (opt->navsys==SYS_IRN) sys="I: IRNSS";  /* v.3.03 */
-        else if (opt->navsys==SYS_SBS) sys="S: SBAS Payload";
-        else sys="M: Mixed";
+        if      (opt->navsys==SYS_GPS) sys=(char *)"G: GPS";
+        else if (opt->navsys==SYS_GLO) sys=(char *)"R: GLONASS";
+        else if (opt->navsys==SYS_GAL) sys=(char *)"E: Galileo";
+        else if (opt->navsys==SYS_QZS) sys=(char *)"J: QZSS";   /* v.3.02 */
+        else if (opt->navsys==SYS_CMP) sys=(char *)"C: BeiDou"; /* v.3.02 */
+        else if (opt->navsys==SYS_IRN) sys=(char *)"I: IRNSS";  /* v.3.03 */
+        else if (opt->navsys==SYS_SBS) sys=(char *)"S: SBAS Payload";
+        else sys=(char *)"M: Mixed";
         
         fprintf(fp,"%9.2f           %-20s%-20s%-20s\n",opt->rnxver,
                 "N: GNSS NAV DATA",sys,"RINEX VERSION / TYPE");
@@ -2338,18 +2338,18 @@ extern int outrnxnavb(FILE *fp, const rnxopt_t *opt, const eph_t *eph)
         if (!sat2code(eph->sat,code)) return 0;
         fprintf(fp,"%-3s %04.0f %2.0f %2.0f %2.0f %2.0f %2.0f",code,ep[0],ep[1],
                 ep[2],ep[3],ep[4],ep[5]);
-        sep="    ";
+        sep=(char *)"    ";
     }
     else if (sys==SYS_QZS) { /* ver.2 or ver.3.02 QZS */
         if (!sat2code(eph->sat,code)) return 0;
         fprintf(fp,"%-3s %02d %2.0f %2.0f %2.0f %2.0f %4.1f",code,
                 (int)ep[0]%100,ep[1],ep[2],ep[3],ep[4],ep[5]);
-        sep="    ";
+        sep=(char *)"    ";
     }
     else {
         fprintf(fp,"%2d %02d %2.0f %2.0f %2.0f %2.0f %4.1f",prn,
                 (int)ep[0]%100,ep[1],ep[2],ep[3],ep[4],ep[5]);
-        sep="   ";
+        sep=(char *)"   ";
     }
     outnavf(fp,eph->f0     );
     outnavf(fp,eph->f1     );
@@ -2484,13 +2484,13 @@ extern int outrnxgnavb(FILE *fp, const rnxopt_t *opt, const geph_t *geph)
     if (opt->rnxver<=2.99) { /* ver.2 */
         fprintf(fp,"%2d %02d %2.0f %2.0f %2.0f %2.0f %4.1f",prn,(int)ep[0]%100,
                 ep[1],ep[2],ep[3],ep[4],ep[5]);
-        sep="   ";
+        sep=(char *)"   ";
     }
     else { /* ver.3 */
         if (!sat2code(geph->sat,code)) return 0;
         fprintf(fp,"%-3s %04.0f %2.0f %2.0f %2.0f %2.0f %2.0f",code,ep[0],ep[1],
                 ep[2],ep[3],ep[4],ep[5]);
-        sep="    ";
+        sep=(char *)"    ";
     }
     outnavf(fp,-geph->taun     );
     outnavf(fp,geph->gamn      );
@@ -2571,13 +2571,13 @@ extern int outrnxhnavb(FILE *fp, const rnxopt_t *opt, const seph_t *seph)
     if (opt->rnxver<=2.99) { /* ver.2 */
         fprintf(fp,"%2d %02d %2.0f %2.0f %2.0f %2.0f %4.1f",prn-100,
                 (int)ep[0]%100,ep[1],ep[2],ep[3],ep[4],ep[5]);
-        sep="   ";
+        sep=(char *)"   ";
     }
     else { /* ver.3 */
         if (!sat2code(seph->sat,code)) return 0;
         fprintf(fp,"%-3s %04.0f %2.0f %2.0f %2.0f %2.0f %2.0f",code,ep[0],ep[1],
                 ep[2],ep[3],ep[4],ep[5]);
-        sep="    ";
+        sep=(char *)"    ";
     }
     outnavf(fp,seph->af0          );
     outnavf(fp,seph->af1          );
