@@ -197,7 +197,7 @@ static int enum2str(char *s, const char *comment, int val)
     int n;
     
     n=sprintf(str,"%d:",val);
-    if (!(p=strstr(comment,str))) {
+    if (!(p=(char *)strstr(comment,str))) {
         return sprintf(s,"%d",val);
     }
     if (!(q=strchr(p+n,','))&&!(q=strchr(p+n,')'))) {

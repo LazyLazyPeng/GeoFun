@@ -914,7 +914,7 @@ extern void initsolbuf(solbuf_t *solbuf, int cyclic, int nmax)
     }
     if (cyclic) {
         if (nmax<=2) nmax=2;
-        if (!(solbuf->data=malloc(sizeof(sol_t)*nmax))) {
+        if (!(solbuf->data=(sol_t *)malloc(sizeof(sol_t)*nmax))) {
             trace(1,"initsolbuf: memory allocation error\n");
             return;
         }
@@ -963,7 +963,7 @@ static int sort_solstat(solstatbuf_t *statbuf)
     
     if (statbuf->n<=0) return 0;
     
-    if (!(statbuf_data=realloc(statbuf->data,sizeof(solstat_t)*statbuf->n))) {
+    if (!(statbuf_data=(solstat_t *)realloc(statbuf->data,sizeof(solstat_t)*statbuf->n))) {
         trace(1,"sort_solstat: memory allocation error\n");
         free(statbuf->data); statbuf->data=NULL; statbuf->n=statbuf->nmax=0;
         return 0;
@@ -1200,7 +1200,7 @@ extern int outnmea_rmc(unsigned char *buff, const sol_t *sol)
     static double dirp=0.0;
     gtime_t time;
     double ep[6],pos[3],enuv[3],dms1[3],dms2[3],vel,dir,amag=0.0;
-    char *p=(char *)buff,*q,sum,*emag="E";
+    char *p=(char *)buff,*q,sum,*emag=(char *)"E";
     
     trace(3,"outnmea_rmc:\n");
     

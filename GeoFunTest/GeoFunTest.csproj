@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="ObservationTests.cs" />
     <Compile Include="OStationTests.cs" />
+    <Compile Include="TimeTests.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitTest2.cs" />

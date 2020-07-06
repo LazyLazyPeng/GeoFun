@@ -1797,7 +1797,7 @@ static void save_msm_obs(rtcm_t *rtcm, int sys, msm_h_t *h, const double *r,
     const char *sig[32];
     double tt,wl;
     unsigned char code[32];
-    char *msm_type="",*q=NULL;
+    char *msm_type=(char *)"",*q=NULL;
     int i,j,k,type,prn,sat,fn,index=0,freq[32],ind[32];
     
     type=getbitu(rtcm->buff,24,12);

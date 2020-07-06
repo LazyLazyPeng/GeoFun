@@ -143,8 +143,8 @@ extern "C" {
 #define NSATGLO     (MAXPRNGLO-MINPRNGLO+1) /* number of GLONASS satellites */
 #define NSYSGLO     1
 #else
-#define MINPRNGLO   0
-#define MAXPRNGLO   0
+#define MINPRNGLO   32
+#define MAXPRNGLO   32 
 #define NSATGLO     0
 #define NSYSGLO     0
 #endif

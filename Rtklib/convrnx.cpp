@@ -288,7 +288,7 @@ static strfile_t *gen_strfile(int format, const char *opt, gtime_t time)
     
     if (format==STRFMT_RTCM2||format==STRFMT_RTCM3) {
         if (!init_rtcm(&str->rtcm)) {
-            showmsg("init rtcm error");
+            showmsg((char *)"init rtcm error");
             return 0;
         }
         str->rtcm.time=time;
@@ -298,7 +298,7 @@ static strfile_t *gen_strfile(int format, const char *opt, gtime_t time)
     }
     else if (format<=MAXRCVFMT) {
         if (!init_raw(&str->raw,format)) {
-            showmsg("init raw error");
+            showmsg((char *)"init raw error");
             return 0;
         }
         str->raw.time=time;
@@ -308,7 +308,7 @@ static strfile_t *gen_strfile(int format, const char *opt, gtime_t time)
     }
     else if (format==STRFMT_RINEX) {
         if (!init_rnxctr(&str->rnx)) {
-            showmsg("init rnx error");
+            showmsg((char *)"init rnx error");
             return 0;
         }
         str->obs=&str->rnx.obs;
@@ -378,13 +378,13 @@ static int open_strfile(strfile_t *str, const char *file)
     
     if (str->format==STRFMT_RTCM2||str->format==STRFMT_RTCM3) {
         if (!(str->fp=fopen(file,"rb"))) {
-            showmsg("rtcm open error: %s",file);
+            showmsg((char *)"rtcm open error: %s",file);
             return 0;
         }
     }
     else if (str->format<=MAXRCVFMT) {
         if (!(str->fp=fopen(file,"rb"))) {
-            showmsg("log open error: %s",file);
+            showmsg((char *)"log open error: %s",file);
             return 0;
         }
         /* read head to resolve time ambiguity */
@@ -397,12 +397,12 @@ static int open_strfile(strfile_t *str, const char *file)
     }
     else if (str->format==STRFMT_RINEX) {
         if (!(str->fp=fopen(file,"r"))) {
-            showmsg("rinex open error: %s",file);
+            showmsg((char *)"rinex open error: %s",file);
             return 0;
         }
         /* open rinex control */
         if (!open_rnxctr(&str->rnx,str->fp)) {
-            showmsg("no rinex file: %s",file);
+            showmsg((char *)"no rinex file: %s",file);
             fclose(str->fp);
             return 0;
         }
@@ -655,7 +655,7 @@ static int scan_obstype(int format, char **files, int nf, rnxopt_t *opt,
     }
     free_strfile(str);
     
-    showmsg("");
+    showmsg((char *)"");
     
     if (abort) {
         trace(2,"aborted in scan\n");
@@ -842,7 +842,7 @@ static int openfile(FILE **ofp, char *files[], const char *file,
         createdir(path);
         
         if (!(ofp[i]=fopen(path,"w"))) {
-            showmsg("file open error: %s",path);
+            showmsg((char *)"file open error: %s",path);
             for (i--;i>=0;i--) if (ofp[i]) fclose(ofp[i]);
             return 0;
         }
@@ -1228,7 +1228,7 @@ static int convrnx_s(int sess, int format, rnxopt_t *opt, const char *file,
     unsigned char slips[MAXSAT][NFREQ+NEXOBS]={{0}};
     int i,j,nf,type,n[NOUTFILE+1]={0},staid=-1,abort=0;
     char path[1024],*paths[NOUTFILE],s[NOUTFILE][1024];
-    char *epath[MAXEXFILE]={0},*staname=*opt->staid?opt->staid:"0000";
+    char *epath[MAXEXFILE]={0},*staname=*opt->staid?opt->staid:(char *)"0000";
     
     trace(3,"convrnx_s: sess=%d format=%d file=%s ofile=%s %s %s %s %s %s %s %s %s\n",
           sess,format,file,ofile[0],ofile[1],ofile[2],ofile[3],ofile[4],
@@ -1236,7 +1236,7 @@ static int convrnx_s(int sess, int format, rnxopt_t *opt, const char *file,
     
     /* replace keywords in input file */
     if (reppath(file,path,opt->ts,staname,"")<0) {
-        showmsg("no time for input file: %s",file);
+        showmsg((char *)"no time for input file: %s",file);
         return 0;
     }
     /* expand wild-cards in input file */
@@ -1272,7 +1272,7 @@ static int convrnx_s(int sess, int format, rnxopt_t *opt, const char *file,
     for (i=0;i<NOUTFILE;i++) {
         paths[i]=s[i];
         if (reppath(ofile[i],paths[i],time,staname,"")<0) {
-            showmsg("no time for output path: %s",ofile[i]);
+            showmsg((char *)"no time for output path: %s",ofile[i]);
             for (i=0;i<MAXEXFILE;i++) free(epath[i]);
             free_strfile(str);
             return 0;
@@ -1384,7 +1384,7 @@ extern int convrnx(int format, rnxopt_t *opt, const char *file, char **ofile)
           format,file,ofile[0],ofile[1],ofile[2],ofile[3],ofile[4],ofile[5],
           ofile[6],ofile[7],ofile[8]);
     
-    showmsg("");
+    showmsg((char *)"");
     
     if (opt->ts.time==0||opt->te.time==0||opt->tunit<=0.0) {
         
@@ -1411,7 +1411,7 @@ extern int convrnx(int format, rnxopt_t *opt, const char *file, char **ofile)
         }
     }
     else {
-        showmsg("no period");
+        showmsg((char *)"no period");
         return 0;
     }
     /* output start/end time */

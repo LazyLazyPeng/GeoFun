@@ -144,7 +144,7 @@ extern int convgpx(const char *infile, const char *outfile, gtime_t ts,
     trace(3,"convgpx : infile=%s outfile=%s\n",infile,outfile);
     
     if (!*outfile) {
-        if ((p=strrchr(infile,'.'))) {
+        if ((p=(char *)strrchr(infile,'.'))) {
             strncpy(file,infile,p-infile);
             strcpy(file+(p-infile),".gpx");
         }

@@ -82,7 +82,7 @@ static int checkbrk(const char *format, ...)
 {
     va_list arg;
     char buff[1024],*p=buff;
-    if (!*format) return showmsg("");
+    if (!*format) return showmsg((char *)"");
     va_start(arg,format);
     p+=vsprintf(p,format,arg);
     va_end(arg);
@@ -242,7 +242,7 @@ static int inputobs(obsd_t *obs, int solq, const prcopt_t *popt)
     if (0<=iobsu&&iobsu<obss.n) {
         settime((time=obss.data[iobsu].time));
         if (checkbrk("processing : %s Q=%d",time_str(time,0),solq)) {
-            aborts=1; showmsg("aborted"); return -1;
+            aborts=1; showmsg((char *)"aborted"); return -1;
         }
     }
     if (!revs) { /* input forward data */
@@ -614,7 +614,7 @@ static void readpreceph(char **infile, int n, const prcopt_t *prcopt,
     /* allocate sbas ephemeris */
     nav->ns=nav->nsmax=NSATSBS*2;
     if (!(nav->seph=(seph_t *)malloc(sizeof(seph_t)*nav->ns))) {
-         showmsg("error : sbas ephem memory allocation");
+         showmsg((char *)"error : sbas ephem memory allocation");
          trace(1,"error : sbas ephem memory allocation");
          return;
     }
@@ -802,20 +802,20 @@ static int antpos(prcopt_t *opt, int rcvno, const obs_t *obs, const nav_t *nav,
     
     if (postype==POSOPT_SINGLE) { /* average of single position */
         if (!avepos(rr,rcvno,obs,nav,opt)) {
-            showmsg("error : station pos computation");
+            showmsg((char *)"error : station pos computation");
             return 0;
         }
     }
     else if (postype==POSOPT_FILE) { /* read from position file */
         name=stas[rcvno==1?0:1].name;
         if (!getstapos(posfile,name,rr)) {
-            showmsg("error : no position of %s in %s",name,posfile);
+            showmsg((char *)"error : no position of %s in %s",name,posfile);
             return 0;
         }
     }
     else if (postype==POSOPT_RINEX) { /* get from rinex header */
         if (norm(stas[rcvno==1?0:1].pos,3)<=0.0) {
-            showmsg("error : no position in rinex header");
+            showmsg((char *)"error : no position in rinex header");
             trace(1,"no position position in rinex header\n");
             return 0;
         }
@@ -843,20 +843,20 @@ static int openses(const prcopt_t *popt, const solopt_t *sopt,
     
     /* read satellite antenna parameters */
     if (*fopt->satantp&&!(readpcv(fopt->satantp,pcvs))) {
-        showmsg("error : no sat ant pcv in %s",fopt->satantp);
+        showmsg((char *)"error : no sat ant pcv in %s",fopt->satantp);
         trace(1,"sat antenna pcv read error: %s\n",fopt->satantp);
         return 0;
     }
     /* read receiver antenna parameters */
     if (*fopt->rcvantp&&!(readpcv(fopt->rcvantp,pcvr))) {
-        showmsg("error : no rec ant pcv in %s",fopt->rcvantp);
+        showmsg((char *)"error : no rec ant pcv in %s",fopt->rcvantp);
         trace(1,"rec antenna pcv read error: %s\n",fopt->rcvantp);
         return 0;
     }
     /* open geoid data */
     if (sopt->geoid>0&&*fopt->geoid) {
         if (!opengeoid(sopt->geoid,fopt->geoid)) {
-            showmsg("error : no geoid data %s",fopt->geoid);
+            showmsg((char *)"error : no geoid data %s",fopt->geoid);
             trace(2,"no geoid data %s\n",fopt->geoid);
         }
     }
@@ -955,7 +955,7 @@ static int outhead(const char *outfile, char **infile, int n,
         createdir(outfile);
         
         if (!(fp=fopen(outfile,"w"))) {
-            showmsg("error : open output file %s",outfile);
+            showmsg((char *)"error : open output file %s",outfile);
             return 0;
         }
     }
@@ -998,7 +998,7 @@ static int execses(gtime_t ts, gtime_t te, double ti, const prcopt_t *popt,
         tracelevel(sopt->trace);
     }
     /* read ionosphere data file */
-    if (*fopt->iono&&(ext=strrchr(fopt->iono,'.'))) {
+    if (*fopt->iono&&(ext=(char *)strrchr(fopt->iono,'.'))) {
         if (strlen(ext)==4&&(ext[3]=='i'||ext[3]=='I')) {
             reppath(fopt->iono,path,ts,"","");
             readtec(path,&navs,1);
@@ -1009,7 +1009,7 @@ static int execses(gtime_t ts, gtime_t te, double ti, const prcopt_t *popt,
         free(navs.erp.data); navs.erp.data=NULL; navs.erp.n=navs.erp.nmax=0;
         reppath(fopt->eop,path,ts,"","");
         if (!readerp(path,&navs.erp)) {
-            showmsg("error : no erp data %s",path);
+            showmsg((char *)"error : no erp data %s",path);
             trace(2,"no erp data %s\n",path);
         }
     }
@@ -1088,7 +1088,7 @@ static int execses(gtime_t ts, gtime_t te, double ti, const prcopt_t *popt,
                 fclose(fp);
             }
         }
-        else showmsg("error : memory allocation");
+        else showmsg((char *)"error : memory allocation");
         free(solf);
         free(solb);
         free(rbf);
@@ -1269,7 +1269,7 @@ extern int postpos(gtime_t ts, gtime_t te, double ti, double tu,
     
     if (ts.time!=0&&te.time!=0&&tu>=0.0) {
         if (timediff(te,ts)<0.0) {
-            showmsg("error : no period");
+            showmsg((char *)"error : no period");
             closeses(&navs,&pcvss,&pcvsr);
             return 0;
         }

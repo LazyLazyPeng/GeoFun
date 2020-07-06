@@ -241,12 +241,12 @@ const char *formatstrs[32]={    /* stream format strings */
 };
 static char *obscodes[]={       /* observation code strings */
     
-    ""  ,"1C","1P","1W","1Y", "1M","1N","1S","1L","1E", /*  0- 9 */
-    "1A","1B","1X","1Z","2C", "2D","2S","2L","2X","2P", /* 10-19 */
-    "2W","2Y","2M","2N","5I", "5Q","5X","7I","7Q","7X", /* 20-29 */
-    "6A","6B","6C","6X","6Z", "6S","6L","8L","8Q","8X", /* 30-39 */
-    "2I","2Q","6I","6Q","3I", "3Q","3X","1I","1Q","5A", /* 40-49 */
-    "5B","5C","9A","9B","9C", "9X",""  ,""  ,""  ,""    /* 50-59 */
+    (char *)""  ,(char *)"1C",(char *)"1P",(char *)"1W",(char *)"1Y", (char *)"1M",(char *)"1N",(char *)"1S",(char *)"1L",(char *)"1E", /*  0- 9 */
+    (char *)"1A",(char *)"1B",(char *)"1X",(char *)"1Z",(char *)"2C", (char *)"2D",(char *)"2S",(char *)"2L",(char *)"2X",(char *)"2P", /* 10-19 */
+    (char *)"2W",(char *)"2Y",(char *)"2M",(char *)"2N",(char *)"5I", (char *)"5Q",(char *)"5X",(char *)"7I",(char *)"7Q",(char *)"7X", /* 20-29 */
+    (char *)"6A",(char *)"6B",(char *)"6C",(char *)"6X",(char *)"6Z", (char *)"6S",(char *)"6L",(char *)"8L",(char *)"8Q",(char *)"8X", /* 30-39 */
+    (char *)"2I",(char *)"2Q",(char *)"6I",(char *)"6Q",(char *)"3I", (char *)"3Q",(char *)"3X",(char *)"1I",(char *)"1Q",(char *)"5A", /* 40-49 */
+    (char *)"5B",(char *)"5C",(char *)"9A",(char *)"9B",(char *)"9C", (char *)"9X",(char *)""  ,(char *)""  ,(char *)""  ,(char *)""    /* 50-59 */
 };
 static unsigned char obsfreqs[]={
     /* 1:L1/E1, 2:L2/B1, 3:L5/E5a/L3, 4:L6/LEX/B3, 5:E5b/B2, 6:E5(a+b), 7:S */
@@ -598,7 +598,7 @@ extern unsigned char obs2code(const char *obs, int *freq)
 extern char *code2obs(unsigned char code, int *freq)
 {
     if (freq) *freq=0;
-    if (code<=CODE_NONE||MAXCODE<code) return "";
+    if (code<=CODE_NONE||MAXCODE<code) return (char *)"";
     if (freq) *freq=obsfreqs[code];
     return obscodes[code];
 }
@@ -2249,7 +2249,7 @@ extern int readpcv(const char *file, pcvs_t *pcvs)
     
     trace(3,"readpcv: file=%s\n",file);
     
-    if (!(ext=strrchr(file,'.'))) ext="";
+    if (!(ext=(char *)strrchr(file,'.'))) ext=(char *)"";
     
     if (!strcmp(ext,".atx")||!strcmp(ext,".ATX")) {
         stat=readantex(file,pcvs);
@@ -3105,7 +3105,7 @@ extern int expath(const char *path, char *paths[], int nmax)
     
     trace(3,"expath  : path=%s nmax=%d\n",path,nmax);
     
-    if ((p=strrchr(path,'\\'))) {
+    if ((p=(char *)strrchr(path,'\\'))) {
         strncpy(dir,path,p-path+1); dir[p-path+1]='\0';
     }
     if ((h=FindFirstFile((LPCTSTR)path,&file))==INVALID_HANDLE_VALUE) {
@@ -3820,7 +3820,7 @@ extern void csmooth(obs_t *obs, int ns)
 extern int rtk_uncompress(const char *file, char *uncfile)
 {
     int stat=0;
-    char *p,cmd[2048]="",tmpfile[1024]="",buff[1024],*fname,*dir="";
+    char *p,cmd[2048]="",tmpfile[1024]="",buff[1024],*fname,*dir=(char *)"";
     
     trace(3,"rtk_uncompress: file=%s\n",file);
     
@@ -3888,6 +3888,7 @@ extern int rtk_uncompress(const char *file, char *uncfile)
 /* dummy application functions for shared library ----------------------------*/
 #ifdef WIN_DLL
 extern int showmsg(char *format,...) {return 0;}
+extern int showmsg(const char* format, ...) { return 0; }
 extern void settspan(gtime_t ts, gtime_t te) {}
 extern void settime(gtime_t time) {}
 #endif
