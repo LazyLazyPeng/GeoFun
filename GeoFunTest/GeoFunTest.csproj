@@ -51,6 +51,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DownloaderTests.cs" />
     <Compile Include="ObservationTests.cs" />
     <Compile Include="OStationTests.cs" />
     <Compile Include="TimeTests.cs" />
@@ -59,6 +60,10 @@
     <Compile Include="UnitTest2.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GeoFun.GNSS.Net\GeoFun.GNSS.Net.csproj">
+      <Project>{5406F13B-7702-4CCE-A05B-0B00396E7495}</Project>
+      <Name>GeoFun.GNSS.Net</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GeoFun.GNSS\GeoFun.GNSS.csproj">
       <Project>{b8d64a98-4a98-4811-8e01-f9783209aaf0}</Project>
       <Name>GeoFun.GNSS</Name>
@@ -362,6 +367,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Data\sp3\1.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
