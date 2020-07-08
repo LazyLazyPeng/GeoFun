@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GeoFun.MathGeo
+namespace GeoFun.Math
 {
     public class IonoModel
     {

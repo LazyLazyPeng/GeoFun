@@ -3,7 +3,7 @@ using MathNet.Numerics.LinearAlgebra.Double;
 using System;
 using System.Collections.Generic;
 
-namespace GeoFun.MathGeo
+namespace GeoFun.Math
 {
     /// <summary>
     /// 球谐函数模型
@@ -34,7 +34,7 @@ namespace GeoFun.MathGeo
             if (lat is null || lon is null || vtec is null) return null;
 
             //// 检测观测值个数是否满足要求
-            int minCount = Math.Min(Math.Min(lat.Count, lon.Count), vtec.Count);
+            int minCount = System.Math.Min(System.Math.Min(lat.Count, lon.Count), vtec.Count);
             uint paraNum = (degree + 1) * (order + 1) * 2;
             if (minCount == 0) return null;
             if (minCount < paraNum)
@@ -52,9 +52,9 @@ namespace GeoFun.MathGeo
                     int start = n * n;
                     for (int m = 0; m <= n; m++)
                     {
-                        double Pnm = Legendre.lpmv(n, m, Math.PI / 2d - lat[i]);
-                        B[i, start + m * 2] = Pnm * Math.Cos(m * lon[i]);
-                        B[i, start + m * 2 + 1] = Pnm * Math.Sin(m * lat[i]);
+                        double Pnm = Legendre.lpmv(n, m, System.Math.PI / 2d - lat[i]);
+                        B[i, start + m * 2] = Pnm * System.Math.Cos(m * lon[i]);
+                        B[i, start + m * 2 + 1] = Pnm * System.Math.Sin(m * lat[i]);
                     }
                 }
 
@@ -88,9 +88,9 @@ namespace GeoFun.MathGeo
                 int start = n * n;
                 for (int m = 0; m <= n; m++)
                 {
-                    double Pnm = Legendre.lpmv(n, m, Math.PI / 2d - lat);
-                    B[start + m * 2] = Math.Cos(m * lon) * Pnm;
-                    B[start + m * 2] = Math.Cos(m * lon) * Pnm;
+                    double Pnm = Legendre.lpmv(n, m, System.Math.PI / 2d - lat);
+                    B[start + m * 2] = System.Math.Cos(m * lon) * Pnm;
+                    B[start + m * 2] = System.Math.Cos(m * lon) * Pnm;
                 }
             }
 
