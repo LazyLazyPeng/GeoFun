@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DownloaderTests.cs" />
+    <Compile Include="MathTests.cs" />
     <Compile Include="ObservationTests.cs" />
     <Compile Include="OStationTests.cs" />
     <Compile Include="TimeTests.cs" />
@@ -67,6 +68,10 @@
     <ProjectReference Include="..\GeoFun.GNSS\GeoFun.GNSS.csproj">
       <Project>{b8d64a98-4a98-4811-8e01-f9783209aaf0}</Project>
       <Name>GeoFun.GNSS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GeoFun.Math\GeoFun.Math.csproj">
+      <Project>{3D465CB9-2115-4401-A3F2-C7D7A8ABA846}</Project>
+      <Name>GeoFun.Math</Name>
     </ProjectReference>
     <ProjectReference Include="..\GeoFun.Spatial\GeoFun.Spatial.csproj">
       <Project>{d1d72b0e-d8eb-4636-9230-3e1b8d244c3e}</Project>

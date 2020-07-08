@@ -5,7 +5,7 @@ using System.Text;
 
 using GeoFun.GNSS;
 
-namespace GeoFun.MathGeo
+namespace GeoFun.Math
 {
     public class PolynomialIonoModel
     {

@@ -141,7 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="convgpx.cpp" />
+    <ClCompile Include="convgpx.c" />
     <ClCompile Include="convkml.cpp" />
     <ClCompile Include="convrnx.cpp" />
     <ClCompile Include="datum.cpp" />

@@ -18,9 +18,6 @@
     <ClCompile Include="Rtklib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="convgpx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="convkml.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -115,6 +112,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="convgpx.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

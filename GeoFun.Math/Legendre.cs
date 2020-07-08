@@ -5,7 +5,7 @@ using System.Text;
 
 using MathNet.Numerics.Interpolation;
 
-namespace GeoFun.MathGeo
+namespace GeoFun.Math
 {
     public class Legendre
     {
@@ -22,18 +22,18 @@ namespace GeoFun.MathGeo
             double mm = m;
             if (m < 0 || n < 0 || m > nn) return 0;
             else if (m == 0 && n == 0) return 1;
-            else if (m == 1 && n == 0) return Math.Sqrt(3) * Math.Cos(theta);
-            else if (m == 1 && n == 1) return Math.Sqrt(3) * Math.Sin(theta);
+            else if (m == 1 && n == 0) return System.Math.Sqrt(3) * System.Math.Cos(theta);
+            else if (m == 1 && n == 1) return System.Math.Sqrt(3) * System.Math.Sin(theta);
             else if (m == n)
             {
-                double c = Math.Sqrt((2 * mm + 1) / (2 * mm));
-                return c *Math.Sin(theta)* lpmv(n - 1, m - 1, theta);
+                double c = System.Math.Sqrt((2 * mm + 1) / (2 * mm));
+                return c * System.Math.Sin(theta) * lpmv(n - 1, m - 1, theta);
             }
             else
             {
-                double a = Math.Sqrt((2 * nn - 1) * (2 * nn + 1) / (nn - mm) / (nn + mm));
-                double b = Math.Sqrt((2 * nn + 1) * (nn + mm - 1) * (nn - mm - 1) / (nn + mm) / (nn - mm) / (2 * nn - 3));
-                return a * Math.Cos(theta) * lpmv(n - 1, m, theta) - b * lpmv(n - 2, m, theta);
+                double a = System.Math.Sqrt((2 * nn - 1) * (2 * nn + 1) / (nn - mm) / (nn + mm));
+                double b = System.Math.Sqrt((2 * nn + 1) * (nn + mm - 1) * (nn - mm - 1) / (nn + mm) / (nn - mm) / (2 * nn - 3));
+                return a * System.Math.Cos(theta) * lpmv(n - 1, m, theta) - b * lpmv(n - 2, m, theta);
             }
         }
 

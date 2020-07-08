@@ -152,6 +152,8 @@ namespace GeoFun
             B = Math.Atan(tii);
 
             H = Z / Math.Sin(B) - ell.N(B) * (1 - ell.E1);
+
+            if (L < 0) L += 2 * Angle.PI;
         }
 
         public static void XYZ2BLH(List<double> X, List<double> Y, List<double> Z, out List<double> B, out List<double> L, out List<double> H, Ellipsoid ell)
