@@ -55,6 +55,7 @@
     <Compile Include="MathTests.cs" />
     <Compile Include="ObservationTests.cs" />
     <Compile Include="OStationTests.cs" />
+    <Compile Include="SP3FileTests.cs" />
     <Compile Include="TimeTests.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -369,6 +370,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\shp\polylinez.shx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\sp3\igs18554.sp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
