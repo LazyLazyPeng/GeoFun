@@ -195,6 +195,42 @@ namespace GeoFun
             return blhList;
         }
 
+        /// <summary>
+        /// xyz转站心坐标系
+        /// </summary>
+        /// <param name="b">站心纬度(弧度)</param>
+        /// <param name="l">站心经度(弧度)</param>
+        /// <param name="p0">站心坐标(m) xyz</param>
+        /// <param name="p2">待求点的xyz</param>
+        /// <returns></returns>
+        public static double[] ECEF2ENU(double b, double l,double[] p0,double[] p2)
+        {
+            if(p0 is null)
+            {
+                throw new ArgumentNullException("p0");
+            }
+
+            if(p2 is null)
+            {
+                throw new ArgumentNullException("p2");
+            }
+
+            double sinb = Math.Sin(b);
+            double sinl = Math.Sin(l);
+            double cosb = Math.Cos(b);
+            double cosl = Math.Cos(l);
+            double dx = p2[0] - p0[0];
+            double dy = p2[1] - p0[1];
+            double dz = p2[2] - p0[2];
+
+
+            double[] pp = new double[3];
+            pp[0] = -sinb * cosl * dx - sinb * sinl * dy + cosb * dz;
+            pp[1] = -sinl * dx + cosl * dy;
+            pp[2] = cosb * cosl * dx + cosb * sinl * dy + sinb * dz;
+            return pp;
+        }
+
         public static void CalIPP(double xSat, double ySat, double zSat,
             double xRec, double yRec, double zRec,
             out double x, out double y, out double z,
