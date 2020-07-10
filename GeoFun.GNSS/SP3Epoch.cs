@@ -14,5 +14,17 @@ namespace GeoFun.GNSS
         /// 所有卫星的数值
         /// </summary>
         public Dictionary<string, SP3Sat> AllSat { get; set; } = new Dictionary<string, SP3Sat>();
+
+        public SP3Sat this[string prn]
+        {
+            get
+            {
+                return AllSat[prn];
+            }
+            set
+            {
+                AllSat[prn] = value;
+            }
+        }
     }
 }

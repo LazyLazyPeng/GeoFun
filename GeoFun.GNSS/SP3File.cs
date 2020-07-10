@@ -1,6 +1,9 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using MathNet.Numerics;
+
+using GeoFun.Math;
 
 namespace GeoFun.GNSS
 {
@@ -44,10 +47,15 @@ namespace GeoFun.GNSS
             }
         }
 
+        /// <summary>
+        /// 历元间隔(s)，默认900
+        /// </summary>
+        public double Interval { get; set; } = 900d;
+
         ///文件头
         public SP3Header Header;
 
-        public Dictionary<GPST, SP3Epoch> AllEpoch { get; set; } = new Dictionary<GPST, SP3Epoch>();
+        public List<SP3Epoch> AllEpoch { get; set; } = new List<SP3Epoch>(96);
 
         public SP3File(string path = "")
         {
@@ -76,10 +84,10 @@ namespace GeoFun.GNSS
             if (Header is null) Header = new SP3Header();
 
             //// Line1
-            Header.Version = lines[0].Substring(0,2);
+            Header.Version = lines[0].Substring(0, 2);
             Header.P_V_Flag = lines[0][2].ToString();
 
-            Header.StartTime = GPST.Decode(lines[0].Substring(3,23));
+            Header.StartTime = GPST.Decode(lines[0].Substring(3, 23));
 
             Header.EpochNum = Int32.Parse(lines[0].Substring(32, 7).Trim());//读完数据之后会更改此值
             Header.Data_Used = lines[0].Substring(40, 5).Trim();
@@ -103,15 +111,15 @@ namespace GeoFun.GNSS
                 int j = 10;
                 for (j = 10; j < 59; j = j + 3)
                 {
-                    if (lines[2+ii].Substring(j - 1, 3).Trim() != "0")
+                    if (lines[2 + ii].Substring(j - 1, 3).Trim() != "0")
                     {
-                        Header.SatPRN.Add(lines[2+ii].Substring(j - 1, 3).Trim());
+                        Header.SatPRN.Add(lines[2 + ii].Substring(j - 1, 3).Trim());
                     }
                 }
             }
 
             //读取卫星精度，8-12行
-            Header.SatAccuracy = new List<string>(); 
+            Header.SatAccuracy = new List<string>();
             int i = 0;
             for (int ii = 0; ii < 5; ii++)
             {
@@ -120,7 +128,7 @@ namespace GeoFun.GNSS
                 {
                     for (j = 10; j < 59; j = j + 3)
                     {
-                        Header.SatAccuracy.Add(lines[7+ii].Substring(j - 1, 3).Trim());
+                        Header.SatAccuracy.Add(lines[7 + ii].Substring(j - 1, 3).Trim());
                         i = i + 1;
                         if (i >= Header.Num_Sats)
                             break;
@@ -132,11 +140,11 @@ namespace GeoFun.GNSS
             {
                 if (lines[i].StartsWith("EOF")) break;
 
-                if(lines[i].StartsWith("*"))
+                if (lines[i].StartsWith("*"))
                 {
-                    SP3Epoch epoch = DecodeEpoch(lines,ref i);
+                    SP3Epoch epoch = DecodeEpoch(lines, ref i);
 
-                    AllEpoch.Add(epoch.Epoch,epoch);
+                    AllEpoch.Add(epoch);
                 }
             }
 
@@ -149,30 +157,30 @@ namespace GeoFun.GNSS
         /// <param name="lines"></param>
         /// <param name="lineNum"></param>
         /// <returns></returns>
-        public SP3Epoch DecodeEpoch(string[] lines,ref int lineNum)
+        public SP3Epoch DecodeEpoch(string[] lines, ref int lineNum)
         {
             SP3Epoch epoch = new SP3Epoch();
             epoch.Epoch = GPST.Decode(lines[lineNum].Substring(1));
 
             Dictionary<string, SP3Sat> allSat = new Dictionary<string, SP3Sat>();
 
-            int i = lineNum+1;
-            for(; i < lines.Length; i++)
+            int i = lineNum + 1;
+            for (; i < lines.Length; i++)
             {
-                if(lines[i].StartsWith("*"))
+                if (lines[i].StartsWith("*"))
                 {
                     break;
                 }
 
                 SP3Sat sat = DecodeSat(lines[i]);
 
-                epoch.AllSat.Add(sat.Prn,sat);
+                epoch.AllSat.Add(sat.Prn, sat);
             }
             lineNum = i;
 
             return epoch;
         }
-        
+
         /// <summary>
         /// 读取一颗卫星的数据
         /// </summary>
@@ -180,28 +188,106 @@ namespace GeoFun.GNSS
         /// <returns></returns>
         public SP3Sat DecodeSat(string line)
         {
-            SP3Sat sat = new SP3Sat();
+            SP3Sat sat = SP3Sat.New();
 
-            //// 移除多余的空格
+            //// 移除多余的空格,并且按空格分割
             string[] segs = StringHelper.SplitFields(line);
 
             sat.Type = segs[0][0];
             sat.Prn = segs[0].Substring(1);
 
-            sat.X = double.Parse(segs[1])*1e3;
-            sat.Y = double.Parse(segs[2])*1e3;
-            sat.Z = double.Parse(segs[3])*1e3;
+            sat.X = double.Parse(segs[1]) * 1e3;
+            sat.Y = double.Parse(segs[2]) * 1e3;
+            sat.Z = double.Parse(segs[3]) * 1e3;
             sat.C = double.Parse(segs[4]);
 
-            if(segs.Length>=9)
+            if (segs.Length >= 9)
             {
-                sat.XBias = int.Parse(segs[5]);
-                sat.YBias = int.Parse(segs[6]);
-                sat.ZBias = int.Parse(segs[7]);
-                sat.CBias = int.Parse(segs[8]);
+                sat.Std[0] = int.Parse(segs[5]);
+                sat.Std[1] = int.Parse(segs[6]);
+                sat.Std[2] = int.Parse(segs[7]);
+                sat.Std[3] = int.Parse(segs[8]);
             }
 
             return sat;
+        }
+
+        public double[] GetSatPos(GPST t0, string prn)
+        {
+            double[] p = { 0, 0, 0 };
+
+            // 00:00:00之前，无法插值
+            if (t0 - StartTime < 0) return p;
+            // 23:59:30之后，无法插值
+            if (t0 - StartTime > 24 * 3600 - 30) return p;
+
+            // 10阶插值
+            double[] t = new double[10];
+            double[] x = new double[10];
+            double[] y = new double[10];
+            double[] z = new double[10];
+
+            GPST ts = StartTime;
+
+            int index = (int)System.Math.Floor((t0 - ts) / Interval);
+
+            // 刚好落在采样点上
+            if (ts - t0 + Interval * index < 1e-13)
+            {
+                p[0] = AllEpoch[index][prn].X;
+                p[1] = AllEpoch[index][prn].Y;
+                p[2] = AllEpoch[index][prn].Z;
+                return p;
+            }
+            else if (ts - t0 + Interval * index + Interval < 1e-13)
+            {
+                p[0] = AllEpoch[index + 1][prn].X;
+                p[1] = AllEpoch[index + 1][prn].Y;
+                p[2] = AllEpoch[index + 1][prn].Z;
+            }
+
+            // 在开始的几个历元内
+            if (index < 3)
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    x[i] = AllEpoch[i][prn].X;
+                    y[i] = AllEpoch[i][prn].Y;
+                    z[i] = AllEpoch[i][prn].Z;
+
+                    t[i] = AllEpoch[i].Epoch.TotalSeconds;
+                }
+            }
+            // 在结束的几个历元内
+            else if (EpochNum - index < 6)
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    x[i] = AllEpoch[EpochNum - 10 + i][prn].X;
+                    y[i] = AllEpoch[EpochNum - 10 + i][prn].Y;
+                    z[i] = AllEpoch[EpochNum - 10 + i][prn].Z;
+
+                    t[i] = AllEpoch[EpochNum - 10 + i].Epoch.TotalSeconds;
+                }
+            }
+            // 在中间
+            else
+            {
+                for (int i = index - 4; i < index + 6; i++)
+                {
+                    x[i] = AllEpoch[i][prn].X;
+                    y[i] = AllEpoch[i][prn].Y;
+                    z[i] = AllEpoch[i][prn].Z;
+
+                    t[i] = AllEpoch[i].Epoch.TotalSeconds;
+
+                }
+            }
+
+            p[0] = Interp.GetValueLagrange(10, t, x, t0.TotalSeconds);
+            p[1] = Interp.GetValueLagrange(10, t, y, t0.TotalSeconds);
+            p[0] = Interp.GetValueLagrange(10, t, z, t0.TotalSeconds);
+            return p;
         }
     }
 }

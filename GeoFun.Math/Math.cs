@@ -60,6 +60,10 @@ namespace GeoFun.Math
             return System.Math.Atan2(x, y);
         }
 
+        public static double Abs(double d)
+        {
+            return System.Math.Abs(d);
+        }
         // 计算向量点乘
         public static double Dot(double[] a, double[] b)
         {

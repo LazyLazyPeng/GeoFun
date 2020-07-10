@@ -16,11 +16,11 @@ namespace GeoFun.GNSS.Tests
         {
             SP3File s = new SP3File("Data/sp3/igs18554.sp3");
             s.TryRead();
-            foreach(var epo in s.AllEpoch.Values)
+            foreach(var epo in s.AllEpoch)
             {
                 foreach(var prn in epo.AllSat.Keys)
                 {
-                    Console.WriteLine("{0} {1} {2} {3}",prn,epo.AllSat[prn].X,epo.AllSat[prn].Y,epo.AllSat[prn].Z);
+                    Console.WriteLine("{0} {1}", prn,epo.AllSat[prn].X,epo.AllSat[prn].Y,epo.AllSat[prn].Z);
                 }
             }
         }

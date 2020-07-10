@@ -59,10 +59,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GeoFun.GNSS\GeoFun.GNSS.csproj">
-      <Project>{b8d64a98-4a98-4811-8e01-f9783209aaf0}</Project>
-      <Name>GeoFun.GNSS</Name>
-    </ProjectReference>
     <ProjectReference Include="..\GeoFun\GeoFun.csproj">
       <Project>{d208a3e9-5bf4-414e-9807-7605898102a0}</Project>
       <Name>GeoFun</Name>

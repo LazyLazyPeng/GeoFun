@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Math = System.Math;
+
 namespace GeoFun.GNSS
 {
     /// <summary>
@@ -102,34 +104,32 @@ namespace GeoFun.GNSS
             }
         }
 
+        public double TotalSeconds
+        {
+            get
+            {
+                return Week.TotalSeconds;
+            }
+        }
+
         public GPST(int year, int month, int day, int hour, int minute, double second)
         {
             CommonT = new CommonT(year, month, day, hour, minute, second);
-
-            MJD = Time.Common2MJD(commonT);
-            week = Time.MJD2GPS(MJD);
         }
 
         public GPST(int year, int month, int day, int hour, int minute, decimal second)
         {
             CommonT = new CommonT(year, month, day, hour, minute, second);
-
-            MJD = Time.Common2MJD(commonT);
-            week = Time.Common2GPS(commonT);
         }
 
         public GPST(int weeks, double seconds)
         {
-            week = new Week(weeks, seconds);
-
-
+            Week = new Week(weeks, seconds);
         }
 
         public GPST(int year, int doy)
         {
             CommonT = Time.DOY2Common(year, doy);
-            mjd = Time.Common2MJD(CommonT);
-            Week = Time.Common2GPS(CommonT);
         }
 
         public GPST(GPST gpst):this(gpst.week.Weeks,gpst.week.Seconds)
