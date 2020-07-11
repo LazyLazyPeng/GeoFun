@@ -70,9 +70,9 @@
       <Project>{b8d64a98-4a98-4811-8e01-f9783209aaf0}</Project>
       <Name>GeoFun.GNSS</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GeoFun.Math\GeoFun.Math.csproj">
+    <ProjectReference Include="..\GeoFun.Math\GeoFun.MathUtils.csproj">
       <Project>{3D465CB9-2115-4401-A3F2-C7D7A8ABA846}</Project>
-      <Name>GeoFun.Math</Name>
+      <Name>GeoFun.MathUtils</Name>
     </ProjectReference>
     <ProjectReference Include="..\GeoFun.Spatial\GeoFun.Spatial.csproj">
       <Project>{d1d72b0e-d8eb-4636-9230-3e1b8d244c3e}</Project>
@@ -94,6 +94,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\rinex\fjpt1930.13o">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\rinex\FLNM2111.15o">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\rinex\ista1000.11o">

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Math = System.Math;
-
 namespace GeoFun.GNSS
 {
     public class Observation

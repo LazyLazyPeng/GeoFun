@@ -6,6 +6,8 @@ using System.Text;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
 
+using Math = System.Math;
+
 namespace GeoFun.GNSS
 {
     public class Iono

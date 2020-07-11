@@ -86,6 +86,10 @@
     <Compile Include="Week.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GeoFun.Math\GeoFun.MathUtils.csproj">
+      <Project>{3d465cb9-2115-4401-a3f2-c7d7a8aba846}</Project>
+      <Name>GeoFun.MathUtils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GeoFun\GeoFun.csproj">
       <Project>{d208a3e9-5bf4-414e-9807-7605898102a0}</Project>
       <Name>GeoFun</Name>

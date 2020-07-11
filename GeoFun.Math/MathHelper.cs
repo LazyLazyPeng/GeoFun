@@ -9,9 +9,9 @@ using System.Xml.Schema;
 using System.Runtime.ExceptionServices;
 using System.Net.Cache;
 
-namespace GeoFun.Math
+namespace GeoFun.MathUtils
 {
-    public class Math
+    public class MathHelper
     {
         public static readonly double PI = 3.14159265358979323;
 

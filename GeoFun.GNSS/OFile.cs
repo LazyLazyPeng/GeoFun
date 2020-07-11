@@ -77,7 +77,7 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 所有历元的观测数据
         /// </summary>
-        public List<OEpoch> AllEpoch = new List<OEpoch>();
+        public List<OEpoch> AllEpoch = new List<OEpoch>(2880*2);
 
         public OFile(string path)
         {

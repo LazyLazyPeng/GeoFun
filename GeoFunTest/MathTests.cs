@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GeoFun.Math;
+using GeoFun.MathUtils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GeoFun;
 
-namespace GeoFun.Math.Tests
+namespace GeoFun.MathUtils.Tests
 {
     [TestClass()]
     public class MathTests
@@ -21,7 +21,7 @@ namespace GeoFun.Math.Tests
             Coordinate.XYZ2BLH(recPos[0], recPos[1], recPos[2], out b, out l, out h, Ellipsoid.ELLIP_WGS84);
             Console.WriteLine("{0} {1} {2}", b, l, h);
             double az, el;
-            Math.CalAzEl(recPos, satPos, out az, out el);
+            MathHelper.CalAzEl(recPos, satPos, out az, out el);
             Console.WriteLine(string.Format("{0} {1}", az * Angle.R2D, el * Angle.R2D));
         }
 
@@ -34,7 +34,7 @@ namespace GeoFun.Math.Tests
                 a[i] = i;
             }
             double[] b = a;
-            Math.Dot(a, b);
+            MathHelper.Dot(a, b);
         }
     }
 }
