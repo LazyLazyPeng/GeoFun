@@ -10,12 +10,12 @@ namespace GeoFun.GNSS
     /// <summary>
     /// GPS时间
     /// </summary>
-    public sealed class GPST:IComparable<GPST>
+    public sealed class GPST : IComparable<GPST>
     {
         /// <summary>
         /// GPS时起始时刻
         /// </summary>
-        public static readonly DateTime StartTime = new DateTime(1980,1,6);
+        public static readonly DateTime StartTime = new DateTime(1980, 1, 6);
 
         private Week week;
         /// <summary>
@@ -29,6 +29,7 @@ namespace GeoFun.GNSS
             }
             set
             {
+                week = value;
                 commonT = Time.GPS2Common(week);
                 mjd = Time.GPS2MJD(week);
             }
@@ -99,7 +100,7 @@ namespace GeoFun.GNSS
             {
                 mjd = value;
 
-                week=Time.MJD2GPS(mjd);
+                week = Time.MJD2GPS(mjd);
                 commonT = Time.MJD2Common(mjd);
             }
         }
@@ -132,8 +133,25 @@ namespace GeoFun.GNSS
             CommonT = Time.DOY2Common(year, doy);
         }
 
-        public GPST(GPST gpst):this(gpst.week.Weeks,gpst.week.Seconds)
+        public GPST(GPST gpst) : this(gpst.week.Weeks, gpst.week.Seconds)
         {
+        }
+
+        public void AddSeconds(double sec)
+        {
+            week.Seconds += sec;
+            if (sec < 0)
+            {
+                int weekNum = (int)Math.Ceiling(sec / Time.SecondsPerWeek);
+                week.Weeks -= weekNum;
+                Week.Seconds += weekNum*Time.SecondsPerWeek;
+            }
+            else
+            {
+                int weekNum = (int)Math.Floor(sec / Time.SecondsPerWeek);
+                week.Weeks += weekNum;
+                Week.Seconds = sec - weekNum * Time.SecondsPerWeek;
+            }
         }
 
         /// <summary>
@@ -186,7 +204,7 @@ namespace GeoFun.GNSS
         /// <param name="t1"></param>
         /// <param name="t2"></param>
         /// <returns></returns>
-        public static double operator -(GPST t1,GPST t2)
+        public static double operator -(GPST t1, GPST t2)
         {
             if (t1 is null || t2 is null) return 0d;
 

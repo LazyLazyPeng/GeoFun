@@ -3,7 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using MathNet.Numerics;
 
-using GeoFun.Math;
+using GeoFun.MathUtils;
 
 namespace GeoFun.GNSS
 {
@@ -212,14 +212,20 @@ namespace GeoFun.GNSS
             return sat;
         }
 
+        /// <summary>
+        /// 获取某颗卫星的位置
+        /// </summary>
+        /// <param name="t0"></param>
+        /// <param name="prn"></param>
+        /// <returns></returns>
         public double[] GetSatPos(GPST t0, string prn)
         {
             double[] p = { 0, 0, 0 };
 
             // 00:00:00之前，无法插值
-            if (t0 - StartTime < 0) return p;
-            // 23:59:30之后，无法插值
-            if (t0 - StartTime > 24 * 3600 - 30) return p;
+            if (t0 - StartTime + 1e-13 < 0) return p;
+            // 00:00:00之后，无法插值
+            if (t0 - StartTime > 24 * 3600) return p;
 
             // 10阶插值
             double[] t = new double[10];

@@ -5,7 +5,7 @@ using System.Text;
 
 using MathNet.Numerics.Interpolation;
 
-namespace GeoFun.Math
+namespace GeoFun.MathUtils
 {
     public class Legendre
     {

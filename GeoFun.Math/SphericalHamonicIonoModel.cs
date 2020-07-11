@@ -3,7 +3,7 @@ using MathNet.Numerics.LinearAlgebra.Double;
 using System;
 using System.Collections.Generic;
 
-namespace GeoFun.Math
+namespace GeoFun.MathUtils
 {
     /// <summary>
     /// 球谐函数模型
