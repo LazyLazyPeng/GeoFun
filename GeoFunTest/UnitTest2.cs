@@ -46,8 +46,8 @@ namespace GeoFunTest
         public void TestOFile()
         {
             OrderedDictionary od = new OrderedDictionary();
-            OFile ofile = new OFile(AppDomain.CurrentDomain.BaseDirectory + "\\Data\\fjpt1930.13o");
-            //ofile.TryRead();
+            OFile ofile = new OFile(AppDomain.CurrentDomain.BaseDirectory + "\\Data\\rinex\\fjpt1930.13o");
+            ofile.TryRead();
             Console.WriteLine(".........");
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace GeoFun.GNSS
@@ -17,12 +18,12 @@ namespace GeoFun.GNSS
             {
                 foreach (var prn in epoches[i].PRNList)
                 {
-                    p1 = p2 = 0d;
-                    if (!epoches[i][prn].SatData.TryGetValue("P1", out p1)
-                        && !epoches[i][prn].SatData.TryGetValue("C1", out p1)) continue;
+                    p1 = epoches[i][prn].SatData["P1"];
+                    p2 = epoches[i][prn].SatData["P2"];
+                    if (p1 == 0d) p1 = epoches[i][prn].SatData["C1"];
 
-                    if (!epoches[i][prn].SatData.TryGetValue("P2", out p2)) continue;
-
+                    if (p1 == 0d || p2 == 0d) continue;
+                    
                     if (!epoches[i][prn].SatData.ContainsKey("P4"))
                     {
                         epoches[i][prn].SatData["P4"] = p1 - p2;
@@ -48,6 +49,7 @@ namespace GeoFun.GNSS
                     l1 = l2 = 0d;
                     if (!epoches[i][prn].SatData.TryGetValue("L1", out l1)) continue;
                     if (!epoches[i][prn].SatData.TryGetValue("L2", out l2)) continue;
+                    if (l1 == 0d || l2 == 0d) continue;
 
                     if (!epoches[i][prn].SatData.ContainsKey("L4"))
                     {

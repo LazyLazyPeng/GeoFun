@@ -54,6 +54,7 @@
     <Compile Include="DownloaderTests.cs" />
     <Compile Include="MathTests.cs" />
     <Compile Include="ObservationTests.cs" />
+    <Compile Include="OFileTests.cs" />
     <Compile Include="OStationTests.cs" />
     <Compile Include="SP3FileTests.cs" />
     <Compile Include="TimeTests.cs" />

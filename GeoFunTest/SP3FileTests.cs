@@ -32,8 +32,9 @@ namespace GeoFun.GNSS.Tests
             SP3File s = new SP3File("Data/sp3/igs18554.sp3");
             o.TryRead();
             s.TryRead();
-            for (int i = 0; i < o.AllEpoch.Count; i++)
+            for (int i = 1; i < o.AllEpoch.Count; i++)
             {
+                Console.WriteLine(string.Format("epoch:{0}",i));
                 foreach (var prn in o.AllEpoch[i].PRNList)
                 {
                     GPST t0 = o.AllEpoch[i].Epoch;
@@ -49,6 +50,8 @@ namespace GeoFun.GNSS.Tests
                     }
 
                     double[] pos = s.GetSatPos(t0, prn);
+
+                    Console.WriteLine("{0} {1} {2} {3}",prn,pos[0],pos[1],pos[2]);
                 }
             }
         }

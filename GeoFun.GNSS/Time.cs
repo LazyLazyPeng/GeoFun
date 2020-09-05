@@ -334,7 +334,7 @@ namespace GeoFun.GNSS
             int dayNum = week * 7 + dayOfWeek;
 
             // 计算实际日期
-            DateTime dt =  GPST.StartTime.AddDays(dayNum);
+            DateTime dt = GPST.StartTime.AddDays(dayNum);
 
             year = dt.Year;
             month = dt.Month;
@@ -350,13 +350,24 @@ namespace GeoFun.GNSS
         /// <param name="dayOfWeek"></param>
         public static void YearMonthDay2GPS(int year, int month, int dayOfMonth, out int week, out int dayOfWeek)
         {
-            DateTime dt = new DateTime(year,month,dayOfMonth);
+            DateTime dt = new DateTime(year, month, dayOfMonth);
 
             // GPS时的所有天数
             int dayNum = (dt - GPST.StartTime).Days;
 
-            week = (int)Math.Floor(dayNum/7d);
+            week = (int)Math.Floor(dayNum / 7d);
             dayOfWeek = dayNum - week * 7;
+        }
+
+        public static void DOY2GPS(int year, int doy, out int week, out int dow)
+        {
+            DateTime dt = new DateTime(year, 1, 1);
+
+            // GPS时的所有天数
+            int dayNum = (dt - GPST.StartTime).Days+doy-1;
+
+            week = (int)Math.Floor(dayNum / 7d);
+            dow = dayNum - week * 7;
         }
     }
 }

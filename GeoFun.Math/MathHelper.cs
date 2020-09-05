@@ -125,8 +125,10 @@ namespace GeoFun.MathUtils
             }
             else
             {
-                az = Atan(y / x);
+                az = System.Math.Atan2(y, x);
+
                 el = Atan(z / (x * Cos(az) + y * Sin(az)));
+                double el1 = System.Math.Asin(z / Sqrt(x * x + y * y + z * z));
             }
 
             // 方位角位于0-2π的周期内
@@ -188,14 +190,13 @@ namespace GeoFun.MathUtils
         /// </summary>
         /// <param name="b">receiver latitude 测站纬度(rad)</param>
         /// <param name="l">receiver longitude 测站经度(rad)</param>
-        /// <param name="r0">distance to earth center of receiver 测站地心距(m)</param>
         /// <param name="re">major axis 地球半径(m)</param>
         /// <param name="h0">height of single layer model of ionosphere电离层单层模型高度(m)</param>
         /// <param name="az">azimuth 方位角(rad)</param>
         /// <param name="el">elevation 高度角(rad)</param>
         /// <param name="bb">latitude of ipp 穿刺点纬度(rad)</param>
         /// <param name="ll">longitude of ipp 穿刺点经度(rad)</param>
-        public static void CalIPP(double b, double l, double r0, double re, double h0, double az, double el, out double bb, out double ll)
+        public static void CalIPP(double b, double l, double re, double h0, double az, double el, out double bb, out double ll)
         {
             //穿刺点与测站在地心的张角
             double phi = PI / 2d - el - Asin(re / (re + h0) * Cos(el));
