@@ -62,11 +62,13 @@ namespace GeoFun.GNSS
         /// </summary>
         public OStation Station { get; set; }
 
+        public OFile File { get; set; }
+
         public OSat this[int index]
         {
             get
             {
-                return Station.Epoches[StartIndex + index][PRN];
+                return File.AllEpoch[StartIndex + index][PRN];
             }
         }
 

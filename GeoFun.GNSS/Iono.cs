@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -46,6 +47,7 @@ namespace GeoFun.GNSS
         /// <param name="ionoH"></param>
         public static void CalIPP(double xSat, double ySat, double zSat,
             double xRec, double yRec, double zRec,
+
             out double x, out double y, out double z,
             double earthR = 63781000, double ionoH = 450000)
         {
@@ -98,7 +100,8 @@ namespace GeoFun.GNSS
         /// 单站模型
         /// </summary>
         public static void SingleStation(OStation station)
-        { }
+        {
+        }
 
         /// <summary>
         /// 多站模型
@@ -107,5 +110,7 @@ namespace GeoFun.GNSS
         public static void MultiStations(List<OStation> stations)
         {
         }
+
+
     }
 }

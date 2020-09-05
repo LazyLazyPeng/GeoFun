@@ -29,10 +29,12 @@ namespace GeoFun.GNSS
                     if (!dcbs.TryGetValue(prn, out dcb)) continue;
 
                     // 已经有P1观测值,不用改C1观测值
-                    if (epoches[i][prn].SatData.TryGetValue("P1", out p1)) continue;
+                    if (epoches[i][prn].SatData.TryGetValue("P1", out p1) &&
+                        epoches[i][prn].SatData["P1"] != 0) continue;
 
                     // 没有C1观测值,无法改正
-                    if (!epoches[i][prn].SatData.TryGetValue("C1", out c1)) continue;
+                    if (!epoches[i][prn].SatData.TryGetValue("C1", out c1) ||
+                        epoches[i][prn].SatData["C1"] == 0) continue;
 
                     // 将C1改正到P1 P1 = C1-DCB_P1C1
                     epoches[i][prn]["P1"] = c1 + dcb * 1e-9 * Common.SPEED_OF_LIGHT;

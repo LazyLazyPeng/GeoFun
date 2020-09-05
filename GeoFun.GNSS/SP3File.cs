@@ -143,6 +143,7 @@ namespace GeoFun.GNSS
                 if (lines[i].StartsWith("*"))
                 {
                     SP3Epoch epoch = DecodeEpoch(lines, ref i);
+                    i--;
 
                     AllEpoch.Add(epoch);
                 }
@@ -168,6 +169,10 @@ namespace GeoFun.GNSS
             for (; i < lines.Length; i++)
             {
                 if (lines[i].StartsWith("*"))
+                {
+                    break;
+                }
+                else if(lines[i].StartsWith("EOF"))
                 {
                     break;
                 }
@@ -237,23 +242,26 @@ namespace GeoFun.GNSS
 
             int index = (int)System.Math.Floor((t0 - ts) / Interval);
 
+            // Console.WriteLine("index:{0}", index);
+
             // 刚好落在采样点上
-            if (ts - t0 + Interval * index < 1e-13)
+            if (Math.Abs(ts - t0 + Interval * index) < 1e-13)
             {
                 p[0] = AllEpoch[index][prn].X;
                 p[1] = AllEpoch[index][prn].Y;
                 p[2] = AllEpoch[index][prn].Z;
                 return p;
             }
-            else if (ts - t0 + Interval * index + Interval < 1e-13)
+            else if (Math.Abs(ts - t0 + Interval * index + Interval) < 1e-13)
             {
                 p[0] = AllEpoch[index + 1][prn].X;
                 p[1] = AllEpoch[index + 1][prn].Y;
                 p[2] = AllEpoch[index + 1][prn].Z;
+                return p;
             }
 
             // 在开始的几个历元内
-            if (index < 3)
+            if (index < 4)
             {
                 for (int i = 0; i < 10; i++)
                 {
@@ -279,20 +287,20 @@ namespace GeoFun.GNSS
             // 在中间
             else
             {
-                for (int i = index - 4; i < index + 6; i++)
+                for (int i = 0; i < 10; i++)
                 {
-                    x[i] = AllEpoch[i][prn].X;
-                    y[i] = AllEpoch[i][prn].Y;
-                    z[i] = AllEpoch[i][prn].Z;
+                    x[i] = AllEpoch[index - 4 + i][prn].X;
+                    y[i] = AllEpoch[index - 4 + i][prn].Y;
+                    z[i] = AllEpoch[index - 4 + i][prn].Z;
 
-                    t[i] = AllEpoch[i].Epoch.TotalSeconds;
+                    t[i] = AllEpoch[index - 4 + i].Epoch.TotalSeconds;
 
                 }
             }
 
             p[0] = Interp.GetValueLagrange(10, t, x, t0.TotalSeconds);
             p[1] = Interp.GetValueLagrange(10, t, y, t0.TotalSeconds);
-            p[0] = Interp.GetValueLagrange(10, t, z, t0.TotalSeconds);
+            p[2] = Interp.GetValueLagrange(10, t, z, t0.TotalSeconds);
             return p;
         }
     }

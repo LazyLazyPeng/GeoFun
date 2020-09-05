@@ -10,11 +10,13 @@ namespace GIon
     {
         static void Main(string[] args)
         {
-            Case case1 = new Case(@"E:\Data\Typhoon\feiyan\gnss");
-            case1.SearchObsFiles();
-            case1.GetStationDOY();
-            case1.Download();
-            case1.ReadFiles();
+            //Case case1 = new Case(@"E:\Data\Typhoon\feiyan\gnss");
+            //case1.SearchObsFiles();
+            //case1.GetStationDOY();
+            //case1.Download();
+            //case1.ReadFiles();
+
+            IonoHelper.Calculate(@"E:\Data\Typhoon\Case\soudelor\CHYI2121.15o");
         }
     }
 }

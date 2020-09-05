@@ -7,6 +7,7 @@ namespace GeoFun.GNSS
 {
     public class Options
     {
+        public static char SATELLITE_SYS = 'G';
         /// <summary>
         /// 观测弧段最短长度
         /// </summary>

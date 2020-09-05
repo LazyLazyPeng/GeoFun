@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Data.Odbc;
 using System.IO;
 using System.Linq;
 
@@ -77,7 +78,7 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 所有历元的观测数据
         /// </summary>
-        public List<OEpoch> AllEpoch = new List<OEpoch>(2880*2);
+        public List<OEpoch> AllEpoch = new List<OEpoch>(2880 * 2);
 
         public OFile(string path)
         {
@@ -221,10 +222,6 @@ namespace GeoFun.GNSS
                                     epoch.PRNList.Add(line.Substring(32 + j * 3, 3).Trim().Replace(' ', '0'));
                                 }
                                 line = sr.ReadLine();
-                                if (line.Contains("G10R20G32G18G13G27R06R05E14E19E11E12"))
-                                {
-                                    int b = 0;
-                                }
                             }
 
                             //// 小于12颗卫星，只需读一行
@@ -242,6 +239,14 @@ namespace GeoFun.GNSS
                                 oSat.SignalStrength = new Dictionary<string, int>();
                                 oSat.Epoch = epoch.Epoch;
                                 oSat.SatPRN = epoch.PRNList[satI].ToString();
+
+                                // 初始化观测值
+                                for (int i = 0; i < Header.obsTypeList.Count; i++)
+                                {
+                                    oSat.SatData.Add(Header.obsTypeList[i], 0d);
+                                    oSat.LLI.Add(Header.obsTypeList[i], 0);
+                                    oSat.SignalStrength.Add(Header.obsTypeList[i], 0);
+                                }
 
                                 double obsValue = 0d;
                                 int lli = -1;
@@ -270,12 +275,6 @@ namespace GeoFun.GNSS
                                     {
                                         obsIndex = i * 5 + j;
 
-                                        //// 初始化观测值
-                                        lli = -1;
-                                        singalStrength = -1;
-                                        oSat.SatData.Add(Header.obsTypeList[i * 5 + j], 0d);
-                                        oSat.LLI[Header.obsTypeList[obsIndex]] = lli;
-                                        oSat.SignalStrength[Header.obsTypeList[obsIndex]] = singalStrength;
                                         try
                                         {
                                             if (double.TryParse(line.Substring(j * 16, 14), out obsValue))
@@ -342,6 +341,125 @@ namespace GeoFun.GNSS
             {
                 return null;
             }
+        }
+
+        public Dictionary<string, List<OArc>> SearchAllArcs(int arcLength = 0)
+        {
+            // 弧段最短长度
+            if (arcLength == 0) arcLength = Options.ARC_MIN_LENGTH;
+
+            Dictionary<string, List<OArc>> allArc = new Dictionary<string, List<OArc>>();
+            if (AllEpoch is null | AllEpoch.Count <= 0) return null;
+            if (Options.SATELLITE_SYS == 'G')
+            {
+                for (int i = 1; i < 33; i++)
+                {
+                    string prn = "G" + i.ToString("0#");
+                    allArc.Add(prn, SearchArcs(prn));
+                }
+            }
+
+            return allArc;
+        }
+
+        public List<OArc> SearchArcs(string prn, int arcLen = 0)
+        {
+            if (arcLen == 0) arcLen = Options.ARC_MIN_LENGTH;
+            List<OArc> arcs = new List<OArc>();
+
+            // 观测值缺失
+            if (
+                !Header.obsTypeList.Contains("L1") ||
+                !Header.obsTypeList.Contains("L2") ||
+                !Header.obsTypeList.Contains("P2") ||
+               (!Header.obsTypeList.Contains("P1") &&
+                !Header.obsTypeList.Contains("C1"))
+                )
+            {
+                return arcs;
+            }
+
+            OArc arc = null;
+            int startIndex = 0;
+            do
+            {
+                arc = SearchArc(prn, startIndex);
+
+                if (arc != null)
+                {
+                    if (arc.Length >= arcLen)
+                    {
+                        arc.StartIndex += 40;
+                        arc.EndIndex -= 10;
+                        arcs.Add(arc);
+                    }
+                    startIndex = arc.EndIndex + 1;
+                }
+            }
+            while (arc != null);
+
+            return arcs;
+        }
+
+        public OArc SearchArc(string prn, int startIndex)
+        {
+            if (startIndex < 0 || startIndex >= AllEpoch.Count) return null;
+            int start = startIndex;
+            int end = startIndex;
+            bool arcStarted = false;
+            for (int i = startIndex; i < AllEpoch.Count; i++)
+            {
+                bool flag = false;
+                if (AllEpoch[i].AllSat.ContainsKey(prn))
+                {
+                    if (
+                        AllEpoch[i][prn]["L1"] != 0 &&
+                        AllEpoch[i][prn]["L2"] != 0 &&
+                        AllEpoch[i][prn]["P2"] != 0 &&
+                        (AllEpoch[i][prn]["P1"] != 0 ||
+                        AllEpoch[i][prn]["C1"] != 0)&&
+                        !AllEpoch[i][prn].Outlier&&
+                        !AllEpoch[i][prn].CycleSlip
+                        )
+                    {
+                        flag = true;
+                    }
+                }
+
+                if (flag)
+                {
+                    if (arcStarted)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        arcStarted = true;
+                        start = i;
+                    }
+                }
+                else
+                {
+                    if (arcStarted)
+                    {
+                        end = i - 1;
+                        arcStarted = false;
+
+                        OArc arc = new OArc();
+                        arc.PRN = prn;
+                        arc.StartIndex = start;
+                        arc.EndIndex = end;
+                        arc.File = this;
+                        return arc;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+
+            return null;
         }
 
         public int CompareTo(OFile other)

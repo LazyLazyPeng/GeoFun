@@ -98,7 +98,14 @@ namespace GeoFun.GNSS
         {
             get
             {
-                return SatData[obsType];
+                if (SatData.ContainsKey(obsType))
+                {
+                    return SatData[obsType];
+                }
+                else
+                {
+                    return 0d;
+                }
             }
             set
             {
