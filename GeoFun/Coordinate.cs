@@ -83,7 +83,7 @@ namespace GeoFun
         /// <param name="Z"></param>
         /// <param name="a">椭球长半轴(m)</param>
         /// <param name="f">扁率倒数</param>
-        public static void XYZ2BLH(List<double> X, List<double> Y, List<double> Z, out List<double> B, out List<double> L, out List<double> H,double a, double f) 
+        public static void XYZ2BLH(List<double> X, List<double> Y, List<double> Z, out List<double> B, out List<double> L, out List<double> H, double a, double f)
         {
             Ellipsoid ell = new Ellipsoid(a = a, f = f);
             XYZ2BLH(X, Y, Z, out B, out L, out H, ell);
@@ -175,15 +175,15 @@ namespace GeoFun
             }
         }
 
-        public static List<BLH> XYZ2BLH(List<XYZ> xyzList,double a, double f)
+        public static List<BLH> XYZ2BLH(List<XYZ> xyzList, double a, double f)
         {
             if (xyzList is null) return null;
             List<BLH> blhList = new List<BLH>(xyzList.Count);
 
-            double b = 0;double l = 0; double h = 0;
-            foreach(var xyz in xyzList)
+            double b = 0; double l = 0; double h = 0;
+            foreach (var xyz in xyzList)
             {
-                XYZ2BLH(xyz.X, xyz.Y, xyz.Z, out b, out l, out h,a,f);
+                XYZ2BLH(xyz.X, xyz.Y, xyz.Z, out b, out l, out h, a, f);
 
                 BLH blh = new BLH();
                 blh.B = b;
@@ -203,14 +203,14 @@ namespace GeoFun
         /// <param name="p0">站心坐标(m) xyz</param>
         /// <param name="p2">待求点的xyz</param>
         /// <returns></returns>
-        public static double[] ECEF2ENU(double b, double l,double[] p0,double[] p2)
+        public static double[] ECEF2ENU(double b, double l, double[] p0, double[] p2)
         {
-            if(p0 is null)
+            if (p0 is null)
             {
                 throw new ArgumentNullException("p0");
             }
 
-            if(p2 is null)
+            if (p2 is null)
             {
                 throw new ArgumentNullException("p2");
             }
@@ -234,7 +234,7 @@ namespace GeoFun
         public static void CalIPP(double xSat, double ySat, double zSat,
             double xRec, double yRec, double zRec,
             out double x, out double y, out double z,
-            double earthR = 63781000,double ionoH = 450000)
+            double earthR = 63781000, double ionoH = 450000)
         {
             x = y = z = 0d;
 
@@ -242,7 +242,7 @@ namespace GeoFun
             Vector<double> op2 = new DenseVector(new double[] { xSat, ySat, zSat });
 
             Vector<double> p1p2 = op1 - op2;
-            p1p2=p1p2/p1p2.L2Norm();
+            p1p2 = p1p2 / p1p2.L2Norm();
 
             double a = p1p2.DotProduct(p1p2);
             double b = 2 * p1p2.DotProduct(op1);
@@ -266,7 +266,7 @@ namespace GeoFun
                 double d1 = i1p2.DotProduct(i1p2);
                 double d2 = i2p2.DotProduct(i2p2);
 
-                if(d1<d2)
+                if (d1 < d2)
                 {
                     x = oi1[0];
                     y = oi1[1];
@@ -279,6 +279,21 @@ namespace GeoFun
                     z = oi1[2];
                 }
             }
+        }
+
+        /// <summary>
+        /// 计算太阳经度
+        /// </summary>
+        /// <param name="hour"></param>
+        /// <param name="minute"></param>
+        /// <param name="second"></param>
+        /// <param name="gmt">时区 东8区为+8 西8区为-8</param>
+        public static double SunLon(int hour, int minute, double second, int gmt)
+        {
+            double l = (hour - gmt + minute / 60d + second / 3600d) * 15 / 360 * 2 * Math.PI;
+            if (l < -Math.PI) l += Math.PI * 2;
+            if (l > Math.PI) l -= Math.PI * 2;
+            return l;
         }
     }
 }

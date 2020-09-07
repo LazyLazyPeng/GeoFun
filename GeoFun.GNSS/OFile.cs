@@ -170,6 +170,13 @@ namespace GeoFun.GNSS
                         line = sr.ReadLine();
                     }//头已读取完
 
+                    AllEpoch = new List<OEpoch>(2880 * 2);
+                    int epochNum = 24 * 3600 / (int)Header.interval;
+                    for (int i = 0; i < epochNum; i++)
+                    {
+                        AllEpoch.Add(new OEpoch());
+                    }
+
                     //读取观测值
                     line = sr.ReadLine();
                     //obsdata_allepoch = new List<OBSDATA_EPOCH>();//全局变量初始化
@@ -301,7 +308,8 @@ namespace GeoFun.GNSS
 
                                 epoch.AllSat.Add(oSat.SatPRN, oSat);
                             }
-                            AllEpoch.Add(epoch);
+                            int index = (int)Math.Floor(((double)epoch.Epoch.SecondsOfDay + 0.1) / Header.interval);
+                            AllEpoch[index] = epoch;
                         }
                         catch (Exception ex)
                         {
@@ -417,8 +425,8 @@ namespace GeoFun.GNSS
                         AllEpoch[i][prn]["L2"] != 0 &&
                         AllEpoch[i][prn]["P2"] != 0 &&
                         (AllEpoch[i][prn]["P1"] != 0 ||
-                        AllEpoch[i][prn]["C1"] != 0)&&
-                        !AllEpoch[i][prn].Outlier&&
+                        AllEpoch[i][prn]["C1"] != 0) &&
+                        !AllEpoch[i][prn].Outlier &&
                         !AllEpoch[i][prn].CycleSlip
                         )
                     {

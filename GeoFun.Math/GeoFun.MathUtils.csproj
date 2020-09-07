@@ -46,11 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Fitter.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="Interp.cs" />
     <Compile Include="IonoModel.cs" />
     <Compile Include="Legendre.cs" />
-    <Compile Include="PolynomialIonoModel.cs" />
+    <Compile Include="PolynomialModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SphericalHamonicIonoModel.cs" />

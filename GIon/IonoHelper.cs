@@ -24,7 +24,6 @@ namespace GIon
             if (info.Name.Length != 12)
             {
                 throw new ArgumentException("文件名称正确，请检查:" + info.FullName);
-                return;
             }
 
             // 分解出测站名，doy和年份
@@ -51,9 +50,11 @@ namespace GIon
             oFile.TryRead();
             sp3.TryRead();
 
-            //
+            //Observation.EliminateSatellites(ref oFile.AllEpoch);
             Observation.CalP4(ref oFile.AllEpoch);
             Observation.CalL4(ref oFile.AllEpoch);
+            Observation.DetectOutlier(ref oFile.AllEpoch);
+
             var arcs = oFile.SearchAllArcs();
             foreach (var prn in arcs.Keys)
             {
@@ -82,6 +83,23 @@ namespace GIon
                 for (int i = 0; i < arcs[prn].Count; i++)
                 {
                     OArc arc = arcs[prn][i];
+                    //多项式拟合
+                    List<double> x = new List<double>();
+                    List<double> y = new List<double>();
+                    for (int j = 0; j < arc.Length; j++)
+                    {
+                        x.Add(j);
+                        y.Add(arc[j]["SP4"]);
+                    }
+                    PolynomialModel pm = new PolynomialModel();
+                    pm.Order = 3;
+                    pm.Fit(x, y);
+                    var yy = pm.CalFit(x);
+                    for (int j = 0; j < arc.Length; j++)
+                    {
+                        arc[j]["SP4"] = y[j] - yy[j];
+                    }
+
                     for (int j = 0; j < arc.Length; j++)
                     {
                         GPST t0 = new GPST(arc[j].Epoch);
@@ -99,17 +117,101 @@ namespace GIon
                         MathHelper.CalAzEl(recp, satp, out az, out el);
                         double bb, ll;
                         MathHelper.CalIPP(b, l, 63781000, 450000, az, el, out bb, out ll);
+                        arc[j].IPP[0] = bb;
+                        arc[j].IPP[1] = ll;
+                        arc[j].Azimuth = az;
+                        arc[j].Elevation = el;
                         ippb[arc.StartIndex + j, p] = bb;
                         ippl[arc.StartIndex + j, p] = ll;
 
-                        sp4[arc.StartIndex + j, p] = arc[j]["P4"];
+                        double tec = 9.52437 * arc[j]["SP4"];
+                        if (tec > 0.5d || tec < -0.5d) tec = 0d;
+                        sp4[arc.StartIndex + j, p] = tec;
                     }
                 }
             }
 
+            for (int i = 0; i < 24; i++)
+            {
+                StringBuilder sb = new StringBuilder();
+                for (int j = i * 120; j < i * 120 + 120; j++)
+                {
+                    var epoch = oFile.AllEpoch[j];
+                    foreach (var prn in epoch.AllSat.Keys)
+                    {
+                        var sat = epoch[prn];
+                        if (sat["SP4"] != 0d)
+                        {
+                            sb.AppendFormat("{0:0#},{1:f10},{2:f10},{3:f3}\r\n",
+                                int.Parse(prn.Substring(1)),
+                                sat.IPP[1] * Angle.R2D,
+                                sat.IPP[0] * Angle.R2D,
+                                sat["SP4"]
+                                );
+                        }
+                    }
+                }
+
+                File.WriteAllText(string.Format("{0}.{1:0#}-{2:0#}.tec.txt", oPath, i, i + 1), sb.ToString(), Encoding.UTF8);
+            }
+
+            //// 2个小时一幅图
+            //for (int i = 0; i < 12; i++)
+            //{
+            //    List<double> lat = new List<double>();
+            //    List<double> lon = new List<double>();
+            //    List<double> tec = new List<double>();
+            //    for (int j = i * 240; j < i * 240 + 240; j++)
+            //    {
+            //        if (j >= oFile.AllEpoch.Count)
+            //        {
+            //            break;
+            //        }
+
+            //        foreach (var item in oFile.AllEpoch[j].AllSat)
+            //        {
+            //            var epoch = oFile.AllEpoch[i].Epoch;
+            //            var sunL0 = Coordinate.SunLon(epoch.CommonT.Hour,
+            //                epoch.CommonT.Minute, (double)epoch.CommonT.second, 8);
+            //            var sat = item.Value;
+            //            if (sat["SP4"] != 0 && sat["SP4"] > 0)
+            //            {
+            //                lat.Add(sat.IPP[0]);
+            //                lon.Add(sat.IPP[1] - sunL0);
+
+            //                double vtec = Iono.STEC2VTEC(sat["SP4"], sat.Elevation);
+            //                tec.Add(vtec);
+            //            }
+            //        }
+            //    }
+            //    var shm = SphericalHamonicIonoModel.CalculateModel(5, 5, lat, lon, tec);
+            //    for (int j = i * 240; j < i * 240 + 240; j++)
+            //    {
+            //        if (j - oFile.AllEpoch.Count >= 0)
+            //        {
+            //            break;
+            //        }
+
+            //        foreach (var item in oFile.AllEpoch[j].AllSat)
+            //        {
+            //            var epoch = oFile.AllEpoch[i].Epoch;
+            //            var sunL0 = Coordinate.SunLon(epoch.CommonT.Hour,
+            //                epoch.CommonT.Minute, (double)epoch.CommonT.second, 8);
+            //            var sat = item.Value;
+            //            if (sat["SP4"] != 0)
+            //            {
+            //                double sp4Est = shm.Calculate(sat.IPP[0], sat.IPP[1] - sunL0);
+            //                double sp4Org = sat["SP4"];
+            //                sat["SP4"] -= sp4Est;
+            //            }
+            //        }
+            //    }
+            //}
+
+
             Write(oPath + ".ipp.b.txt", ippb);
-            Write(oPath + "ipp.l.txt", ippl);
-            Write(oPath + "meas.p4.txt", sp4);
+            Write(oPath + ".ipp.l.txt", ippl);
+            Write(oPath + ".meas.p4.txt", sp4);
         }
 
         public static void Write(string path, double[,] data)

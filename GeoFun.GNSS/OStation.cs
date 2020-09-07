@@ -94,7 +94,7 @@ namespace GeoFun.GNSS
             {
                 try
                 {
-                    if(file.Name == "03652480.18o")
+                    if (file.Name == "03652480.18o")
                     {
                         int a = 0;
                     }
@@ -154,15 +154,12 @@ namespace GeoFun.GNSS
                         //// Outlier
                         else if (Epoches[i][arc.PRN].Outlier) flag = false;
 
-                        if (!Epoches[i][arc.PRN].SatData.TryGetValue("P2", out p2)) flag = false;
-                        if (!Epoches[i][arc.PRN].SatData.TryGetValue("L1", out l1)) flag = false;
-                        if (!Epoches[i][arc.PRN].SatData.TryGetValue("L2", out l2)) flag = false;
+                        l1 = Epoches[i][arc.PRN]["L1"];
+                        l2 = Epoches[i][arc.PRN]["L2"];
+                        p1 = Epoches[i][arc.PRN]["P1"];
+                        p2 = Epoches[i][arc.PRN]["P2"];
+                        if (p1 == 0d) p1 = Epoches[i][arc.PRN]["C1"];
 
-                        if (!Epoches[i][arc.PRN].SatData.TryGetValue("P1", out p1)) flag = false;
-                        else if (Math.Abs(p1) < 0.001)
-                        {
-                            if (!Epoches[i][arc.PRN].SatData.TryGetValue("C1", out p1)) flag = false;
-                        }
 
                         if (Math.Abs(p1) < 1e-3) flag = false;
                         if (Math.Abs(p2) < 1e-3) flag = false;
@@ -203,15 +200,11 @@ namespace GeoFun.GNSS
                     if (!prn.StartsWith("G")) continue;
 
                     //// Check if some meas missing
-                    if (!Epoches[i][prn].SatData.TryGetValue("P2", out p2)) continue;
-                    if (!Epoches[i][prn].SatData.TryGetValue("L1", out l1)) continue;
-                    if (!Epoches[i][prn].SatData.TryGetValue("L2", out l2)) continue;
-
-                    if (!Epoches[i][prn].SatData.TryGetValue("P1", out p1)) flag = false;
-                    else if (Math.Abs(p1) < 0.001)
-                    {
-                        if (!Epoches[i][prn].SatData.TryGetValue("C1", out p1)) flag = false;
-                    }
+                    l1 = Epoches[i][prn]["L1"];
+                    l2 = Epoches[i][prn]["L2"];
+                    p1 = Epoches[i][prn]["P1"];
+                    p2 = Epoches[i][prn]["P2"];
+                    if (p1 == 0d) p1 = Epoches[i][prn]["C1"];
 
                     if (Math.Abs(p1) < 1e-3) flag = false;
                     else if (Math.Abs(p2) < 1e-3) flag = false;
@@ -233,7 +226,6 @@ namespace GeoFun.GNSS
 
         public void DetectCycleSlip()
         {
-
             foreach (var prn in Arcs.Keys)
             {
                 //// 旧的弧段
@@ -248,11 +240,11 @@ namespace GeoFun.GNSS
 
                 int index = -1;
                 OArc arc = null;
-                while(oldArcs.Count()>0)
+                while (oldArcs.Count() > 0)
                 {
                     arc = oldArcs.Pop();
-                    if(Observation.DetectCycleSlip(ref arc,out index))
-                    { 
+                    if (Observation.DetectCycleSlip(ref arc, out index))
+                    {
                         // 根据返回周跳的索引将弧段分为2段
                         OArc[] arcs = arc.Split(index);
 
@@ -263,7 +255,7 @@ namespace GeoFun.GNSS
                         }
 
                         // 后一段加入未检测列表
-                        if(arcs[1].Length>=Options.ARC_MIN_LENGTH)
+                        if (arcs[1].Length >= Options.ARC_MIN_LENGTH)
                         {
                             oldArcs.Push(arcs[1]);
                         }
@@ -282,26 +274,29 @@ namespace GeoFun.GNSS
 
         public void DetectOutlier()
         {
-            if (Arcs is null) return;
+            if (Epoches is null) return;
 
             double c1 = 0d, p1 = 0d, p2 = 0d;
-            foreach (var prn in Arcs.Keys)
+            for (int i = 0; i < Epoches.Count; i++)
             {
-                for (int i = 0; i < Arcs[prn].Count; i++)
+                var epoch = Epoches[i];
+                foreach (var prn in epoch.AllSat.Keys)
                 {
-                    for (int j = 0; j < Arcs[prn][i].Length; j++)
-                    {
-                        //// 检查P1P2
-                        if (Arcs[prn][i][j].SatData.TryGetValue("P1", out p1) && Arcs[prn][i][j].SatData.TryGetValue("P2", out p2))
-                        {
-                            if (Math.Abs(p1 - p2) > Options.OUTLIER_P1P2) Arcs[prn][i][j].Outlier = true;
-                        }
+                    OSat sat = epoch.AllSat[prn];
+                    p2 = sat["P2"];
+                    p1 = sat["P1"];
+                    c1 = sat["C1"];
 
-                        //// 检查P1C1
-                        else if (Arcs[prn][i][j].SatData.TryGetValue("P1", out p1) && Arcs[prn][i][j].SatData.TryGetValue("C1", out c1))
-                        {
-                            if (Math.Abs(p1 - c1) > Options.OUTLIER_P1P2) Arcs[prn][i][j].Outlier = true;
-                        }
+                    //// 检查P1P2
+                    if (p1 != 0d && p2 != 0d)
+                    {
+                        if (Math.Abs(p1 - p2) > Options.OUTLIER_P1P2) sat.Outlier = true;
+                    }
+
+                    //// 检查P1C1
+                    else if (p1 != 0 && c1 != 0)
+                    {
+                        if (Math.Abs(p1 - c1) > Options.OUTLIER_P1C1) sat.Outlier = true;
                     }
                 }
             }
@@ -310,6 +305,8 @@ namespace GeoFun.GNSS
         public void CalP4L4()
         {
             OArc arc = null;
+            double p1 = 0d, p2 = 0d, l1 = 0d, l2 = 0d;
+
             foreach (var prn in Arcs.Keys)
             {
                 for (int i = 0; i < Arcs[prn].Count; i++)
@@ -319,22 +316,28 @@ namespace GeoFun.GNSS
 
                     for (int j = 0; j < arc.Length; j++)
                     {
-                        if (!arc[j].SatData.ContainsKey("P4"))
+                        p1 = arc[j].SatData["P1"];
+                        p2 = arc[j].SatData["P2"];
+                        l1 = arc[j].SatData["L1"];
+                        l2 = arc[j].SatData["L2"];
+                        if (p1 == 0d) p1 = arc[j].SatData["C1"];
+
+                        if (p1 != 0d || p2 != 0d)
                         {
-                            arc[j].SatData.Add("P4", arc[j]["P1"] - arc[j]["P2"]);
+                            arc[j]["P4"] = p1 - p2;
                         }
                         else
                         {
-                            arc[j]["P4"] = arc[j]["P1"] - arc[j]["P2"];
+                            arc[j]["P4"] = 0;
                         }
 
-                        if (!arc[j].SatData.ContainsKey("L4"))
+                        if (l1 != 0 && l2 != 0)
                         {
-                            arc[j].SatData.Add("L4", arc[j]["L1"] - arc[j]["L2"]);
+                            arc[j]["L4"] = l1 - l2;
                         }
                         else
                         {
-                            arc[j]["L4"] = arc[j]["L1"] - arc[j]["L2"];
+                            arc[j]["L4"] = 0;
                         }
                     }
                 }
@@ -345,6 +348,9 @@ namespace GeoFun.GNSS
         /// 计算相位平滑伪距值
         /// 对于30s采样率的
         /// </summary>
+        /// <remarks>
+        /// 参考 任晓东. 多系统GNSS电离层TEC高精度建模及差分码偏差精确估计[D].
+        /// </remarks>
         public void SmoothP4()
         {
             double f1 = Common.GPS_F1;
@@ -368,7 +374,7 @@ namespace GeoFun.GNSS
                     // 平滑P4
                     for (int j = 0; j < arc.Length; j++)
                     {
-                        arc[j].SatData.Add("SP4", arc[j]["P4"] + p4l4);
+                        arc[j].SatData.Add("SP4", arc[j]["L4"] - p4l4);
                     }
                 }
             }
@@ -379,10 +385,11 @@ namespace GeoFun.GNSS
         /// </summary>
         public void Preprocess()
         {
-            DetectArcs();
-            DetectClockJump();
-            //DetectCycleSlip();
             DetectOutlier();
+            DetectArcs();
+            DetectCycleSlip();
+            //DetectClockJump();
+            //DetectCycleSlip();
             CalP4L4();
             SmoothP4();
         }

@@ -35,7 +35,7 @@ namespace GeoFun.MathUtils
 
             //// 检测观测值个数是否满足要求
             int minCount = System.Math.Min(System.Math.Min(lat.Count, lon.Count), vtec.Count);
-            uint paraNum = (degree + 1) * (order + 1) * 2;
+            uint paraNum = (degree + 1) * (degree + 1);
             if (minCount == 0) return null;
             if (minCount < paraNum)
             {
@@ -45,16 +45,20 @@ namespace GeoFun.MathUtils
             //// 设计矩阵
             Matrix<double> B = new DenseMatrix(minCount, (int)paraNum);
             Vector<double> L = new DenseVector(minCount);
-            for (int i = 0; i <= minCount; i++)
+            for (int i = 0; i < minCount; i++)
             {
+                int col = 0;
                 for (int n = 0; n <= degree; n++)
                 {
-                    int start = n * n;
                     for (int m = 0; m <= n; m++)
                     {
                         double Pnm = Legendre.lpmv(n, m, System.Math.PI / 2d - lat[i]);
-                        B[i, start + m * 2] = Pnm * System.Math.Cos(m * lon[i]);
-                        B[i, start + m * 2 + 1] = Pnm * System.Math.Sin(m * lat[i]);
+                        B[i, col] = Pnm * System.Math.Cos(m * lon[i]);
+                        col++;
+                        // Bn0不需要估计,因为sin(0)乘任何数都是0
+                        if (m == 0) continue;
+                        B[i, col] = Pnm * System.Math.Sin(m * lon[i]);
+                        col++;
                     }
                 }
 
@@ -62,6 +66,8 @@ namespace GeoFun.MathUtils
             }
 
             //// 求解
+            var btb = B.Transpose() * B;
+            var btbi = btb.Inverse();
             Vector<double> x = (B.Transpose() * B).Inverse() * (B.Transpose() * L);
 
             SphericalHamonicIonoModel model = new SphericalHamonicIonoModel();
@@ -82,15 +88,21 @@ namespace GeoFun.MathUtils
         {
             double result = 0d;
 
-            Vector<double> B = new DenseVector(((int)Degree + 1) * ((int)Order + 1) * 2);
+            int index = 0;
+            Vector<double> B = new DenseVector((int)(Degree + 1) * (int)(Degree + 1));
             for (int n = 0; n <= Degree; n++)
             {
-                int start = n * n;
                 for (int m = 0; m <= n; m++)
                 {
                     double Pnm = Legendre.lpmv(n, m, System.Math.PI / 2d - lat);
-                    B[start + m * 2] = System.Math.Cos(m * lon) * Pnm;
-                    B[start + m * 2] = System.Math.Cos(m * lon) * Pnm;
+                    B[index] = System.Math.Cos(m * lon) * Pnm;
+                    index++;
+                    if (m == 0) B[index] = 0;
+                    else
+                    {
+                        B[index] = System.Math.Sin(m * lon) * Pnm;
+                        index++;
+                    }
                 }
             }
 

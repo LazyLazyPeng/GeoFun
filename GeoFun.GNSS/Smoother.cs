@@ -63,7 +63,7 @@ namespace GeoFun.GNSS
         /// 平滑一个弧段
         /// </summary>
         /// <param name="arc"></param>
-        public static void SmoothP4ByL4(ref OArc arc)
+        public static void SmoothP4ByL4_1(ref OArc arc)
         {
             double power = 1;
 
@@ -78,6 +78,43 @@ namespace GeoFun.GNSS
 
                 arc[i]["P4"] = arc[i]["P4"] * power + (1 - power) * p4_est;
             }
+        }
+
+        /// <summary>
+        /// 平滑一个弧段
+        /// </summary>
+        /// <param name="arc"></param>
+        public static void SmoothP4ByL4(ref OArc arc)
+        {
+            // 整个弧段P4+L4的均值<P4+L4>
+            int n = 0;
+            double p4, l4;
+            double p4l4 = 0d;
+            for (int i = 0; i < arc.Length; i++)
+            {
+                p4 = arc[i]["P4"];
+                l4 = arc[i]["L4"];
+                if (p4 != 0 && l4 != 0)
+                {
+                    p4l4 += p4;
+                    n++;
+                }
+            }
+            if (n > 0) p4l4 /= n;
+
+            // 平滑P4
+            for (int j = 0; j < arc.Length; j++)
+            {
+                p4 = arc[j]["P4"];
+                l4 = arc[j]["L4"];
+
+                arc[j].SatData["SP4"] = 0;
+                if (p4 != 0 && l4 != 0)
+                {
+                    arc[j].SatData["SP4"] = arc[j]["L4"] - p4l4;
+                }
+            }
+
         }
     }
 }

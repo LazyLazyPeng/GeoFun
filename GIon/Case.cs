@@ -92,9 +92,9 @@ namespace GIon
              */
              foreach(var station in Stations)
             {
-                station.DetectArcs();
                 station.DetectOutlier();
-                station.DetectClockJump();
+                station.DetectArcs();
+                //station.DetectClockJump();
                 station.DetectCycleSlip();
             }
 
