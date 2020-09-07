@@ -28,15 +28,15 @@ namespace GeoFun.GNSS
         ///     LP1（相位平滑伪距结果）、LP2（相位平滑伪距结果）
         /// 用哈希表储存，便于查找.
         /// </summary>
-        public Dictionary<string,double> SatData = new Dictionary<string, double>();
+        public Dictionary<string, double> SatData = new Dictionary<string, double>();
         /// <summary>
         /// 失锁标识符
         /// </summary>
-        public Dictionary<string,int> LLI;
+        public Dictionary<string, int> LLI;
         /// <summary>
         /// 信号强度，1表示可能的最小信号强度，5表示良好S/N比的值，9表示可能的最大信号强度，0或空表示未知或未给出
         /// </summary>
-        public Dictionary<string,int> SignalStrength;
+        public Dictionary<string, int> SignalStrength;
         /// <summary>
         /// 卫星坐标，可由精密星历或者广播星历计算得到
         /// </summary>
@@ -90,6 +90,19 @@ namespace GeoFun.GNSS
         public bool LackOfP1 = false;
 
         /// <summary>
+        /// 穿刺点位置
+        /// </summary>
+        public double[] IPP = new double[2];
+        /// <summary>
+        /// 方位角
+        /// </summary>
+        public double Azimuth = 0d;
+        /// <summary>
+        /// 高度角
+        /// </summary>
+        public double Elevation = 0d;
+
+        /// <summary>
         /// 根据观测值名称索引
         /// </summary>
         /// <param name="obsType"></param>
@@ -109,7 +122,7 @@ namespace GeoFun.GNSS
             }
             set
             {
-                if(SatData.ContainsKey(obsType))
+                if (SatData.ContainsKey(obsType))
                 {
                     SatData[obsType] = value;
                 }

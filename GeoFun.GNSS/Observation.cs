@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Math = System.Math;
 
 namespace GeoFun.GNSS
 {
@@ -18,20 +19,13 @@ namespace GeoFun.GNSS
             {
                 foreach (var prn in epoches[i].PRNList)
                 {
-                    p1 = epoches[i][prn].SatData["P1"];
-                    p2 = epoches[i][prn].SatData["P2"];
-                    if (p1 == 0d) p1 = epoches[i][prn].SatData["C1"];
-
+                    epoches[i][prn]["P4"] = 0d;
+                    p1 = epoches[i][prn]["P1"];
+                    p2 = epoches[i][prn]["P2"];
+                    if (p1 == 0) p1 = epoches[i][prn]["C1"];
                     if (p1 == 0d || p2 == 0d) continue;
-                    
-                    if (!epoches[i][prn].SatData.ContainsKey("P4"))
-                    {
-                        epoches[i][prn].SatData["P4"] = p1 - p2;
-                    }
-                    else
-                    {
-                        epoches[i][prn].SatData.Add("P4", p1 - p2);
-                    }
+
+                    epoches[i][prn].SatData["P4"] = p2 - p1;
                 }
             }
         }
@@ -46,19 +40,12 @@ namespace GeoFun.GNSS
             {
                 foreach (var prn in epoches[i].PRNList)
                 {
-                    l1 = l2 = 0d;
-                    if (!epoches[i][prn].SatData.TryGetValue("L1", out l1)) continue;
-                    if (!epoches[i][prn].SatData.TryGetValue("L2", out l2)) continue;
+                    epoches[i][prn]["L4"] = 0d;
+                    l1 = epoches[i][prn]["L1"];
+                    l2 = epoches[i][prn]["L2"];
                     if (l1 == 0d || l2 == 0d) continue;
 
-                    if (!epoches[i][prn].SatData.ContainsKey("L4"))
-                    {
-                        epoches[i][prn].SatData["L4"] = l1 * Common.GPS_L1 - l2 * Common.GPS_L2;
-                    }
-                    else
-                    {
-                        epoches[i][prn].SatData.Add("L4", l1 * Common.GPS_L1 - l2 * Common.GPS_L2);
-                    }
+                    epoches[i][prn].SatData["L4"] = -l1 * Common.GPS_L1 + l2 * Common.GPS_L2;
                 }
             }
         }
@@ -79,9 +66,31 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 探测粗差
         /// </summary>
-        public static void DetectOutlier()
+        public static void DetectOutlier(ref List<OEpoch> epoches)
         {
+            if (epoches is null) return;
 
+            double c1 = 0d, p1 = 0d, p2 = 0d;
+            for (int i = 0; i < epoches.Count; i++)
+            {
+                foreach (var prn in epoches[i].AllSat.Keys)
+                {
+                    p1 = epoches[i][prn]["P1"];
+                    p2 = epoches[i][prn]["P2"];
+
+                    //// 检查P1P2
+                    if (p1 != 0 && p2 != 0)
+                    {
+                        if (Math.Abs(p1 - p2) > Options.OUTLIER_P1P2) epoches[i][prn].Outlier = true;
+                    }
+
+                    //// 检查P1C1
+                    else if (p1 != 0 && c1 != 0)
+                    {
+                        if (Math.Abs(p1 - c1) > Options.OUTLIER_P1C1) epoches[i][prn].Outlier = true;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -90,7 +99,7 @@ namespace GeoFun.GNSS
         /// <remarks>
         /// GPS周跳探测与修复的算法研究与实现.彭秀英.2004
         /// </remarks>
-        public static bool DetectCycleSlip(ref OArc arc,out int index)
+        public static bool DetectCycleSlip(ref OArc arc, out int index)
         {
             index = -1;
 
@@ -463,7 +472,8 @@ namespace GeoFun.GNSS
             if (epoches is null || epoches.Count <= 0) return;
             foreach (var epoch in epoches)
             {
-                for (int i = epoch.SatNum - 1; i > -1; i--)
+                int satNum = epoch.SatNum;
+                for (int i = 0; i < satNum; i++)
                 {
                     if (!epoch[i].SatPRN.StartsWith("G"))
                     {

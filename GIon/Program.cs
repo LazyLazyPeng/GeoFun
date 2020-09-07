@@ -1,13 +1,16 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace GIon
 {
     class Program
     {
+        [STAThread]
         static void Main(string[] args)
         {
             //Case case1 = new Case(@"E:\Data\Typhoon\feiyan\gnss");
@@ -16,7 +19,9 @@ namespace GIon
             //case1.Download();
             //case1.ReadFiles();
 
-            IonoHelper.Calculate(@"E:\Data\Typhoon\Case\soudelor\CHYI2121.15o");
+            //IonoHelper.Calculate(@"E:\Data\Typhoon\Case\ramasun\gnss\qion1971.140");
+            Application.EnableVisualStyles();
+            Application.Run(new FrmMain());
         }
     }
 }
