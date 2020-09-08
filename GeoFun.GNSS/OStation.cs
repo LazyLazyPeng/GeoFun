@@ -212,7 +212,6 @@ namespace GeoFun.GNSS
             return flag;
         }
 
-
         public void DetectArcs1()
         {
             if (Epoches is null || Epoches.Count <= 0) return;
@@ -548,6 +547,43 @@ namespace GeoFun.GNSS
             //DetectCycleSlip();
             CalP4L4();
             SmoothP4();
+        }
+
+        public void Fit()
+        {
+            foreach (var prn in Arcs.Keys)
+            {
+                var arcs = Arcs[prn];
+                for (int i = 0; i < arcs.Count; i++)
+                {
+                    var arc = arcs[i];
+
+                    Fit(arc);
+                }
+            }
+        }
+        public void Fit(OArc arc)
+        {
+            List<int> index = new List<int>();
+            List<double> x = new List<double>();
+            List<double> y = new List<double>();
+            for (int i = 0; i < arc.Length; i++)
+            {
+                if (Math.Abs(arc[i]["SP4"]) > 1e-3)
+                {
+                    index.Add(i);
+
+                    x.Add(i);
+                    y.Add(arc[i]["SP4"]);
+                }
+            }
+
+            PolynomialModel pm = PolynomialModel.Fit(x, y, 3);
+
+            for(int i =0; i <x.Count; i++)
+            {
+                arc[index[i]]["SP4"] -= pm.CalFit(x[i]);
+            }
         }
     }
 }
