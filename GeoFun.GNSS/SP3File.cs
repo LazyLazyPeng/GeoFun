@@ -38,6 +38,45 @@ namespace GeoFun.GNSS
             }
         }
 
+        public string CenterName = "igs";
+
+        private int week;
+        /// <summary>
+        /// 周数
+        /// </summary>
+        public int Week
+        {
+            get
+            {
+                return week;
+            }
+            set
+            {
+                week = value;
+            }
+        }
+        private int dow;
+        /// <summary>
+        /// 天数
+        /// </summary>
+        public int DayOfWeek {
+            get
+            {
+                return dow;
+            }
+            set
+            {
+                dow = value;
+            }
+        }
+        public int AllDayNum
+        {
+            get
+            {
+                return week * 7 + dow;
+            }
+        }
+
         ///历元数
         public int EpochNum
         {
@@ -61,6 +100,8 @@ namespace GeoFun.GNSS
         {
             Path = path;
             Header = new SP3Header();
+
+            FileName.ParseSP3Name(System.IO.Path.GetFileName(path), out CenterName, out week, out dow);
         }
 
         /// <summary>
@@ -172,7 +213,7 @@ namespace GeoFun.GNSS
                 {
                     break;
                 }
-                else if(lines[i].StartsWith("EOF"))
+                else if (lines[i].StartsWith("EOF"))
                 {
                     break;
                 }

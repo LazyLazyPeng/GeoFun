@@ -369,5 +369,6 @@ namespace GeoFun.GNSS
             week = (int)Math.Floor(dayNum / 7d);
             dow = dayNum - week * 7;
         }
+
     }
 }
