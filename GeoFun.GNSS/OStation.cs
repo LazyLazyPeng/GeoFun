@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 
 using System.IO;
+using GeoFun.MathUtils;
+using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace GeoFun.GNSS
 {
@@ -12,6 +15,8 @@ namespace GeoFun.GNSS
     /// </summary>
     public class OStation
     {
+        public List<DOY> DOYs = new List<DOY>();
+
         /// <summary>
         /// 采样率(s)
         /// </summary>
@@ -30,7 +35,7 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 概略位置
         /// </summary>
-        public Coor3 ApproxPos { get; set; } = new Coor3();
+        public double[] ApproxPos { get; set; } = new double[3];
 
         /// <summary>
         /// 测站法向量
@@ -39,6 +44,15 @@ namespace GeoFun.GNSS
 
         public List<OFile> OFiles = new List<OFile>();
         public List<OEpoch> Epoches = new List<OEpoch>(2880 * 2);
+
+        public int EpochNum
+        {
+            get
+            {
+                if (Epoches is null) return 0;
+                return Epoches.Count;
+            }
+        }
 
         /// <summary>
         /// 测站上所有卫星的所有观测弧段
@@ -94,14 +108,17 @@ namespace GeoFun.GNSS
             {
                 try
                 {
-                    if (file.Name == "03652480.18o")
-                    {
-                        int a = 0;
-                    }
                     OFile oFile = new OFile(file.FullName);
                     if (oFile.TryRead())
                     {
                         OFiles.Add(oFile);
+
+                        if (Math.Abs(oFile.Header.approxPos.X) > 1e3)
+                        {
+                            ApproxPos[0] = oFile.Header.approxPos.X;
+                            ApproxPos[1] = oFile.Header.approxPos.Y;
+                            ApproxPos[2] = oFile.Header.approxPos.Z;
+                        }
                     }
                     else
                     {
@@ -123,7 +140,80 @@ namespace GeoFun.GNSS
             ReadAllObs(dirInfo);
         }
 
-        public void DetectArcs()
+        public void GetStationDOY()
+        {
+            DOYs = new List<DOY>();
+            foreach (var file in OFiles)
+            {
+                DOYs.Add(new DOY(file.Year, file.DOY));
+            }
+
+            //// DOY排序
+            DOYs.Sort();
+        }
+        /// <summary>
+        /// 检查数据DOY是否连续
+        /// </summary>
+        public bool CheckDOY()
+        {
+            bool flag = true;
+            if (DOYs.Count < 2) return true; ;
+            for (int i = 1; i < DOYs.Count; i++)
+            {
+                //// 判断doy是否连续
+                // 1.不跨年
+                if (DOYs[i].Year == DOYs[i - 1].Year)
+                {
+                    if (DOYs[i].Day - DOYs[i - 1].Day <= 1)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        flag = false;
+                        break;
+                    }
+                }
+
+                // 2.跨年
+                else if (DOYs[i].Year - DOYs[i - 1].Year > 1)
+                {
+                    flag = false;
+                    break;
+                }
+                else
+                {
+                    if (DOYs[i].Day != 1)
+                    {
+                        flag = false;
+                        break;
+                    }
+
+                    // 闰年最后一天
+                    if (DateTime.IsLeapYear(DOYs[i - 1].Year)
+                        && DOYs[i - 1].Day == 366)
+                    {
+                        continue;
+                    }
+                    // 非闰年最后一天
+                    else if (DateTime.IsLeapYear(DOYs[i - 1].Year)
+                        && DOYs[i - 1].Day == 365)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        flag = false;
+                        break;
+                    }
+                }
+            }
+
+            return flag;
+        }
+
+
+        public void DetectArcs1()
         {
             if (Epoches is null || Epoches.Count <= 0) return;
 
@@ -224,16 +314,28 @@ namespace GeoFun.GNSS
             }
         }
 
+        public void DetectArcs()
+        {
+            for (int i = 0; i < 32; i++)
+            {
+                string prn = string.Format("G{0:0#}", i + 1);
+                List<OArc> arcList = OArc.Detect(this, prn);
+                Arcs.Add(prn, arcList);
+            }
+        }
+
         public void DetectCycleSlip()
         {
-            foreach (var prn in Arcs.Keys)
+            for (int k = 0; k < Arcs.Keys.Count; k++)
             {
+                string prn = Arcs.Keys.ElementAt(k);
+
                 //// 旧的弧段
                 Stack<OArc> oldArcs = new Stack<OArc>();
                 //// 探测后新的弧段
                 List<OArc> newArcs = new List<OArc>();
 
-                for (int i = Arcs.Count - 0; i >= 0; i--)
+                for (int i = Arcs[prn].Count - 1; i >= 0; i--)
                 {
                     oldArcs.Push(Arcs[prn][i].Copy());
                 }
@@ -243,7 +345,7 @@ namespace GeoFun.GNSS
                 while (oldArcs.Count() > 0)
                 {
                     arc = oldArcs.Pop();
-                    if (Observation.DetectCycleSlip(ref arc, out index))
+                    if (ObsHelper.DetectCycleSlip(ref arc, out index))
                     {
                         // 根据返回周跳的索引将弧段分为2段
                         OArc[] arcs = arc.Split(index);
@@ -351,7 +453,7 @@ namespace GeoFun.GNSS
         /// <remarks>
         /// 参考 任晓东. 多系统GNSS电离层TEC高精度建模及差分码偏差精确估计[D].
         /// </remarks>
-        public void SmoothP4()
+        public void SmoothP41()
         {
             double f1 = Common.GPS_F1;
             double f2 = Common.GPS_F2;
@@ -375,6 +477,60 @@ namespace GeoFun.GNSS
                     for (int j = 0; j < arc.Length; j++)
                     {
                         arc[j].SatData.Add("SP4", arc[j]["L4"] - p4l4);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 计算相位平滑伪距值
+        /// </summary>
+        public void SmoothP4()
+        {
+            ObsHelper.CalL4(ref Epoches);
+            ObsHelper.CalP4(ref Epoches);
+
+            foreach (var prn in Arcs.Keys)
+            {
+                for (int i = 0; i < Arcs[prn].Count; i++)
+                {
+                    OArc arc = Arcs[prn][i];
+                    Smoother.SmoothP4ByL4(ref arc);
+                }
+            }
+        }
+
+        public void CalAzElIPP()
+        {
+            if (Arcs is null) return;
+            // 测站概略坐标错误，需要估计
+            if (Math.Abs(ApproxPos[0]) < 1e-1
+             || Math.Abs(ApproxPos[1]) < 1e-1
+             || Math.Abs(ApproxPos[2]) < 1e-1) return;
+
+            double recb, recl, rech;
+            Coordinate.XYZ2BLH(ApproxPos, out recb, out recl, out rech, Ellipsoid.ELLIP_WGS84);
+
+            double az, el, ippb, ippl;
+            foreach (var prn in Arcs.Keys)
+            {
+                for (int i = 0; i < Arcs[prn].Count; i++)
+                {
+                    OArc arc = Arcs[prn][i];
+                    for (int j = 0; j < arc.Length; j++)
+                    {
+                        az = 0d;
+                        el = 0d;
+                        ippb = 0d;
+                        ippl = 0d;
+
+                        MathHelper.CalAzEl(ApproxPos, arc[j].SatCoor, out az, out el);
+                        MathHelper.CalIPP(recb, recl, Common.EARTH_RADIUS2, Common.IONO_HIGH, az, el, out ippb, out ippl);
+
+                        arc[j].Azimuth = az;
+                        arc[j].Elevation = el;
+                        arc[j].IPP[0] = ippb;
+                        arc[j].IPP[1] = ippl;
                     }
                 }
             }

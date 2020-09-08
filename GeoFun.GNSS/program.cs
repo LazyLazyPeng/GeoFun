@@ -41,8 +41,8 @@ namespace GeoFun.GNSS
                 //Console.ReadKey();
                 //return;
 
-                Observation.CalP4(ref ofile.AllEpoch);
-                Observation.CalL4(ref ofile.AllEpoch);
+                ObsHelper.CalP4(ref ofile.AllEpoch);
+                ObsHelper.CalL4(ref ofile.AllEpoch);
 
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < ofile.AllEpoch.Count; i++)

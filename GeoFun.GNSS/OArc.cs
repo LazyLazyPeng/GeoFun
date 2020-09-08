@@ -68,7 +68,7 @@ namespace GeoFun.GNSS
         {
             get
             {
-                return File.AllEpoch[StartIndex + index][PRN];
+                return Station.Epoches[StartIndex + index][PRN];
             }
         }
 
@@ -100,7 +100,7 @@ namespace GeoFun.GNSS
             arc1.PRN = PRN;
             arc1.Station = Station;
             arc1.StartIndex = StartIndex;
-            arc1.EndIndex = StartIndex+index - 1;
+            arc1.EndIndex = StartIndex + index - 1;
 
             // 第2段[index,end]
             OArc arc2 = new OArc();
@@ -111,7 +111,7 @@ namespace GeoFun.GNSS
 
             // EndIndex = StartIndex + (index - 1 < 0 ? 0 : index - 1);
 
-            return new OArc[] {arc1,arc2 };
+            return new OArc[] { arc1, arc2 };
         }
 
         /// <summary>
@@ -121,6 +121,67 @@ namespace GeoFun.GNSS
         public OArc Copy()
         {
             return new OArc(this);
+        }
+
+        public static List<OArc> Detect(OStation sta, string prn, int minArcLen=-1)
+        {
+            if (sta is null) return null;
+            if (minArcLen < 0) minArcLen = Options.ARC_MIN_LENGTH;
+
+            List<OArc> arcs = new List<OArc>();
+
+            int start = -1;
+            double l1, l2, p1, p2, c1;
+            for (int i = 0; i < sta.EpochNum; i++)
+            {
+                bool flag = true;
+                if (!sta.Epoches[i].AllSat.ContainsKey(prn)) flag = false;
+                else
+                {
+                    l1 = sta.Epoches[i][prn]["L1"];
+                    l2 = sta.Epoches[i][prn]["L2"];
+                    p1 = sta.Epoches[i][prn]["P1"];
+                    p2 = sta.Epoches[i][prn]["P2"];
+                    c1 = sta.Epoches[i][prn]["C1"];
+
+                    if (l1 == 0 || l2 == 0 || p2 == 0) flag = false;
+                    else if (p1 == 0 && c1 == 0) flag = false;
+                }
+
+                if(flag)
+                {
+                    // 弧段继续
+                    if (start > -1) continue;
+                    // 弧段开始
+                    else
+                    {
+                        start = i;
+                    }
+                }
+                else
+                {
+                    // 弧段结束
+                    if (start > -1)
+                    {
+                        if (i - start > minArcLen)
+                        {
+                            OArc arc = new OArc();
+                            arc.StartIndex = start;
+                            arc.EndIndex = i - 1;
+                            arc.Station = sta;
+                            arc.PRN = prn;
+                            arcs.Add(arc);
+                        }
+                        start = -1;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+
+            return arcs;
         }
     }
 }

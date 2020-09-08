@@ -51,9 +51,9 @@ namespace GIon
             sp3.TryRead();
 
             //Observation.EliminateSatellites(ref oFile.AllEpoch);
-            Observation.CalP4(ref oFile.AllEpoch);
-            Observation.CalL4(ref oFile.AllEpoch);
-            Observation.DetectOutlier(ref oFile.AllEpoch);
+            ObsHelper.CalP4(ref oFile.AllEpoch);
+            ObsHelper.CalL4(ref oFile.AllEpoch);
+            ObsHelper.DetectOutlier(ref oFile.AllEpoch);
 
             var arcs = oFile.SearchAllArcs();
             foreach (var prn in arcs.Keys)
@@ -106,13 +106,8 @@ namespace GIon
                         t0.AddSeconds(-arc[j]["P2"] / GeoFun.GNSS.Common.C0);
 
                         double[] satp = sp3.GetSatPos(t0, prn);
-                        arc[j].SatCoor = new GeoFun.GNSS.Coor3
-                        {
-                            X = satp[0],
-                            Y = satp[1],
-                            Z = satp[2]
-                        };
-
+                        arc[j].SatCoor = satp;
+ 
                         double az, el;
                         MathHelper.CalAzEl(recp, satp, out az, out el);
                         double bb, ll;
@@ -140,6 +135,10 @@ namespace GIon
                     foreach (var prn in epoch.AllSat.Keys)
                     {
                         var sat = epoch[prn];
+                        if (sat["SP4"] > 0.5d||sat["SP4"]<-0.5d)
+                        {
+                            sat["SP4"] = 0d;
+                        }
                         if (sat["SP4"] != 0d)
                         {
                             sb.AppendFormat("{0:0#},{1:f10},{2:f10},{3:f3}\r\n",

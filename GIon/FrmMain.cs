@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GeoFun.GNSS;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -23,6 +24,11 @@ namespace GIon
         {
             if (!Directory.Exists(tbxFolderIn.Text))
                 MessageBox.Show("文件夹不存在");
+
+            Common.msgBox = new MessageHelper(tbxMsg);
+
+            Case ionoCase = new Case(tbxFolderIn.Text);
+            ionoCase.Start();
 
             DirectoryInfo dir = new DirectoryInfo(tbxFolderIn.Text);
 

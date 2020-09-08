@@ -61,6 +61,7 @@
     <Compile Include="enumDCBOption.cs" />
     <Compile Include="enumGNSSSystem.cs" />
     <Compile Include="GPST.cs" />
+    <Compile Include="IMessageBox.cs" />
     <Compile Include="Iono.cs" />
     <Compile Include="NEpoch.cs" />
     <Compile Include="NFile.cs" />
@@ -68,10 +69,12 @@
     <Compile Include="NSat.cs" />
     <Compile Include="OArc.cs" />
     <Compile Include="Observation.cs" />
+    <Compile Include="ObsHelper.cs" />
     <Compile Include="OEpoch.cs" />
     <Compile Include="OFile.cs" />
     <Compile Include="OHeader.cs" />
     <Compile Include="Options.cs" />
+    <Compile Include="Orbit.cs" />
     <Compile Include="OSat.cs" />
     <Compile Include="OStation.cs" />
     <Compile Include="PRNCode.cs" />

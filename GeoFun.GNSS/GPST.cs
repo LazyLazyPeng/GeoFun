@@ -213,5 +213,12 @@ namespace GeoFun.GNSS
 
             return t1.Week.TotalSeconds - t2.Week.TotalSeconds;
         }
+
+        override
+        public string ToString()
+        {
+            return string.Format("{0}-{1:0#}-{2:0#} {3:0#}:{4:0#}:{5:00.000}",commonT.Year,commonT.Month,commonT.Day,commonT.Hour,commonT.Minute,commonT.second);
+        }
+
     }
 }

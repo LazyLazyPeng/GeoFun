@@ -46,7 +46,7 @@ namespace GeoFun.GNSS.Tests
 
             Console.WriteLine(ofile.Path);
 
-            Observation.DetectClockJumpAndRepair(ref ofile.AllEpoch, (int)ofile.Header.interval);
+            ObsHelper.DetectClockJumpAndRepair(ref ofile.AllEpoch, (int)ofile.Header.interval);
         }
 
         [TestMethod()]

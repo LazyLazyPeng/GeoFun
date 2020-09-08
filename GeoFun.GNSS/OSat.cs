@@ -40,7 +40,7 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 卫星坐标，可由精密星历或者广播星历计算得到
         /// </summary>
-        public Coor3 SatCoor;
+        public double[] SatCoor = { 0d, 0d, 0d };
         /// <summary>
         /// 卫星钟差，可由精密星历或者广播星历计算得到
         /// </summary>
@@ -92,7 +92,7 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 穿刺点位置
         /// </summary>
-        public double[] IPP = new double[2];
+        public double[] IPP = { 0d, 0d };
         /// <summary>
         /// 方位角
         /// </summary>

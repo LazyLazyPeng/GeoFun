@@ -7,6 +7,8 @@ namespace GeoFun.GNSS
 {
     public class Common
     {
+        public static IMessageBox msgBox = null;
+
         /// <summary>
         /// 地球半径(m)
         /// </summary>

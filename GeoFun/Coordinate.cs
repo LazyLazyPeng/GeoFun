@@ -89,6 +89,11 @@ namespace GeoFun
             XYZ2BLH(X, Y, Z, out B, out L, out H, ell);
         }
 
+        public static void XYZ2BLH(double[] xyz, out double B, out double L, out double H, Ellipsoid ell)
+        {
+            XYZ2BLH(xyz[0], xyz[1], xyz[2], out B, out L, out H, ell);
+        }
+
         /// <summary>
         /// 大地坐标转空间直角坐标
         /// </summary>
