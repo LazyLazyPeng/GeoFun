@@ -1,8 +1,10 @@
-﻿using GeoFun.Sys;
+﻿using GeoFun.IO;
+using GeoFun.Sys;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -22,6 +24,8 @@ namespace GeoFun.GNSS
         /// 所有弧段
         /// </summary>
         public Dictionary<string, List<OArc>> Arcs = new Dictionary<string, List<OArc>>();
+
+        public double Interval = 30d;
 
         public Observation(string folder)
         {
@@ -218,7 +222,19 @@ namespace GeoFun.GNSS
                 OStation oSta = new OStation(station);
                 oSta.ReadAllObs(Folder);
                 oSta.SortObs();
+                if(oSta.EpochNum>0)
+                {
+                    oSta.StartTime=oSta.Epoches[0].Epoch;
+                }
                 Stations.Add(oSta);
+            }
+
+            foreach(var sta in Stations)
+            {
+                if (sta is null) continue;
+
+                Interval = sta.Interval;
+                break;
             }
         }
 
@@ -228,7 +244,7 @@ namespace GeoFun.GNSS
         public void DetectArcs()
         {
             if (Stations is null) return;
-            foreach(var sta in Stations)
+            foreach (var sta in Stations)
             {
                 sta.DetectArcs();
             }
@@ -238,7 +254,7 @@ namespace GeoFun.GNSS
         /// </summary>
         public void SmoothP4()
         {
-            foreach(var sta in Stations)
+            foreach (var sta in Stations)
             {
                 sta.SmoothP4();
             }
@@ -249,7 +265,7 @@ namespace GeoFun.GNSS
         public void CalAzElIPP()
         {
             if (Stations is null) return;
-            foreach(var osta in Stations)
+            foreach (var osta in Stations)
             {
                 osta.CalAzElIPP();
             }
@@ -262,7 +278,7 @@ namespace GeoFun.GNSS
         {
             if (Stations is null) return;
 
-            foreach(var sta in Stations)
+            foreach (var sta in Stations)
             {
                 sta.DetectOutlier();
             }
@@ -274,7 +290,7 @@ namespace GeoFun.GNSS
         {
             if (Stations is null) return;
 
-            foreach(var sta in Stations)
+            foreach (var sta in Stations)
             {
                 sta.DetectCycleSlip();
             }
@@ -289,5 +305,98 @@ namespace GeoFun.GNSS
             DetectArcs();
             DetectCycleSlip();
         }
+
+        /// <summary>
+        /// 拟合观测值,得残差
+        /// </summary>
+        public void Fit()
+        {
+            if (Stations is null) return;
+
+            foreach (var sta in Stations)
+            {
+                sta.Fit();
+            }
+        }
+
+        /// <summary>
+        /// 每几个历元输出一张图
+        /// </summary>
+        /// <param name="epoNum"></param>
+        public void WriteTECMap(string outFolder,int epoNum = 10)
+        {
+            List<int> startIndex = new List<int>();
+
+            GPST startTime = Stations.Min(s => s.StartTime);
+            for (int i = 0; i < Stations.Count; i++)
+            {
+                OStation sta = Stations[i];
+                int index = (int)Math.Floor(sta.StartTime.TotalSeconds - startTime.TotalSeconds + 0.1d);
+                startIndex.Add(index);
+            }
+
+            GPST curStartTime = new GPST(startTime);
+            GPST curEndTime =  new GPST(startTime);
+            double p4 = 0d;
+            int start = 0, end = epoNum;
+            List<string[]> data = new List<string[]>();
+            do
+            {
+                for (int i = 0; i < Stations.Count; i++)
+                {
+                    var sta = Stations[i];
+                    if (startIndex[i] >= end) continue;
+                    if (startIndex[i] + sta.EpochNum <= start) continue;
+
+                    int epoNum1 = startIndex[i] < start ? start - startIndex[i] : 0;
+                    int epoNum2 = end - startIndex[i];
+                    for (int j = epoNum1; j < epoNum2; j++)
+                    {
+                        foreach (var sat in sta.Epoches[j].AllSat.Values)
+                        {
+                            p4 = sat["SP4"];
+                            if (Math.Abs(p4) < 1e-10) continue;
+
+                            data.Add(new string[]
+                            {
+                                sat.IPP[0].ToString("#.##########"),
+                                sat.IPP[1].ToString("#.##########"),
+                                p4.ToString("#.####") });
+                        }
+                    }
+                }
+
+                // 写入文件
+                if (data.Count>0)
+                {
+                    curStartTime.AddSeconds(start*Interval);
+                    curEndTime.AddSeconds(end*Interval);
+                    string fileName = string.Format("{0}{1:0#}{2:0#}{3:0#}{4:0#}{5:##.#}.{6}{7:0#}{8:0#}{9:0#}{10:0#}{11:##.#}.tec",
+                        curStartTime.CommonT.Year,
+                        curStartTime.CommonT.Month,
+                        curStartTime.CommonT.Day,
+                        curStartTime.CommonT.Hour,
+                        curStartTime.CommonT.Minute,
+                        curStartTime.CommonT.Second,
+                        curEndTime.CommonT.Year,
+                        curEndTime.CommonT.Month,
+                        curEndTime.CommonT.Day,
+                        curEndTime.CommonT.Hour,
+                        curEndTime.CommonT.Minute,
+                        curEndTime.CommonT.Second
+                        );
+
+                    string filePath = Path.Combine(outFolder,fileName);
+
+                    FileHelper.WriteLines(filePath,data,',');
+                }
+
+                start += epoNum;
+                end += epoNum;
+                data = new List<string[]>();
+            }
+            while (data.Count > 0);
+        }
+
     }
 }

@@ -20,6 +20,29 @@ namespace GeoFun.MathUtils
         /// </summary>
         public List<double> Factor = new List<double>();
 
+        public static PolynomialModel Fit(List<double> x, List<double> y, int order)
+        {
+            if (x is null || y is null) return null;
+            PolynomialModel pm = new PolynomialModel();
+            pm.Order = order;
+
+            int n = System.Math.Min(x.Count, y.Count);
+            DenseMatrix b = new DenseMatrix(n, order + 1);
+            DenseVector l = new DenseVector(n);
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < order + 1; j++)
+                {
+                    b[i, j] = System.Math.Pow(x[i], j);
+                    l[i] = y[i];
+                }
+            }
+
+            Vector<double> r = (b.Transpose() * b).Inverse() * (b.Transpose() * l);
+            pm.Factor = r.ToList();
+            return pm;
+        }
+
         public void Fit(List<double> x, List<double> y)
         {
             if (x is null || y is null) return;

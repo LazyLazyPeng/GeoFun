@@ -111,6 +111,8 @@ namespace GIon
             Obs.Preprocess();
             Obs.SmoothP4();
 
+            Obs.Fit();
+
             /** 5.列法方程并求解DCB
                   5.1 列出单天解的法方程
                   5.2 多天解法方程叠加
@@ -123,6 +125,7 @@ namespace GIon
                   7.1 将结果写出到txt文本
                   7,2 分析结果并绘图
              */
+            Obs.WriteTECMap(resFolder,10);
 
         }
 
