@@ -15,6 +15,7 @@ namespace GIon
 {
     public partial class FrmMain : Form
     {
+        public static MessageHelper MessHelper;
         public FrmMain()
         {
             InitializeComponent();
@@ -25,33 +26,38 @@ namespace GIon
             if (!Directory.Exists(tbxFolderIn.Text))
                 MessageBox.Show("文件夹不存在");
 
-            Common.msgBox = new MessageHelper(tbxMsg);
+            var messHelper = new MessageHelper(tbxMsg);
+            Common.msgBox = messHelper;
 
             Case ionoCase = new Case(tbxFolderIn.Text);
-            ionoCase.Start();
-
-            DirectoryInfo dir = new DirectoryInfo(tbxFolderIn.Text);
+            MessHelper = messHelper;
 
             Task task = new Task(() =>
             {
+                DirectoryInfo dir = new DirectoryInfo(tbxFolderIn.Text);
+                ionoCase.Resolve();
+                return;
+
                 foreach (var file in dir.GetFiles("*?.??o"))
                 {
                     tbxMsg.Invoke(new Action(() =>
                     {
                         tbxMsg.Text += string.Format("\r\n {0} 正在解算:{1}", DateTime.Now.ToString(), file.Name);
-                        tbxMsg.Select(tbxMsg.Text.Length-1,0);
+                        tbxMsg.Select(tbxMsg.Text.Length - 1, 0);
                         tbxMsg.ScrollToCaret();
                     }));
-                    IonoHelper.Calculate(file.FullName);
+                    //IonoHelper.Calculate(file.FullName);
+
+
                     tbxMsg.Invoke(new Action(() =>
                     {
                         tbxMsg.Text += string.Format("\r\n {0} 解算完成:{1}\r\n", DateTime.Now.ToString(), file.Name);
-                        tbxMsg.Select(tbxMsg.Text.Length-1,0);
+                        tbxMsg.Select(tbxMsg.Text.Length - 1, 0);
                         tbxMsg.ScrollToCaret();
                     }));
                 }
             });
-            task.ContinueWith(t=>MessageBox.Show("解算完成"),TaskContinuationOptions.ExecuteSynchronously);
+            task.ContinueWith(t => MessageBox.Show("解算完成"), TaskContinuationOptions.ExecuteSynchronously);
             task.Start();
         }
 

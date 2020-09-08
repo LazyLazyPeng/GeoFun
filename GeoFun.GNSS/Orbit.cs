@@ -153,7 +153,7 @@ namespace GeoFun.GNSS
             // 00:00:00之前，无法插值
             if (t0 - StartTime + 1e-13 < 0) return p;
             // 00:00:00之后，无法插值
-            if (t0 - StartTime > 24 * 3600) return p;
+            if (t0 - StartTime > EpochNum * Interval) return p;
 
             // 10阶插值
             double[] t = new double[10];
@@ -242,7 +242,8 @@ namespace GeoFun.GNSS
                 pRange = sat["P2"];
                 if (pRange == 0d) pRange = sat["P1"];
                 if (pRange == 0d) pRange = sat["C1"];
-                if (pRange == 0d) continue;
+                if (pRange == 0d)
+                    continue;
 
                 GPST t0 = new GPST(oEpo.Epoch);
                 t0.AddSeconds(-pRange / Common.C0);
