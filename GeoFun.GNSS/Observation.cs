@@ -222,14 +222,14 @@ namespace GeoFun.GNSS
                 OStation oSta = new OStation(station);
                 oSta.ReadAllObs(Folder);
                 oSta.SortObs();
-                if(oSta.EpochNum>0)
+                if (oSta.EpochNum > 0)
                 {
-                    oSta.StartTime=oSta.Epoches[0].Epoch;
+                    oSta.StartTime = oSta.Epoches[0].Epoch;
                 }
                 Stations.Add(oSta);
             }
 
-            foreach(var sta in Stations)
+            foreach (var sta in Stations)
             {
                 if (sta is null) continue;
 
@@ -323,7 +323,7 @@ namespace GeoFun.GNSS
         /// 每几个历元输出一张图
         /// </summary>
         /// <param name="epoNum"></param>
-        public void WriteTECMap(string outFolder,int epoNum = 10)
+        public void WriteTECMap(string outFolder, int epoNum = 10)
         {
             List<int> startIndex = new List<int>();
 
@@ -336,12 +336,14 @@ namespace GeoFun.GNSS
             }
 
             GPST curStartTime = new GPST(startTime);
-            GPST curEndTime =  new GPST(startTime);
+            GPST curEndTime = new GPST(startTime);
+            curEndTime.AddSeconds(epoNum * Interval);
             double p4 = 0d;
             int start = 0, end = epoNum;
             List<string[]> data = new List<string[]>();
             do
             {
+                data = new List<string[]>();
                 for (int i = 0; i < Stations.Count; i++)
                 {
                     var sta = Stations[i];
@@ -359,18 +361,16 @@ namespace GeoFun.GNSS
 
                             data.Add(new string[]
                             {
-                                sat.IPP[0].ToString("#.##########"),
-                                sat.IPP[1].ToString("#.##########"),
-                                p4.ToString("#.####") });
+                                (sat.IPP[1]*Angle.R2D).ToString("#.##########"),
+                                (sat.IPP[0]*Angle.R2D).ToString("#.##########"),
+                                p4.ToString("f4") });
                         }
                     }
                 }
 
                 // 写入文件
-                if (data.Count>0)
+                //if (data.Count > 0)
                 {
-                    curStartTime.AddSeconds(start*Interval);
-                    curEndTime.AddSeconds(end*Interval);
                     string fileName = string.Format("{0}{1:0#}{2:0#}{3:0#}{4:0#}{5:##.#}.{6}{7:0#}{8:0#}{9:0#}{10:0#}{11:##.#}.tec",
                         curStartTime.CommonT.Year,
                         curStartTime.CommonT.Month,
@@ -386,17 +386,18 @@ namespace GeoFun.GNSS
                         curEndTime.CommonT.Second
                         );
 
-                    string filePath = Path.Combine(outFolder,fileName);
+                    string filePath = Path.Combine(outFolder, fileName);
+                    FileHelper.WriteLines(filePath, data, ',');
 
-                    FileHelper.WriteLines(filePath,data,',');
+                    curStartTime.AddSeconds(epoNum * Interval);
+                    curEndTime.AddSeconds(epoNum * Interval);
+
                 }
 
                 start += epoNum;
                 end += epoNum;
-                data = new List<string[]>();
             }
             while (data.Count > 0);
         }
-
     }
 }

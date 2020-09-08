@@ -70,6 +70,9 @@ namespace GIon
             Init();
         }
 
+        /// <summary>
+        /// 读取所有数据，统一进行解算，很耗内存和时间
+        /// </summary>
         public void Start()
         {
             Obs = new Observation(obsFolder);
@@ -88,7 +91,9 @@ namespace GIon
              *    2.1 读观测文件
              *    2.2 读星历、钟差、dcb
              */
+            FrmMain.MessHelper.Print("\r\n读取文件");
             ReadFiles();
+            FrmMain.MessHelper.Print("\r\n读取文件完成");
 
             /** 3.误差改正、粗差剔除
                   3.1 粗差探测
@@ -100,17 +105,24 @@ namespace GIon
                   4.1 相位平滑伪距观测值
                   4.2 高度角，方位角
              */
-            foreach(var station in Obs.Stations)
+
+            FrmMain.MessHelper.Print("\r\n计算卫星轨道");
+            foreach (var station in Obs.Stations)
             {
-                for(int i =0; i < station.EpochNum; i++)
+                for (int i = 0; i < station.EpochNum; i++)
                 {
                     OEpoch oepo = station.Epoches[i];
                     Orb.GetSatPos(ref oepo);
                 }
             }
+            FrmMain.MessHelper.Print("\r\n预处理...");
             Obs.Preprocess();
+            FrmMain.MessHelper.Print("\r\n计算穿刺点...");
+            Obs.CalAzElIPP();
+            FrmMain.MessHelper.Print("\r\n相位平滑伪距...");
             Obs.SmoothP4();
 
+            FrmMain.MessHelper.Print("\r\n多项式拟合...");
             Obs.Fit();
 
             /** 5.列法方程并求解DCB
@@ -122,11 +134,58 @@ namespace GIon
              */
 
             /** 7.将结果写出到文件
+            FrmMain.MessHelper.Print("多项式拟合...");
                   7.1 将结果写出到txt文本
                   7,2 分析结果并绘图
              */
-            Obs.WriteTECMap(resFolder,10);
+            FrmMain.MessHelper.Print("\r\n结果输出...");
+            Obs.WriteTECMap(resFolder, 10);
 
+        }
+
+        /// <summary>
+        /// 逐个测站解算,耗内存小
+        /// </summary>
+        public void Resolve()
+        {
+            Orb = new Orbit(orbFolder);
+            Obs = new Observation(obsFolder);
+            Orb = new Orbit(orbFolder);
+
+            /** 1.预处理
+                  1.1 下载星历、钟差、dcb、电离层文件
+                  1.2  转换rinex版本(调用gfzrnx程序)
+            */
+            Obs.SearchFiles();
+            Obs.CheckDataConsit();
+            if (!Download(Obs.DOYs)) return;
+            Orb.GetAllSp3Files();
+
+            Orb.Read(orbFolder);
+            foreach (var station in Obs.DOYs.Keys)
+            {
+                OStation sta = new OStation(station);
+                sta.ReadAllObs(obsFolder);
+                sta.SortObs();
+                if (sta.EpochNum > 0)
+                {
+                    sta.StartTime = sta.Epoches[0].Epoch;
+                }
+
+                for (int i = 0; i < sta.EpochNum; i++)
+                {
+                    OEpoch oepo = sta.Epoches[i];
+                    Orb.GetSatPos(ref oepo);
+                }
+
+                sta.DetectOutlier();
+                sta.DetectArcs();
+                sta.DetectCycleSlip();
+                sta.CalAzElIPP();
+                sta.SmoothP4();
+                sta.Fit();
+                sta.WriteMeas(resFolder, 20);
+            }
         }
 
         public void Init()
@@ -195,7 +254,7 @@ namespace GIon
         /// 从网上下载必须的数据
         /// </summary>
         /// <returns></returns>
-        public bool Download(Dictionary<string,List<DOY>> DOYs)
+        public bool Download(Dictionary<string, List<DOY>> DOYs)
         {
             // 获取数据的起始和结束时间
             DOY start = null;
@@ -227,7 +286,7 @@ namespace GIon
                 Downloader.DownloadClkDOY(start.Year, start.Day, orbFolder);
                 Downloader.DownloadI(start.Year, start.Day, orbFolder);
 
-                start=start.AddDays(1);
+                start = start.AddDays(1);
             }
 
             return true;

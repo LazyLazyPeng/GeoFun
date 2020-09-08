@@ -7,6 +7,8 @@ using System.IO;
 using GeoFun.MathUtils;
 using System.Collections;
 using System.Text.RegularExpressions;
+using System.ComponentModel;
+using GeoFun.IO;
 
 namespace GeoFun.GNSS
 {
@@ -425,7 +427,7 @@ namespace GeoFun.GNSS
 
                         if (p1 != 0d || p2 != 0d)
                         {
-                            arc[j]["P4"] = p1 - p2;
+                            arc[j]["P4"] = p2 - p1;
                         }
                         else
                         {
@@ -434,7 +436,7 @@ namespace GeoFun.GNSS
 
                         if (l1 != 0 && l2 != 0)
                         {
-                            arc[j]["L4"] = l1 - l2;
+                            arc[j]["L4"] = l2 - l1;
                         }
                         else
                         {
@@ -530,6 +532,11 @@ namespace GeoFun.GNSS
                         arc[j].Elevation = el;
                         arc[j].IPP[0] = ippb;
                         arc[j].IPP[1] = ippl;
+
+                        if (ippb < 0)
+                        {
+                            int b = 0;
+                        }
                     }
                 }
             }
@@ -580,9 +587,64 @@ namespace GeoFun.GNSS
 
             PolynomialModel pm = PolynomialModel.Fit(x, y, 3);
 
-            for(int i =0; i <x.Count; i++)
+            for (int i = 0; i < x.Count; i++)
             {
                 arc[index[i]]["SP4"] -= pm.CalFit(x[i]);
+            }
+        }
+
+        public void WriteMeas(string folder, int epoNum)
+        {
+            // start time(st)
+            GPST st = new GPST(Epoches[0].Epoch);
+            // end time(et)
+            GPST et = new GPST(Epoches[0].Epoch);
+
+            // start index(si) end index(ei)
+            int si = 0, ei = si;
+            while (si < EpochNum)
+            {
+                ei = si + epoNum;
+                if (ei >= EpochNum) ei = EpochNum-1;
+
+                st = Epoches[si].Epoch;
+                et = Epoches[ei].Epoch;
+
+                List<string[]> lines = new List<string[]>();
+                for (int i = 0; i < ei; i++)
+                {
+                    foreach (var sat in Epoches[i].AllSat.Values)
+                    {
+                        if (Math.Abs(sat["SP4"]) < 1e-10) continue;
+
+                        lines.Add(new string[]
+                        {
+                            sat.SatPRN,
+                            (sat.IPP[1]*Angle.R2D).ToString("#.##########"),
+                            (sat.IPP[0]*Angle.R2D).ToString("#.##########"),
+                            sat["SP4"].ToString("f4")
+                        });
+                    }
+                }
+
+                string fileName = Name+string.Format(".{0}{1:0#}{2:0#}{3:0#}{4:0#}{5:##.#}.{6}{7:0#}{8:0#}{9:0#}{10:0#}{11:##.#}.tec",
+                    st.CommonT.Year,
+                    st.CommonT.Month,
+                    st.CommonT.Day,
+                    st.CommonT.Hour,
+                    st.CommonT.Minute,
+                    st.CommonT.Second,
+                    et.CommonT.Year,
+                    et.CommonT.Month,
+                    et.CommonT.Day,
+                    et.CommonT.Hour,
+                    et.CommonT.Minute,
+                    et.CommonT.Second
+                    );
+                string filePath = Path.Combine(folder, fileName);
+                FileHelper.WriteLines(filePath,lines,',');
+
+                si += epoNum;
             }
         }
     }

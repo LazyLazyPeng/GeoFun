@@ -152,7 +152,7 @@ namespace GeoFun.GNSS
             {
                 int weekNum = (int)Math.Floor(sec / Time.SecondsPerWeek);
                 week.Weeks += weekNum;
-                Week.Seconds = sec - weekNum * Time.SecondsPerWeek;
+                Week.Seconds -=  weekNum * Time.SecondsPerWeek;
                 Week = Week;
             }
         }

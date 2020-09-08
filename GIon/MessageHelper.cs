@@ -24,6 +24,8 @@ namespace GIon
             MyTextBox.Invoke(new Action(() =>
             {
                 MyTextBox.Text = MyTextBox.Text + msg;
+                MyTextBox.Select(MyTextBox.Text.Length,0);
+                MyTextBox.ScrollToCaret();
             }));
         }
     }

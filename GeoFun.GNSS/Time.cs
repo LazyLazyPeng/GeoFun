@@ -8,7 +8,7 @@ namespace GeoFun.GNSS
     public static class Time
     {
         public static readonly int SecondsPerDay = 24 * 3600;
-        public static readonly int SecondsPerWeek = 7 * 3600;
+        public static readonly int SecondsPerWeek = 7 * 24 * 3600;
 
         public static readonly int[] DaysPerMonth = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
         public static readonly int[] DaysPerMonthLeapYear = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
@@ -100,7 +100,8 @@ namespace GeoFun.GNSS
             int a, b, c, d, e;
             double seconds = 0d;
 
-            a = (int)(days + sod / 86400 + 2400000.5 + 0.5);
+            double jd = days + sod / 86400 + 2400000.5;
+            a = (int)(jd + 0.5);
             b = a + 1537;
             c = (int)((b - 122.1) / 365.25);
             d = (int)(365.25 * c);
@@ -364,7 +365,7 @@ namespace GeoFun.GNSS
             DateTime dt = new DateTime(year, 1, 1);
 
             // GPS时的所有天数
-            int dayNum = (dt - GPST.StartTime).Days+doy-1;
+            int dayNum = (dt - GPST.StartTime).Days + doy - 1;
 
             week = (int)Math.Floor(dayNum / 7d);
             dow = dayNum - week * 7;
