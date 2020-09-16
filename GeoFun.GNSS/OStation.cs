@@ -9,6 +9,7 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
 using GeoFun.IO;
+using MathNet.Numerics.LinearAlgebra.Solvers;
 
 namespace GeoFun.GNSS
 {
@@ -18,6 +19,23 @@ namespace GeoFun.GNSS
     public class OStation
     {
         public List<DOY> DOYs = new List<DOY>();
+
+        public DOY StartDOY
+        {
+            get
+            {
+                if (DOYs is null||DOYs.Count<=0) return null;
+                return DOYs.Min();
+            }
+        }
+        public DOY EndDOY
+        {
+            get
+            {
+                if (DOYs is null || DOYs.Count <= 0) return null;
+                return DOYs.Max();
+            }
+        }
 
         /// <summary>
         /// 采样率(s)
@@ -43,6 +61,14 @@ namespace GeoFun.GNSS
         /// 测站法向量
         /// </summary>
         public double[] ApproxPosNEU { get; set; } = new double[3];
+
+        public int FileNum
+        {
+            get
+            {
+                return OFiles.Count;
+            }
+        }
 
         public List<OFile> OFiles = new List<OFile>();
         public List<OEpoch> Epoches = new List<OEpoch>(2880 * 2);
@@ -91,11 +117,11 @@ namespace GeoFun.GNSS
                       select o).ToList();
 
             //// 将观测历元合并到一个大的数组
-            Epoches = new List<OEpoch>(OFiles.Sum(o => o.AllEpoch.Count));
+            Epoches = new List<OEpoch>(OFiles.Sum(o => o.Epoches.Count));
             foreach (var o in OFiles)
             {
                 o.StartIndex = Epoches.Count;
-                Epoches.AddRange(o.AllEpoch);
+                Epoches.AddRange(o.Epoches);
             }
         }
 
@@ -103,18 +129,14 @@ namespace GeoFun.GNSS
         /// 读取文件夹下该测站的所有观测文件(rinex2版本)
         /// </summary>
         /// <param name="dir"></param>
-        public void ReadAllObs(DirectoryInfo dir)
+        public void ReadAllObs()
         {
-            var files = dir.GetFiles(string.Format("{0}???*.??o", Name));
-            foreach (var file in files)
+            foreach (var oFile in OFiles)
             {
                 try
                 {
-                    OFile oFile = new OFile(file.FullName);
                     if (oFile.TryRead())
                     {
-                        OFiles.Add(oFile);
-
                         if (Math.Abs(oFile.Header.approxPos.X) > 1e3)
                         {
                             ApproxPos[0] = oFile.Header.approxPos.X;
@@ -124,24 +146,40 @@ namespace GeoFun.GNSS
                     }
                     else
                     {
-                        Console.WriteLine("文件读取失败,路径为:" + file.FullName);
+                        Common.msgBox.Print("文件读取失败,路径为:" + oFile.Path);
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(string.Format("文件读取失败！\n路径为:{0}\n 原因是:{1}",
-                        file.FullName, ex.ToString()));
+                    Common.msgBox.Print(string.Format("文件读取失败！\n路径为:{0}\n 原因是:{1}",
+                        oFile.Path, ex.ToString()));
                     //// todo:读取失败
                 }
             }
         }
 
-        public void ReadAllObs(string dir)
+        /// <summary>
+        /// 在文件夹中查找该测站所有O文件
+        /// </summary>
+        /// <param name="folder"></param>
+        /// <returns></returns>
+        public int SearchAllOFiles(string folder)
         {
-            DirectoryInfo dirInfo = new DirectoryInfo(dir);
-            ReadAllObs(dirInfo);
-        }
+            if (string.IsNullOrEmpty(Name)) return 0;
+            if (!Directory.Exists(folder)) return 0;
 
+            int fileCount = 0;
+            DirectoryInfo dir = new DirectoryInfo(folder);
+            string searchPattern = string.Format("{0}???*.??o",Name);
+            foreach(var file in dir.GetFiles(searchPattern))
+            {
+                OFiles.Add(new OFile(file.FullName));
+                fileCount++;
+            }
+
+            return fileCount;
+        }
+        
         public void GetStationDOY()
         {
             DOYs = new List<DOY>();
@@ -159,7 +197,7 @@ namespace GeoFun.GNSS
         public bool CheckDOY()
         {
             bool flag = true;
-            if (DOYs.Count < 2) return true; ;
+            if (DOYs.Count < 2) return true; 
             for (int i = 1; i < DOYs.Count; i++)
             {
                 //// 判断doy是否连续
@@ -214,102 +252,30 @@ namespace GeoFun.GNSS
             return flag;
         }
 
-        public void DetectArcs1()
+        /// <summary>
+        /// 检查测站数据是否连续
+        /// </summary>
+        /// <returns></returns>
+        public bool CheckDataConsist()
         {
-            if (Epoches is null || Epoches.Count <= 0) return;
+            GetStationDOY();
+            return CheckDOY();
+        }
 
-            string prn = "";
-            double p1, p2, l1, l2;
-
-            //// 弧段已经开始但尚未结束的卫星编号
-            List<OArc> startedArc = new List<OArc>();
-            List<OArc> endedArc = new List<OArc>();
-
-            bool flag = true;
-            for (int i = 0; i < Epoches.Count; i++)
+        public void CalVTEC()
+        {
+            foreach (var prn in Arcs.Keys)
             {
-                if (Epoches[i].Epoch.SecondsOfYear < Options.START_TIME.SecondsOfYear || Epoches[i].Epoch.SecondsOfYear > Options.END_TIME.SecondsOfYear) continue;
-
-                foreach (var arc in startedArc)
+                for (int i = 0; i < Arcs[prn].Count; i++)
                 {
-                    flag = true;
+                    OArc arc = Arcs[prn][i];
 
-                    //// Some MEAS missed
-                    if (!Epoches[i].PRNList.Contains(arc.PRN)) flag = false;
-
-                    else
+                    for (int j = 0; j < arc.Length; j++)
                     {
-                        //// Cycle slip
-                        if (Epoches[i][arc.PRN].CycleSlip) flag = false;
-
-                        //// Outlier
-                        else if (Epoches[i][arc.PRN].Outlier) flag = false;
-
-                        l1 = Epoches[i][arc.PRN]["L1"];
-                        l2 = Epoches[i][arc.PRN]["L2"];
-                        p1 = Epoches[i][arc.PRN]["P1"];
-                        p2 = Epoches[i][arc.PRN]["P2"];
-                        if (p1 == 0d) p1 = Epoches[i][arc.PRN]["C1"];
-
-
-                        if (Math.Abs(p1) < 1e-3) flag = false;
-                        if (Math.Abs(p2) < 1e-3) flag = false;
-                        if (Math.Abs(l1) < 1e-3) flag = false;
-                        if (Math.Abs(l2) < 1e-3) flag = false;
-                    }
-
-                    //// An arc is end
-                    if (!flag)
-                    {
-                        arc.EndIndex = i - 1;
-
-                        endedArc.Add(arc);
-                    }
-                }
-
-                foreach (var arc in endedArc)
-                {
-                    startedArc.Remove(arc);
-
-                    if (arc.Length >= Options.ARC_MIN_LENGTH)
-                    {
-                        if (!Arcs.ContainsKey(arc.PRN))
+                        if (Math.Abs(arc[j]["SP4"]) > 1e-10)
                         {
-                            Arcs.Add(arc.PRN, new List<OArc>());
+                            arc[j]["SP4"] = Iono.STEC2VTEC(9.52437 * arc[j]["SP4"], arc[j].Elevation);
                         }
-
-                        Arcs[arc.PRN].Add(arc);
-                    }
-                }
-
-                endedArc.Clear();
-
-                for (int j = 0; j < Epoches[i].PRNList.Count; j++)
-                {
-                    prn = Epoches[i].PRNList[j];
-
-                    if (!prn.StartsWith("G")) continue;
-
-                    //// Check if some meas missing
-                    l1 = Epoches[i][prn]["L1"];
-                    l2 = Epoches[i][prn]["L2"];
-                    p1 = Epoches[i][prn]["P1"];
-                    p2 = Epoches[i][prn]["P2"];
-                    if (p1 == 0d) p1 = Epoches[i][prn]["C1"];
-
-                    if (Math.Abs(p1) < 1e-3) flag = false;
-                    else if (Math.Abs(p2) < 1e-3) flag = false;
-                    else if (Math.Abs(l1) < 1e-3) flag = false;
-                    else if (Math.Abs(l2) < 1e-3) flag = false;
-
-                    //// A new arc start
-                    if (!startedArc.Any(o => o.PRN == prn))
-                    {
-                        OArc arc = new OArc();
-                        arc.StartIndex = i;
-                        arc.PRN = prn;
-                        arc.Station = this;
-                        startedArc.Add(arc);
                     }
                 }
             }
@@ -565,11 +531,12 @@ namespace GeoFun.GNSS
                 {
                     var arc = arcs[i];
 
-                    Fit(arc);
+                    Fit(ref arc, 20, 2);
+                    //Smoother.Smooth(ref arc, "SP4", 5);
                 }
             }
         }
-        public void Fit(OArc arc)
+        public void Fit(ref OArc arc)
         {
             List<int> index = new List<int>();
             List<double> x = new List<double>();
@@ -592,6 +559,80 @@ namespace GeoFun.GNSS
                 arc[index[i]]["SP4"] -= pm.CalFit(x[i]);
             }
         }
+        public void DoubleDiff()
+        {
+            foreach (var prn in Arcs.Keys)
+            {
+                var arcs = Arcs[prn];
+                for (int i = 0; i < arcs.Count; i++)
+                {
+                    var arc = arcs[i];
+
+                    ObsHelper.CalDoubleDiff(ref arc);
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// 对弧段进行滑动窗口拟合
+        /// </summary>
+        /// <param name="arc"></param>
+        /// <param name="length">窗口的长度 单位:历元</param>
+        /// <param name="order">多项式拟合的阶数</param>
+        public void Fit(ref OArc arc, int length, int order)
+        {
+            int si = 0;
+            int ei = si + length;
+            double sp4 = 0d;
+            PolynomialModel pm = new PolynomialModel();
+            while (si < arc.Length)
+            {
+                if (ei > arc.Length) ei = arc.Length;
+
+                // 只有一个历元
+                if (si == ei)
+                {
+                    arc[si]["SP4"] = 0d;
+                    break;
+                }
+
+                List<double> x = new List<double>();
+                List<double> y = new List<double>();
+                List<int> index = new List<int>();
+                for (int i = si; i < ei; i++)
+                {
+                    sp4 = arc[i]["SP4"];
+                    if (Math.Abs(sp4) > 1e-10)
+                    {
+                        x.Add(i);
+                        y.Add(sp4);
+                        index.Add(i);
+                    }
+                }
+
+                double sigma;
+                List<double> residue;
+                if (pm.Fit(x, y, out residue, out sigma))
+                {
+                    for (int i = 0; i < x.Count; i++)
+                    {
+                        // 剔粗差
+                        if (Math.Abs(residue[i]) < 5 * sigma && Math.Abs(residue[i]) < 2.5)
+                        {
+                            arc[index[i]]["SP4"] = residue[i];
+                        }
+                        else
+                        {
+                            arc[index[i]]["SP4"] = 0d;
+                        }
+                    }
+                }
+
+                si = ei;
+                ei += length;
+            }
+        }
 
         public void WriteMeas(string folder, int epoNum)
         {
@@ -605,7 +646,7 @@ namespace GeoFun.GNSS
             while (si < EpochNum)
             {
                 ei = si + epoNum;
-                if (ei >= EpochNum) ei = EpochNum-1;
+                if (ei >= EpochNum) ei = EpochNum - 1;
 
                 st = Epoches[si].Epoch;
                 et = Epoches[ei].Epoch;
@@ -627,7 +668,7 @@ namespace GeoFun.GNSS
                     }
                 }
 
-                string fileName = Name+string.Format(".{0}{1:0#}{2:0#}{3:0#}{4:0#}{5:##.#}.{6}{7:0#}{8:0#}{9:0#}{10:0#}{11:##.#}.tec",
+                string fileName = Name + string.Format(".{0}{1:0#}{2:0#}{3:0#}{4:0#}{5:##.#}.{6}{7:0#}{8:0#}{9:0#}{10:0#}{11:##.#}.tec",
                     st.CommonT.Year,
                     st.CommonT.Month,
                     st.CommonT.Day,
@@ -642,10 +683,121 @@ namespace GeoFun.GNSS
                     et.CommonT.Second
                     );
                 string filePath = Path.Combine(folder, fileName);
-                FileHelper.WriteLines(filePath,lines,',');
+                FileHelper.WriteLines(filePath, lines, ',');
 
                 si += epoNum;
             }
+        }
+
+        public void WriteTEC(string folder)
+        {
+            var sta = this;
+            {
+                List<string[]> lines = new List<string[]>();
+                List<string[]> linesB = new List<string[]>();
+                List<string[]> linesL = new List<string[]>();
+
+                for (int i = 0; i < sta.EpochNum; i++)
+                {
+                    string[] line = new string[32];
+                    string[] lineb = new string[32];
+                    string[] linel = new string[32];
+                    for (int j = 0; j < 32; j++)
+                    {
+                        line[j] = "0.0000000000";
+                        lineb[j] = "0.0000000000";
+                        linel[j] = "0.0000000000";
+                    }
+
+                    foreach (var prn in sta.Epoches[i].AllSat.Keys)
+                    {
+                        // 去掉高度角小于15°的
+                        if (sta.Epoches[i][prn].Elevation < 30 * Angle.D2R)
+                        {
+                            continue;
+                        }
+
+                        if (!prn.StartsWith("G")) continue;
+                        int index = int.Parse(prn.Substring(1)) - 1;
+                        line[index] = sta.Epoches[i].AllSat[prn]["SP4"].ToString("#.##########");
+                        lineb[index] = (sta.Epoches[i].AllSat[prn].IPP[1] * Angle.R2D).ToString("#.##########");
+                        linel[index] = (sta.Epoches[i].AllSat[prn].IPP[0] * Angle.R2D).ToString("#.##########");
+                    }
+                    lines.Add(line);
+                    linesB.Add(lineb);
+                    linesL.Add(linel);
+                }
+
+                string fileName = sta.Name + ".meas.p4.txt";
+                string filePath = Path.Combine(folder, fileName);
+                FileHelper.WriteLines(filePath, lines, ',');
+
+                string fileNameB = sta.Name + ".ipp.b.txt";
+                string fileNameL = sta.Name + ".ipp.l.txt";
+
+                string filePathB = Path.Combine(folder, fileNameB);
+                string filePathL = Path.Combine(folder, fileNameL);
+
+                FileHelper.WriteLines(filePathB, linesB, ',');
+                FileHelper.WriteLines(filePathL, linesL, ',');
+            }
+
+        }
+
+        public void WriteMeas(string folder, string meas)
+        {
+            var sta = this;
+            {
+                List<string[]> lines = new List<string[]>();
+                List<string[]> linesB = new List<string[]>();
+                List<string[]> linesL = new List<string[]>();
+
+                for (int i = 0; i < sta.EpochNum; i++)
+                {
+                    string[] line = new string[32];
+                    string[] lineb = new string[32];
+                    string[] linel = new string[32];
+                    for (int j = 0; j < 32; j++)
+                    {
+                        line[j] = "0.0000000000";
+                        lineb[j] = "0.0000000000";
+                        linel[j] = "0.0000000000";
+                    }
+
+                    foreach (var prn in sta.Epoches[i].AllSat.Keys)
+                    {
+                        // 去掉高度角小于15°的
+                        if (sta.Epoches[i][prn].Elevation < 30 * Angle.D2R)
+                        {
+                            continue;
+                        }
+
+                        if (!prn.StartsWith("G")) continue;
+                        int index = int.Parse(prn.Substring(1)) - 1;
+                        line[index] = sta.Epoches[i].AllSat[prn][meas].ToString("#.##########");
+                        lineb[index] = (sta.Epoches[i].AllSat[prn].IPP[1] * Angle.R2D).ToString("#.##########");
+                        linel[index] = (sta.Epoches[i].AllSat[prn].IPP[0] * Angle.R2D).ToString("#.##########");
+                    }
+                    lines.Add(line);
+                    linesB.Add(lineb);
+                    linesL.Add(linel);
+                }
+
+                string fileName = string.Format("{0}.meas.{1}.txt", sta.Name, meas.ToLower());
+                string filePath = Path.Combine(folder, fileName);
+                FileHelper.WriteLines(filePath, lines, ',');
+
+                string fileNameB = sta.Name + ".ipp.b.txt";
+                string fileNameL = sta.Name + ".ipp.l.txt";
+
+                string filePathB = Path.Combine(folder, fileNameB);
+                string filePathL = Path.Combine(folder, fileNameL);
+
+                FileHelper.WriteLines(filePathB, linesB, ',');
+                FileHelper.WriteLines(filePathL, linesL, ',');
+            }
+
+
         }
     }
 }

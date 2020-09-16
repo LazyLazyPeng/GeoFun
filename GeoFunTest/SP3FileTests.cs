@@ -32,20 +32,20 @@ namespace GeoFun.GNSS.Tests
             SP3File s = new SP3File("Data/sp3/igs18554.sp3");
             o.TryRead();
             s.TryRead();
-            for (int i = 1; i < o.AllEpoch.Count; i++)
+            for (int i = 1; i < o.Epoches.Count; i++)
             {
                 Console.WriteLine(string.Format("epoch:{0}",i));
-                foreach (var prn in o.AllEpoch[i].PRNList)
+                foreach (var prn in o.Epoches[i].PRNList)
                 {
-                    GPST t0 = o.AllEpoch[i].Epoch;
-                    if(o.AllEpoch[i][prn].SatData.ContainsKey("P1"))
+                    GPST t0 = o.Epoches[i].Epoch;
+                    if(o.Epoches[i][prn].SatData.ContainsKey("P1"))
                     {
-                        double p1 = o.AllEpoch[i][prn].SatData["P1"];
+                        double p1 = o.Epoches[i][prn].SatData["P1"];
                         t0.AddSeconds(-p1/Common.C0);
                     }
-                    else if(o.AllEpoch[i][prn].SatData.ContainsKey("P2"))
+                    else if(o.Epoches[i][prn].SatData.ContainsKey("P2"))
                     {
-                        double p2 = o.AllEpoch[i][prn].SatData["P2"];
+                        double p2 = o.Epoches[i][prn].SatData["P2"];
                         t0.AddSeconds(-p2/Common.C0);
                     }
 

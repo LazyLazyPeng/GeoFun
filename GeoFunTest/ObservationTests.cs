@@ -34,7 +34,7 @@ namespace GeoFun.GNSS.Tests
         public void DetectCycleSlipTest()
         {
             OStation station = new OStation("fjpt");
-            station.ReadAllObs(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "rinex", "30900700.11o"));
+            station.ReadAllObs();
             station.DetectCycleSlip();
         }
 
@@ -46,7 +46,7 @@ namespace GeoFun.GNSS.Tests
 
             Console.WriteLine(ofile.Path);
 
-            ObsHelper.DetectClockJumpAndRepair(ref ofile.AllEpoch, (int)ofile.Header.interval);
+            ObsHelper.DetectClockJumpAndRepair(ref ofile.Epoches, (int)ofile.Header.interval);
         }
 
         [TestMethod()]

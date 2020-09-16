@@ -17,11 +17,6 @@ namespace GeoFun.GNSS
         /// </summary>
         public static readonly double DEC_POWER = 0.01;
 
-        public static void Smooth()
-        {
-
-        }
-
         /// <summary>
         /// 用另一个观测序列来平滑本观测序列
         /// </summary>
@@ -115,6 +110,45 @@ namespace GeoFun.GNSS
                 }
             }
 
+        }
+
+        /// <summary>
+        /// 滑动平均
+        /// </summary>
+        /// <param name="arc">弧段</param>
+        /// <param name="meas">要平滑的观测值名称</param>
+        /// <param name="order">阶数</param>
+        public static void Smooth(ref OArc arc, string meas,int order)
+        {
+            if (arc is null) return;
+
+            int left = 0, right = 0;
+            if(order%2==0)
+            {
+                left = order / 2;
+                right = left - 1;
+            }
+            else
+            {
+                left = right = (order - 1) / 2;
+            }
+
+            for(int i=left; i < arc.Length-right; i++)
+            {
+                double mean = 0d;
+                int k = 0;
+                for(int j = i-left; j < i+right+1; j++)
+                {
+                    if (Math.Abs(arc[j][meas]) < 1e-10) continue;
+
+                    mean = mean * k / (k + 1) + arc[j][meas] / (k + 1);
+                    k++;
+                }
+
+                arc[i][meas] -= mean;
+            }
+            arc.StartIndex += left;
+            arc.EndIndex -= right;
         }
     }
 }

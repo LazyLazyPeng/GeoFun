@@ -370,6 +370,14 @@ namespace GeoFun.GNSS
             week = (int)Math.Floor(dayNum / 7d);
             dow = dayNum - week * 7;
         }
+        public static void GPS2DOY(int week, int dow, out int year, out int doy)
+        {
+            DateTime dt = new DateTime(1980,1,6);
+
+            dt=dt.AddDays(week*7+dow);
+            year = dt.Year;
+            doy = dt.DayOfYear;
+        }
 
     }
 }

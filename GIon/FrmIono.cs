@@ -13,10 +13,10 @@ using System.Windows.Forms;
 
 namespace GIon
 {
-    public partial class FrmMain : Form
+    public partial class FrmIono : Form
     {
         public static MessageHelper MessHelper;
-        public FrmMain()
+        public FrmIono()
         {
             InitializeComponent();
         }
@@ -24,37 +24,50 @@ namespace GIon
         private void btnOK_Click(object sender, EventArgs e)
         {
             if (!Directory.Exists(tbxFolderIn.Text))
+            {
                 MessageBox.Show("文件夹不存在");
+                return;
+            }
 
             var messHelper = new MessageHelper(tbxMsg);
             Common.msgBox = messHelper;
 
+            enumSolutionType solType = enumSolutionType.SingleStationSingleDay;
+            if (rbSingleStationMultiDay.Checked)
+            {
+                solType = enumSolutionType.SingleStationMultiDay;
+            }
+            else if (rbMultiStationMultiDay.Checked)
+            {
+                solType = enumSolutionType.MultiStationMultiDay;
+            }
+
+            enumFitType fitType = enumFitType.Polynomial;
+            if(rbDifference.Checked)
+            {
+                fitType = enumFitType.DoubleDifference;
+            }
+
             Case ionoCase = new Case(tbxFolderIn.Text);
+            ionoCase.FitType = fitType;
             MessHelper = messHelper;
 
             Task task = new Task(() =>
             {
                 DirectoryInfo dir = new DirectoryInfo(tbxFolderIn.Text);
-                ionoCase.Resolve();
-                return;
-
-                foreach (var file in dir.GetFiles("*?.??o"))
+                switch(solType)
                 {
-                    tbxMsg.Invoke(new Action(() =>
-                    {
-                        tbxMsg.Text += string.Format("\r\n {0} 正在解算:{1}", DateTime.Now.ToString(), file.Name);
-                        tbxMsg.Select(tbxMsg.Text.Length - 1, 0);
-                        tbxMsg.ScrollToCaret();
-                    }));
-                    //IonoHelper.Calculate(file.FullName);
-
-
-                    tbxMsg.Invoke(new Action(() =>
-                    {
-                        tbxMsg.Text += string.Format("\r\n {0} 解算完成:{1}\r\n", DateTime.Now.ToString(), file.Name);
-                        tbxMsg.Select(tbxMsg.Text.Length - 1, 0);
-                        tbxMsg.ScrollToCaret();
-                    }));
+                    case enumSolutionType.SingleStationSingleDay:
+                        ionoCase.ResolveSingleStationSingleDay();
+                        break;
+                    case enumSolutionType.SingleStationMultiDay:
+                        ionoCase.ResolveSingleStationMultiDay();
+                        break;
+                    case enumSolutionType.MultiStationMultiDay:
+                        ionoCase.MultiStationMultiDay();
+                        break;
+                    default:
+                        break;
                 }
             });
             task.ContinueWith(t => MessageBox.Show("解算完成"), TaskContinuationOptions.ExecuteSynchronously);

@@ -220,7 +220,7 @@ namespace GeoFun.GNSS
             foreach (var station in DOYs.Keys)
             {
                 OStation oSta = new OStation(station);
-                oSta.ReadAllObs(Folder);
+                oSta.ReadAllObs();
                 oSta.SortObs();
                 if (oSta.EpochNum > 0)
                 {
@@ -268,6 +268,13 @@ namespace GeoFun.GNSS
             foreach (var osta in Stations)
             {
                 osta.CalAzElIPP();
+            }
+        }
+        public void CalVTEC()
+        {
+            foreach (var sta in Stations)
+            {
+                sta.CalVTEC();
             }
         }
 
@@ -398,6 +405,41 @@ namespace GeoFun.GNSS
                 end += epoNum;
             }
             while (data.Count > 0);
+        }
+
+        public void WriteP4(string outFolder)
+        {
+            foreach (var sta in Stations)
+            {
+                List<string[]> lines = new List<string[]>();
+
+                for (int i = 0; i < sta.EpochNum; i++)
+                {
+                    string[] line = new string[32];
+                    for (int j = 0; j < 32; j++)
+                    {
+                        line[j] = "0.0000000000";
+                    }
+
+                    foreach (var prn in sta.Epoches[i].AllSat.Keys)
+                    {
+                        // 去掉高度角小于15°的
+                        if (sta.Epoches[i][prn].Elevation < 30 * Angle.D2R)
+                        {
+                            continue;
+                        }
+
+                        if (!prn.StartsWith("G")) continue;
+                        int index = int.Parse(prn.Substring(1)) - 1;
+                        line[index] = sta.Epoches[i].AllSat[prn]["SP4"].ToString("#.##########");
+                    }
+                    lines.Add(line);
+                }
+
+                string fileName = sta.Name + ".meas.p4.txt";
+                string filePath = Path.Combine(outFolder, fileName);
+                FileHelper.WriteLines(filePath, lines, ',');
+            }
         }
     }
 }

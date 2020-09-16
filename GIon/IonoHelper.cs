@@ -51,11 +51,12 @@ namespace GIon
             sp3.TryRead();
 
             //Observation.EliminateSatellites(ref oFile.AllEpoch);
-            ObsHelper.CalP4(ref oFile.AllEpoch);
-            ObsHelper.CalL4(ref oFile.AllEpoch);
-            ObsHelper.DetectOutlier(ref oFile.AllEpoch);
+            ObsHelper.CalP4(ref oFile.Epoches);
+            ObsHelper.CalL4(ref oFile.Epoches);
+            ObsHelper.DetectOutlier(ref oFile.Epoches);
 
-            var arcs = oFile.SearchAllArcs();
+            oFile.SearchAllArcs();
+            var arcs = oFile.Arcs;
             foreach (var prn in arcs.Keys)
             {
                 for (int i = 0; i < arcs[prn].Count; i++)
@@ -107,7 +108,7 @@ namespace GIon
 
                         double[] satp = sp3.GetSatPos(t0, prn);
                         arc[j].SatCoor = satp;
- 
+
                         double az, el;
                         MathHelper.CalAzEl(recp, satp, out az, out el);
                         double bb, ll;
@@ -131,11 +132,11 @@ namespace GIon
                 StringBuilder sb = new StringBuilder();
                 for (int j = i * 120; j < i * 120 + 120; j++)
                 {
-                    var epoch = oFile.AllEpoch[j];
+                    var epoch = oFile.Epoches[j];
                     foreach (var prn in epoch.AllSat.Keys)
                     {
                         var sat = epoch[prn];
-                        if (sat["SP4"] > 0.5d||sat["SP4"]<-0.5d)
+                        if (sat["SP4"] > 0.5d || sat["SP4"] < -0.5d)
                         {
                             sat["SP4"] = 0d;
                         }

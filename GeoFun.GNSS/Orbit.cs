@@ -73,7 +73,7 @@ namespace GeoFun.GNSS
             }
         }
 
-        public void GetAllSp3Files(string folder = null)
+        public void GetAllSp3Files(string folder = null,DOY start=null,DOY end = null)
         {
             if (folder == null)
             {
@@ -93,6 +93,25 @@ namespace GeoFun.GNSS
 
             foreach (var path in paths)
             {
+                string center;
+                int week,  dow;
+                FileName.ParseSP3Name(path.Name,
+                    out center,out week,out dow);
+
+                int year, doy;
+                Time.GPS2DOY(week, dow,out year,out doy);
+
+                DOY fileDOY = new DOY(year, doy);
+
+                if (start != null)
+                {
+                    if (fileDOY < start) continue;
+                }
+                if (end != null)
+                {
+                    if (fileDOY > end) continue;
+                }
+
                 Files.Add(new SP3File(path.FullName));
             }
 
@@ -239,6 +258,7 @@ namespace GeoFun.GNSS
             double pRange = 0d;
             foreach (var sat in oEpo.AllSat.Values)
             {
+                if (!sat.SatPRN.StartsWith("G")) continue;
                 pRange = sat["P2"];
                 if (pRange == 0d) pRange = sat["P1"];
                 if (pRange == 0d) pRange = sat["C1"];

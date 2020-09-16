@@ -41,13 +41,13 @@ namespace GeoFun.GNSS
                 //Console.ReadKey();
                 //return;
 
-                ObsHelper.CalP4(ref ofile.AllEpoch);
-                ObsHelper.CalL4(ref ofile.AllEpoch);
+                ObsHelper.CalP4(ref ofile.Epoches);
+                ObsHelper.CalL4(ref ofile.Epoches);
 
                 StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < ofile.AllEpoch.Count; i++)
+                for (int i = 0; i < ofile.Epoches.Count; i++)
                 {
-                    var epoch = ofile.AllEpoch[i];
+                    var epoch = ofile.Epoches[i];
                     Console.WriteLine(string.Format(epoch.Epoch.ToRinexString()));
 
                     if (epoch.PRNList.Contains("G01"))
@@ -77,10 +77,10 @@ namespace GeoFun.GNSS
                         Console.Write(" P1-P2(P4):{0,7:f3}", epoch[prn]["P4"]);
                         Console.Write(" L1-L2(L4):{0,13:f3}", epoch[prn]["L4"]);
                         if (i > 0 &&
-                            ofile.AllEpoch[i - 1].PRNList.Contains(prn) &&
-                            ofile.AllEpoch[i - 1][prn].SatData.ContainsKey("L4"))
+                            ofile.Epoches[i - 1].PRNList.Contains(prn) &&
+                            ofile.Epoches[i - 1][prn].SatData.ContainsKey("L4"))
                         {
-                            Console.Write(" L4(i)-L4(i-1):{0}", ofile.AllEpoch[i][prn]["L4"] - ofile.AllEpoch[i - 1][prn]["L4"]);
+                            Console.Write(" L4(i)-L4(i-1):{0}", ofile.Epoches[i][prn]["L4"] - ofile.Epoches[i - 1][prn]["L4"]);
                         }
                         //Console.Write(" P1-C1(ns),{0,13:f3}", (epoch[prn]["P1"] - epoch[prn]["C1"])*1e9 / Common.SPEED_OF_LIGHT);
 
