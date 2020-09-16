@@ -61,5 +61,15 @@ namespace GeoFun.GNSS.Tests
             Assert.IsTrue(week == 1855);
             Assert.IsTrue(dow == 0);
         }
+
+        [TestMethod()]
+        public void GPS2DOYTest()
+        {
+            int year, doy;
+            Time.GPS2DOY(2017, 2, out year, out doy);
+            Assert.IsTrue(year==2018);
+            Assert.IsTrue(doy==247);
+
+        }
     }
 }

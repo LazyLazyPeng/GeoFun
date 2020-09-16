@@ -27,7 +27,7 @@ namespace GIon.Tests
         public void GetStationDOYTest()
         {
             Case case1 = new Case();
-            case1.Path = @"C:\Users\Administrator\Desktop\新建文件夹\obs";
+            case1.RootFolder = @"C:\Users\Administrator\Desktop\新建文件夹\obs";
             //case1.SearchObsFiles();
             //case1.GetStationDOY();
             //foreach (var item in case1.DOYs)

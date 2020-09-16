@@ -24,11 +24,11 @@ namespace GeoFun.GNSS
             return true;
         }
 
-        public static bool ParseSP3Name(string name, out string centerName, out int doy, out int day)
+        public static bool ParseSP3Name(string name, out string centerName, out int week, out int dow)
         {
             centerName = "";
-            doy = 0;
-            day = 0;
+            week = 0;
+            dow = 0;
             if (string.IsNullOrWhiteSpace(name)) return false;
 
             // 去掉后缀
@@ -36,8 +36,8 @@ namespace GeoFun.GNSS
             if (nameNoExt.EndsWith(".sp3")) nameNoExt = nameNoExt.Substring(0, nameNoExt.Length - 4);
 
             centerName = nameNoExt.Substring(0, 3);
-            if (!int.TryParse(nameNoExt.Substring(3, 4), out doy)) return false;
-            if (!int.TryParse(nameNoExt.Substring(7, 1), out day)) return false;
+            if (!int.TryParse(nameNoExt.Substring(3, 4), out week)) return false;
+            if (!int.TryParse(nameNoExt.Substring(7, 1), out dow)) return false;
             return true;
         }
     }

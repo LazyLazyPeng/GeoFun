@@ -31,8 +31,10 @@ namespace GeoFun.GNSS.Net
             //Downloader.DownloadI(2015,212, @"C:\Users\Administrator\Desktop\soudelor211");
 
 
-            Downloader.DownloadDCB(2015,7,"P1C1", @"C:\Users\Administrator\Desktop\soudelor211");
-            Downloader.DownloadDCB(2015,7,"P1P2", @"C:\Users\Administrator\Desktop\soudelor211");
+            //Downloader.DownloadDCB(2015,7,"P1C1", @"C:\Users\Administrator\Desktop\soudelor211");
+            //Downloader.DownloadDCB(2015,7,"P1P2", @"C:\Users\Administrator\Desktop\soudelor211");
+
+            string[] stationNames = { "WUHN", "TNML", "HKWS", "KMNM", "NCKU", "TCMS","TWTF"};
         }
     }
 }

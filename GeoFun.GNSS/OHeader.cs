@@ -16,7 +16,7 @@ namespace GeoFun.GNSS
         /// <summary>
         ///  marker name,点名
         /// </summary>
-        public string markName; 
+        public string markName;
         /// <summary>
         ///  marker number,点号
         /// </summary>

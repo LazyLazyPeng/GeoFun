@@ -42,7 +42,14 @@ namespace GeoFun.GNSS
         {
             get
             {
-                return Station.Epoches[StartIndex].Epoch;
+                if (Station is null)
+                {
+                    return File.Epoches[StartIndex].Epoch;
+                }
+                else
+                {
+                    return Station.Epoches[StartIndex].Epoch;
+                }
             }
         }
 
@@ -53,8 +60,16 @@ namespace GeoFun.GNSS
         {
             get
             {
-                return Station.Epoches[EndIndex].Epoch;
+                if (File is null)
+                {
+                    return Station.Epoches[EndIndex].Epoch;
+                }
+                else
+                {
+                    return File.Epoches[EndIndex].Epoch;
+                }
             }
+
         }
 
         /// <summary>
@@ -68,7 +83,14 @@ namespace GeoFun.GNSS
         {
             get
             {
-                return Station.Epoches[StartIndex + index][PRN];
+                if (File is null)
+                {
+                    return Station.Epoches[StartIndex + index][PRN];
+                }
+                else
+                {
+                    return File.Epoches[StartIndex + index][PRN];
+                }
             }
         }
 
@@ -81,6 +103,7 @@ namespace GeoFun.GNSS
         public OArc(OArc arc)
         {
             PRN = arc.PRN;
+            File = arc.File;
             Station = arc.Station;
             StartIndex = arc.StartIndex;
             EndIndex = arc.EndIndex;
@@ -98,6 +121,7 @@ namespace GeoFun.GNSS
             // 第一段
             OArc arc1 = new OArc();
             arc1.PRN = PRN;
+            arc1.File = File;
             arc1.Station = Station;
             arc1.StartIndex = StartIndex;
             arc1.EndIndex = StartIndex + index - 1;
@@ -105,6 +129,7 @@ namespace GeoFun.GNSS
             // 第2段[index,end]
             OArc arc2 = new OArc();
             arc2.Station = Station;
+            arc2.File = File;
             arc2.PRN = PRN;
             arc2.StartIndex = StartIndex + index;
             arc2.EndIndex = EndIndex;
@@ -123,7 +148,7 @@ namespace GeoFun.GNSS
             return new OArc(this);
         }
 
-        public static List<OArc> Detect(OStation sta, string prn, int minArcLen=-1)
+        public static List<OArc> Detect(OStation sta, string prn, int minArcLen = -1)
         {
             if (sta is null) return null;
             if (minArcLen < 0) minArcLen = Options.ARC_MIN_LENGTH;
@@ -146,9 +171,11 @@ namespace GeoFun.GNSS
 
                     if (l1 == 0 || l2 == 0 || p2 == 0) flag = false;
                     else if (p1 == 0 && c1 == 0) flag = false;
+                    else if (sta.Epoches[i][prn].Outlier) flag = false;
+                    else if (sta.Epoches[i][prn].CycleSlip) flag = false;
                 }
 
-                if(flag)
+                if (flag)
                 {
                     // 弧段继续
                     if (start > -1) continue;
@@ -166,8 +193,8 @@ namespace GeoFun.GNSS
                         if (i - start > minArcLen)
                         {
                             OArc arc = new OArc();
-                            arc.StartIndex = start;
-                            arc.EndIndex = i - 1;
+                            arc.StartIndex = start + 10;
+                            arc.EndIndex = i - 1 - 10;
                             arc.Station = sta;
                             arc.PRN = prn;
                             arcs.Add(arc);

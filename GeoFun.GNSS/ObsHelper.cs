@@ -50,6 +50,27 @@ namespace GeoFun.GNSS
             }
         }
 
+        public static void CalDoubleDiff(ref OArc arc)
+        {
+            if (arc is null) return;
+
+            for (int i = 1; i < arc.Length - 1; i++)
+            {
+                if (Math.Abs(arc[i - 1]["L4"]) < 1e-13 ||
+                    Math.Abs(arc[i]["L4"]) < 1e-13 ||
+                    Math.Abs(arc[i + 1]["L4"]) < 1e-13)
+                {
+                    continue;
+                }
+
+                arc[i]["L6"] = 9.52437 * ((arc[i + 1]["L4"] - arc[i]["L4"]) -
+                                        (arc[i]["L4"] - arc[i - 1]["L4"]));
+            }
+
+            arc.StartIndex += 1;
+            arc.EndIndex -= 1;
+        }
+
         public static void GetMeas(ref List<OEpoch> epoches, string measName)
         {
             if (measName == "P4")
@@ -135,14 +156,14 @@ namespace GeoFun.GNSS
             double dP2 = Common.DELTA_P2;
 
             double vp1, vp2, vl1, vl2;
-            GetMeas(arc[0], out vp1, out vp2, out vl1, out vl2,out dP1);
+            GetMeas(arc[0], out vp1, out vp2, out vl1, out vl2, out dP1);
             // 初始化NW(i-1)
             NW1 = (1 / (f1 - f2) *
                   (f1 * vl1 * l1 - f2 * vl2 * l2) -
                   1 / (f1 + f2) *
                   (f1 * vp1 + f2 * vp2)) / Common.GPS_Lw;
 
-            GetMeas(arc[1], out vp1, out vp2, out vl1, out vl2,out dP1);
+            GetMeas(arc[1], out vp1, out vp2, out vl1, out vl2, out dP1);
             // 初始化NW(i)
             NW2 = (1 / (f1 - f2) *
                   (f1 * vl1 * l1 - f2 * vl2 * l2) -
@@ -158,7 +179,7 @@ namespace GeoFun.GNSS
             int arcLen = arc.Length - 1;
             for (int i = 1; i < arcLen; i++)
             {
-                if (!GetMeas(arc[i + 1], out vp1, out vp2, out vl1, out vl2,out dP1))
+                if (!GetMeas(arc[i + 1], out vp1, out vp2, out vl1, out vl2, out dP1))
                 {
                     index = i + 1;
                     return true;
@@ -186,7 +207,7 @@ namespace GeoFun.GNSS
                     //OArc newArc = arc.Split(i + 1);
                     //arc.Station.Arcs[arc.PRN].Add(newArc);
                     index = i + 1;
-                    Common.msgBox.Print(string.Format("\r\n检测到周跳，时间:{0},历元:{1:0000},编号:{2}",arc[i+1].Epoch,i+1+arc.StartIndex,arc[i+1].SatPRN));
+                    Common.msgBox.Print(string.Format("\r\n检测到周跳，时间:{0},历元:{1:0000},编号:{2}", arc[i + 1].Epoch, i + 1 + arc.StartIndex, arc[i + 1].SatPRN));
                     return true;
                 }
 
@@ -493,7 +514,7 @@ namespace GeoFun.GNSS
             }
         }
 
-        public static bool GetMeas(OSat sat, out double p1, out double p2, out double l1, out double l2,out double dp1)
+        public static bool GetMeas(OSat sat, out double p1, out double p2, out double l1, out double l2, out double dp1)
         {
             dp1 = Common.DELTA_P1;
             p1 = p2 = l1 = l2 = 0d;

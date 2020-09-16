@@ -48,11 +48,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Case.cs" />
-    <Compile Include="FrmMain.cs">
+    <Compile Include="enumFitType.cs" />
+    <Compile Include="enumSolutionType.cs" />
+    <Compile Include="FrmIono.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FrmMain.Designer.cs">
-      <DependentUpon>FrmMain.cs</DependentUpon>
+    <Compile Include="FrmIono.Designer.cs">
+      <DependentUpon>FrmIono.cs</DependentUpon>
     </Compile>
     <Compile Include="IonoHelper.cs" />
     <Compile Include="Message.cs" />
@@ -86,8 +88,8 @@
     <Folder Include="Tools\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="FrmMain.resx">
-      <DependentUpon>FrmMain.cs</DependentUpon>
+    <EmbeddedResource Include="FrmIono.resx">
+      <DependentUpon>FrmIono.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

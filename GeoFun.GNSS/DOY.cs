@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
@@ -42,7 +43,7 @@ namespace GeoFun.GNSS
                 day += dayNum;
                 while (day <= 0)
                 {
-                    day += Time.DayNumOfYear(year);
+                    day += Time.DayNumOfYear(year-1);
                     year--;
                 }
             }
@@ -57,11 +58,15 @@ namespace GeoFun.GNSS
 
         public static bool operator ==(DOY doy1, DOY doy2)
         {
+            if (doy1 is null && doy2 is null) return true;
+            if (doy1 is null || doy2 is null) return false;
             return (doy1.Year == doy2.Year) && (doy1.Day == doy2.Day);
         }
 
         public static bool operator !=(DOY doy1, DOY doy2)
         {
+            if (doy1 is null && doy2 is null) return false;
+            if (doy1 is null || doy2 is null) return true;
             return (doy1.Year != doy2.Year) || (doy1.Day != doy2.Day);
         }
 
@@ -97,6 +102,15 @@ namespace GeoFun.GNSS
             return doy1 > doy2 || doy1 == doy2;
         }
 
+        public static int operator-(DOY doy1, DOY doy2)
+        {
+            DateTime dt1 = new DateTime(doy1.Year, doy1.GetMonth(), doy1.Day);
+            DateTime dt2 = new DateTime(doy2.Year, doy2.GetMonth(), doy2.Day);
+
+            var span = dt1 - dt2;
+            return (int)span.TotalDays;
+        }
+
         /// <summary>
         /// 与其他日期进行比较，以便排序
         /// </summary>
@@ -115,9 +129,20 @@ namespace GeoFun.GNSS
             }
         }
 
-        private int GetDaysPerYear()
+        public int GetMonth()
         {
-            return DateTime.IsLeapYear(Year) ? 366 : 365;
+            int[] daysOfMonth = { 31,28,31,30,31,30,31,31,30,31,30,31};
+            if (DateTime.IsLeapYear(Year)) daysOfMonth[1] = 29;
+
+            int month = 1;
+            int dayNum = 0;
+            while(dayNum+daysOfMonth[month-1]<Day)
+            {
+                dayNum += daysOfMonth[month-1];
+                month++;
+            }
+
+            return month;
         }
     }
 }
