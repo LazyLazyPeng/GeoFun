@@ -126,7 +126,6 @@ namespace GeoFun.GNSS
                 using (StreamReader sr = new StreamReader(fs))
                 {
                     Header = new OHeader();
-                    //Header.StartIndex = AllEpoch.Count;
                     string line = sr.ReadLine();  //一行数据
                                                   //读取头
                     while (line != "" && line != null)
@@ -203,11 +202,16 @@ namespace GeoFun.GNSS
                         line = sr.ReadLine();
                     }//头已读取完
 
+                    GPST epoStart = new GPST(Year, DOY);
                     Epoches = new List<OEpoch>(2880 * 2);
-                    int epochNum = 24 * 3600 / (int)Header.interval;
+                    int epochNum = (int)Math.Floor((Time.SecondsPerDay+0.1d) / Header.interval);
                     for (int i = 0; i < epochNum; i++)
                     {
-                        Epoches.Add(new OEpoch());
+                        var curEpo = new GPST(epoStart); 
+                        curEpo.AddSeconds(Header.interval*epochNum);
+                        var obsEpo = new OEpoch();
+                        obsEpo.Epoch = curEpo;
+                        Epoches.Add(obsEpo);
                     }
 
                     //读取观测值

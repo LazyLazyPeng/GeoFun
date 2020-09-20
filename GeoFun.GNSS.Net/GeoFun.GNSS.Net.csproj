@@ -35,8 +35,8 @@
     <Reference Include="codeaddicts.libArgument, Version=1.0.6001.31903, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Codeaddicts.libArgument.1.0.6001.31903\lib\codeaddicts.libArgument.dll</HintPath>
     </Reference>
-    <Reference Include="FluentFTP, Version=24.0.0.0, Culture=neutral, PublicKeyToken=f4af092b1d8df44f, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentFTP.24.0.0\lib\net40\FluentFTP.dll</HintPath>
+    <Reference Include="FluentFTP, Version=32.4.4.0, Culture=neutral, PublicKeyToken=f4af092b1d8df44f, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentFTP.32.4.4\lib\net40\FluentFTP.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

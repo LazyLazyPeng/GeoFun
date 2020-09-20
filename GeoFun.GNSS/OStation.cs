@@ -10,6 +10,8 @@ using System.Text.RegularExpressions;
 using System.ComponentModel;
 using GeoFun.IO;
 using MathNet.Numerics.LinearAlgebra.Solvers;
+using MathNet.Numerics.LinearAlgebra.Double;
+using MathNet.Numerics.Data.Matlab;
 
 namespace GeoFun.GNSS
 {
@@ -24,7 +26,7 @@ namespace GeoFun.GNSS
         {
             get
             {
-                if (DOYs is null||DOYs.Count<=0) return null;
+                if (DOYs is null || DOYs.Count <= 0) return null;
                 return DOYs.Min();
             }
         }
@@ -170,8 +172,8 @@ namespace GeoFun.GNSS
 
             int fileCount = 0;
             DirectoryInfo dir = new DirectoryInfo(folder);
-            string searchPattern = string.Format("{0}???*.??o",Name);
-            foreach(var file in dir.GetFiles(searchPattern))
+            string searchPattern = string.Format("{0}???*.??o", Name);
+            foreach (var file in dir.GetFiles(searchPattern))
             {
                 OFiles.Add(new OFile(file.FullName));
                 fileCount++;
@@ -179,7 +181,7 @@ namespace GeoFun.GNSS
 
             return fileCount;
         }
-        
+
         public void GetStationDOY()
         {
             DOYs = new List<DOY>();
@@ -197,7 +199,7 @@ namespace GeoFun.GNSS
         public bool CheckDOY()
         {
             bool flag = true;
-            if (DOYs.Count < 2) return true; 
+            if (DOYs.Count < 2) return true;
             for (int i = 1; i < DOYs.Count; i++)
             {
                 //// 判断doy是否连续
@@ -491,6 +493,10 @@ namespace GeoFun.GNSS
                         ippb = 0d;
                         ippl = 0d;
 
+                        if (Math.Abs(arc[j].SatCoor[0]) < 1e-10) continue;
+                        if (Math.Abs(arc[j].SatCoor[1]) < 1e-10) continue;
+                        if (Math.Abs(arc[j].SatCoor[2]) < 1e-10) continue;
+
                         MathHelper.CalAzEl(ApproxPos, arc[j].SatCoor, out az, out el);
                         MathHelper.CalIPP(recb, recl, Common.EARTH_RADIUS2, Common.IONO_HIGH, az, el, out ippb, out ippl);
 
@@ -572,6 +578,19 @@ namespace GeoFun.GNSS
                 }
             }
 
+        }
+        public void Smooth()
+        {
+            foreach (var prn in Arcs.Keys)
+            {
+                var arcs = Arcs[prn];
+                for (int i = 0; i < arcs.Count; i++)
+                {
+                    var arc = arcs[i];
+
+                    Smoother.Smooth(ref arc, "SP4", 5);
+                }
+            }
         }
 
         /// <summary>
@@ -746,6 +765,14 @@ namespace GeoFun.GNSS
 
         public void WriteMeas(string folder, string meas)
         {
+            //var matLon = new DenseMatrix(EpochNum, 32);
+            //var matLat = new DenseMatrix(EpochNum, 32);
+            //var matP1 = new DenseMatrix(EpochNum, 32);
+            //var matP2 = new DenseMatrix(EpochNum, 32);
+            //var matL1 = new DenseMatrix(EpochNum, 32);
+            //var matL2 = new DenseMatrix(EpochNum, 32);
+            //var matP4 = new DenseMatrix(EpochNum, 32);
+
             var sta = this;
             {
                 List<string[]> lines = new List<string[]>();
@@ -754,29 +781,60 @@ namespace GeoFun.GNSS
 
                 for (int i = 0; i < sta.EpochNum; i++)
                 {
-                    string[] line = new string[32];
-                    string[] lineb = new string[32];
-                    string[] linel = new string[32];
-                    for (int j = 0; j < 32; j++)
+                    string[] line = new string[38];
+                    string[] lineb = new string[38];
+                    string[] linel = new string[38];
+                    for (int j = 0; j < 38; j++)
                     {
                         line[j] = "0.0000000000";
                         lineb[j] = "0.0000000000";
                         linel[j] = "0.0000000000";
                     }
 
+                    line[0] = sta.Epoches[i].Epoch.CommonT.Year.ToString();
+                    line[1] = sta.Epoches[i].Epoch.CommonT.Month.ToString("0#");
+                    line[2] = sta.Epoches[i].Epoch.CommonT.Day.ToString("0#");
+                    line[3] = sta.Epoches[i].Epoch.CommonT.Hour.ToString("0#");
+                    line[4] = sta.Epoches[i].Epoch.CommonT.Minute.ToString("0#");
+                    line[5] = sta.Epoches[i].Epoch.CommonT.Second.ToString("0#.##########");
+
+                    lineb[0] = sta.Epoches[i].Epoch.CommonT.Year.ToString();
+                    lineb[1] = sta.Epoches[i].Epoch.CommonT.Month.ToString("0#");
+                    lineb[2] = sta.Epoches[i].Epoch.CommonT.Day.ToString("0#");
+                    lineb[3] = sta.Epoches[i].Epoch.CommonT.Hour.ToString("0#");
+                    lineb[4] = sta.Epoches[i].Epoch.CommonT.Minute.ToString("0#");
+                    lineb[5] = sta.Epoches[i].Epoch.CommonT.Second.ToString("0#.##########");
+
+                    linel[0] = sta.Epoches[i].Epoch.CommonT.Year.ToString();
+                    linel[1] = sta.Epoches[i].Epoch.CommonT.Month.ToString("0#");
+                    linel[2] = sta.Epoches[i].Epoch.CommonT.Day.ToString("0#");
+                    linel[3] = sta.Epoches[i].Epoch.CommonT.Hour.ToString("0#");
+                    linel[4] = sta.Epoches[i].Epoch.CommonT.Minute.ToString("0#");
+                    linel[5] = sta.Epoches[i].Epoch.CommonT.Second.ToString("0#.##########");
+
                     foreach (var prn in sta.Epoches[i].AllSat.Keys)
                     {
-                        // 去掉高度角小于15°的
+                        var sat = sta.Epoches[i].AllSat[prn];
+
+                        // 去掉高度角小于30°的
                         if (sta.Epoches[i][prn].Elevation < 30 * Angle.D2R)
                         {
                             continue;
                         }
 
                         if (!prn.StartsWith("G")) continue;
-                        int index = int.Parse(prn.Substring(1)) - 1;
+                        int index = int.Parse(prn.Substring(1)) - 1+6;
                         line[index] = sta.Epoches[i].AllSat[prn][meas].ToString("#.##########");
                         lineb[index] = (sta.Epoches[i].AllSat[prn].IPP[1] * Angle.R2D).ToString("#.##########");
                         linel[index] = (sta.Epoches[i].AllSat[prn].IPP[0] * Angle.R2D).ToString("#.##########");
+
+                        //matP1[i, index] = sat["P1"];
+                        //matP2[i, index] = sat["P2"];
+                        //matL1[i, index] = sat["L1"];
+                        //matL2[i, index] = sat["L2"];
+                        //matP4[i, index] = sat["SP4"];
+                        //matLat[i, index] = sat.IPP[0] * Angle.R2D;
+                        //matLon[i, index] = sat.IPP[1] * Angle.R2D;
                     }
                     lines.Add(line);
                     linesB.Add(lineb);
@@ -795,9 +853,20 @@ namespace GeoFun.GNSS
 
                 FileHelper.WriteLines(filePathB, linesB, ',');
                 FileHelper.WriteLines(filePathL, linesL, ',');
+
+                //List<MatlabMatrix> mats = new List<MatlabMatrix>
+                //{
+                //    MatlabWriter.Pack(matP1,"p1"),
+                //    MatlabWriter.Pack(matP2,"p2"),
+                //    MatlabWriter.Pack(matL1,"l1"),
+                //    MatlabWriter.Pack(matL2,"l2"),
+                //    MatlabWriter.Pack(matP1,"p4"),
+                //    MatlabWriter.Pack(matLat,"lat"),
+                //    MatlabWriter.Pack(matLon,"lon"),
+                //};
+
+                //MatlabWriter.Store(Path.Combine(folder, Name + ".mat"), mats);
             }
-
-
         }
     }
 }

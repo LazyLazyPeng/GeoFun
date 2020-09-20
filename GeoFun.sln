@@ -49,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoFun.GNSSTests1", "GeoFun
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoFun.MathTests3", "GeoFun.MathTests3\GeoFun.MathTests3.csproj", "{F614FAC8-EA46-44B2-B208-353EA6434A68}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GNSSIon", "GNSSIon\GNSSIon.csproj", "{603787F6-6012-467F-ABAA-7D66759D2078}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -327,6 +329,18 @@ Global
 		{F614FAC8-EA46-44B2-B208-353EA6434A68}.Release|x64.Build.0 = Release|Any CPU
 		{F614FAC8-EA46-44B2-B208-353EA6434A68}.Release|x86.ActiveCfg = Release|Any CPU
 		{F614FAC8-EA46-44B2-B208-353EA6434A68}.Release|x86.Build.0 = Release|Any CPU
+		{603787F6-6012-467F-ABAA-7D66759D2078}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{603787F6-6012-467F-ABAA-7D66759D2078}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{603787F6-6012-467F-ABAA-7D66759D2078}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{603787F6-6012-467F-ABAA-7D66759D2078}.Debug|x64.Build.0 = Debug|Any CPU
+		{603787F6-6012-467F-ABAA-7D66759D2078}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{603787F6-6012-467F-ABAA-7D66759D2078}.Debug|x86.Build.0 = Debug|Any CPU
+		{603787F6-6012-467F-ABAA-7D66759D2078}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{603787F6-6012-467F-ABAA-7D66759D2078}.Release|Any CPU.Build.0 = Release|Any CPU
+		{603787F6-6012-467F-ABAA-7D66759D2078}.Release|x64.ActiveCfg = Release|Any CPU
+		{603787F6-6012-467F-ABAA-7D66759D2078}.Release|x64.Build.0 = Release|Any CPU
+		{603787F6-6012-467F-ABAA-7D66759D2078}.Release|x86.ActiveCfg = Release|Any CPU
+		{603787F6-6012-467F-ABAA-7D66759D2078}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

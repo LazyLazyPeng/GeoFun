@@ -9,6 +9,7 @@ namespace GIon
     public enum enumFitType
     {
         None,
+        Smooth,
         Polynomial,
         DoubleDifference,
     }
