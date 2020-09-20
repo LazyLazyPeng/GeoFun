@@ -225,6 +225,13 @@ namespace GIon
                     PrintWithTime("多项式拟合计算...");
                     sta.Fit();
                 }
+                else if (FitType == enumFitType.Smooth)
+                {
+                    PrintWithTime("VTEC计算...");
+                    sta.CalVTEC();
+                    PrintWithTime("多项式拟合计算...");
+                    sta.Smooth();
+                }
                 else if (FitType == enumFitType.DoubleDifference)
                 {
                     PrintWithTime("二阶差分计算...");

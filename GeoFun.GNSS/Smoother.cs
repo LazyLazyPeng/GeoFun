@@ -140,6 +140,7 @@ namespace GeoFun.GNSS
                 for(int j = i-left; j < i+right+1; j++)
                 {
                     if (Math.Abs(arc[j][meas]) < 1e-10) continue;
+                    if (Math.Abs(arc[j][meas]) > 1) continue;
 
                     mean = mean * k / (k + 1) + arc[j][meas] / (k + 1);
                     k++;

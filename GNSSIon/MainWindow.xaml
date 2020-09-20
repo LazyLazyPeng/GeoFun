@@ -1,0 +1,53 @@
+﻿<Window x:Class="GNSSIon.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GNSSIon"
+        mc:Ignorable="d"
+        Title="电离层计算程序" Height="450" Width="800">
+    <Grid>
+        <WrapPanel >
+            <Menu IsMainMenu="True">
+                <MenuItem Header="文件(_F) " IsCheckable="False" 
+                   IsEnabled="True" ToolTip="文件相关的操作 ">
+                    <!--Menuitem控件为子容器,IsCheckable=" "设置是否打勾,IsEnabled=" "表示文件菜单是否可用,ToolTip="  "显示快捷的文字提示-->
+                    <MenuItem Header="新建(_N)"></MenuItem >
+                    <MenuItem Header="打开(_O)"></MenuItem >
+                    <Separator ></Separator>
+                    <!--添加下划线,分组-->
+                    <MenuItem Header="添加(_D)"></MenuItem >
+                    <Separator ></Separator>
+                    <MenuItem Header="关闭(_C)"></MenuItem >
+                </MenuItem >
+                <MenuItem Header="编辑(_E)" IsCheckable="True">
+                    <MenuItem Header="MenuItem1"></MenuItem >
+                    <MenuItem Header="MenuItem2"></MenuItem >
+                </MenuItem >
+                <MenuItem Header="视图(_V)">
+                    <MenuItem Header="MenuItem3"></MenuItem >
+                    <MenuItem Header="MenuItem4"></MenuItem >
+                </MenuItem >
+                <MenuItem Header="下载(_D)">
+                    <MenuItem Name="btnDownload" Header="下载数据" Click="btnDownload_Click"></MenuItem >
+                    <MenuItem Header="MenuItem6"></MenuItem >
+                </MenuItem >
+            </Menu >
+            <WrapPanel.ContextMenu>
+                <ContextMenu >
+                    <MenuItem Header=" 右键菜单1">
+                        <MenuItem Header=" 子菜单1"></MenuItem>
+                    </MenuItem>
+                    <MenuItem Header=" 右键菜单2">
+                        <MenuItem Header=" 子菜单1"></MenuItem>
+                    </MenuItem>
+                    <MenuItem Header=" 右键菜单3">
+                        <MenuItem Header=" 子菜单1"></MenuItem>
+                    </MenuItem>
+                </ContextMenu>
+            </WrapPanel.ContextMenu>
+        </WrapPanel>
+    </Grid>
+
+
+</Window>

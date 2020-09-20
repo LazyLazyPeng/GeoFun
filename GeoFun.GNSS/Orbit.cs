@@ -189,6 +189,7 @@ namespace GeoFun.GNSS
             // 刚好落在采样点上
             if (Math.Abs(ts - t0 + Interval * index) < 1e-13)
             {
+                if (!Epoches[index].AllSat.ContainsKey(prn)) return p;
                 p[0] = Epoches[index][prn].X;
                 p[1] = Epoches[index][prn].Y;
                 p[2] = Epoches[index][prn].Z;
@@ -196,6 +197,7 @@ namespace GeoFun.GNSS
             }
             else if (Math.Abs(ts - t0 + Interval * index + Interval) < 1e-13)
             {
+                if (!Epoches[index].AllSat.ContainsKey(prn)) return p;
                 p[0] = Epoches[index + 1][prn].X;
                 p[1] = Epoches[index + 1][prn].Y;
                 p[2] = Epoches[index + 1][prn].Z;
@@ -207,6 +209,7 @@ namespace GeoFun.GNSS
             {
                 for (int i = 0; i < 10; i++)
                 {
+                    if (!Epoches[i].AllSat.ContainsKey(prn)) return p;
                     x[i] = Epoches[i][prn].X;
                     y[i] = Epoches[i][prn].Y;
                     z[i] = Epoches[i][prn].Z;
@@ -219,6 +222,7 @@ namespace GeoFun.GNSS
             {
                 for (int i = 0; i < 10; i++)
                 {
+                    if (!Epoches[EpochNum - 10 + i].AllSat.ContainsKey(prn)) return p;
                     x[i] = Epoches[EpochNum - 10 + i][prn].X;
                     y[i] = Epoches[EpochNum - 10 + i][prn].Y;
                     z[i] = Epoches[EpochNum - 10 + i][prn].Z;
@@ -231,6 +235,7 @@ namespace GeoFun.GNSS
             {
                 for (int i = 0; i < 10; i++)
                 {
+                    if (!Epoches[index - 4 + i].AllSat.ContainsKey(prn)) return p;
                     x[i] = Epoches[index - 4 + i][prn].X;
                     y[i] = Epoches[index - 4 + i][prn].Y;
                     z[i] = Epoches[index - 4 + i][prn].Z;

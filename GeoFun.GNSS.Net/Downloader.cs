@@ -328,6 +328,9 @@ namespace GeoFun.GNSS.Net
             string localPathZ = Path.Combine(Path.GetFullPath(outPath), name);
             // 本地路径,解压后
             string localPath = localPathZ.Substring(0, localPathZ.Length - 2);
+            string localPathO = localPath.Substring(0, localPath.Length - 1) + "o";
+
+            if (File.Exists(localPath)||File.Exists(localPathO)) return true;
 
             // 本地缓存路径
             string localTempPath = Path.Combine(Common.TEMP_DIR, "daily", year4.ToString(), doy.ToString(), year2.ToString("D2") + "n", name);
@@ -361,7 +364,8 @@ namespace GeoFun.GNSS.Net
 
             if (!File.Exists(localPath))
             {
-                throw new Exception("解压失败,路径为:" + localPathZ);
+                //("解压失败,路径为:" + localPathZ);
+                return false;
             }
 
             cmd = string.Format("\"{0}\\crx2rnx.exe\" \"{1}\" &exit", AppDomain.CurrentDomain.BaseDirectory, localPath);
