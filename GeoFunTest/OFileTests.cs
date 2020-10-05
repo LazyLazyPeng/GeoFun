@@ -17,7 +17,7 @@ namespace GeoFun.GNSS.Tests
         {
             OFile ofile = OFile.Read(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "rinex", "30900700.11o"));
             Assert.IsNotNull(ofile, "读取文件失败!");
-            ofile.SearchAllArcs();
+            ofile.DetectAllArcs();
             var arcs = ofile.Arcs;
 
             foreach (var key in arcs.Keys)

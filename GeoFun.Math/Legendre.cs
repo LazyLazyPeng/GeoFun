@@ -14,7 +14,7 @@ namespace GeoFun.MathUtils
         /// </summary>
         /// <param name="nn">阶</param>
         /// <param name="mm">次</param>
-        /// <param name="theta">角度(弧度)</param>
+        /// <param name="theta">地心余纬(弧度) pi/2-b b为纬度</param>
         /// <returns></returns>
         public static double lpmv(int n, int m, double theta)
         {

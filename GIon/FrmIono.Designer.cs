@@ -41,14 +41,21 @@
             this.rbSmooth = new System.Windows.Forms.RadioButton();
             this.rbDifference = new System.Windows.Forms.RadioButton();
             this.rbPolynomial = new System.Windows.Forms.RadioButton();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.tbxCutOffAngle = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
-            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
+            this.tbxMinArcLen = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.progressBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.rbOriginalMeas = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbxCutOffAngle)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbxMinArcLen)).BeginInit();
+            this.statusStrip1.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -63,11 +70,11 @@
             // btnOpen
             // 
             this.btnOpen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOpen.Location = new System.Drawing.Point(544, 14);
+            this.btnOpen.Location = new System.Drawing.Point(598, 12);
             this.btnOpen.Name = "btnOpen";
-            this.btnOpen.Size = new System.Drawing.Size(75, 23);
+            this.btnOpen.Size = new System.Drawing.Size(78, 25);
             this.btnOpen.TabIndex = 1;
-            this.btnOpen.Text = "打开";
+            this.btnOpen.Text = "打开...";
             this.btnOpen.UseVisualStyleBackColor = true;
             this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
             // 
@@ -77,15 +84,15 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxFolderIn.Location = new System.Drawing.Point(109, 14);
             this.tbxFolderIn.Name = "tbxFolderIn";
-            this.tbxFolderIn.Size = new System.Drawing.Size(403, 23);
+            this.tbxFolderIn.Size = new System.Drawing.Size(479, 23);
             this.tbxFolderIn.TabIndex = 2;
             // 
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(544, 50);
+            this.btnOK.Location = new System.Drawing.Point(624, 344);
             this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(75, 23);
+            this.btnOK.Size = new System.Drawing.Size(75, 37);
             this.btnOK.TabIndex = 3;
             this.btnOK.Text = "开始解算";
             this.btnOK.UseVisualStyleBackColor = true;
@@ -99,7 +106,8 @@
             this.tbxMsg.Location = new System.Drawing.Point(15, 49);
             this.tbxMsg.Multiline = true;
             this.tbxMsg.Name = "tbxMsg";
-            this.tbxMsg.Size = new System.Drawing.Size(497, 293);
+            this.tbxMsg.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.tbxMsg.Size = new System.Drawing.Size(573, 361);
             this.tbxMsg.TabIndex = 4;
             // 
             // groupBox1
@@ -108,9 +116,9 @@
             this.groupBox1.Controls.Add(this.rbMultiStationMultiDay);
             this.groupBox1.Controls.Add(this.rbSingleStationMultiDay);
             this.groupBox1.Controls.Add(this.rbSingleStationSingleDay);
-            this.groupBox1.Location = new System.Drawing.Point(518, 82);
+            this.groupBox1.Location = new System.Drawing.Point(598, 45);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(125, 84);
+            this.groupBox1.Size = new System.Drawing.Size(133, 84);
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
             // 
@@ -149,19 +157,20 @@
             // groupBox2
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.rbOriginalMeas);
             this.groupBox2.Controls.Add(this.rbSmooth);
             this.groupBox2.Controls.Add(this.rbDifference);
             this.groupBox2.Controls.Add(this.rbPolynomial);
-            this.groupBox2.Location = new System.Drawing.Point(518, 160);
+            this.groupBox2.Location = new System.Drawing.Point(598, 130);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(125, 94);
+            this.groupBox2.Size = new System.Drawing.Size(133, 120);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
             // 
             // rbSmooth
             // 
             this.rbSmooth.AutoSize = true;
-            this.rbSmooth.Location = new System.Drawing.Point(6, 69);
+            this.rbSmooth.Location = new System.Drawing.Point(6, 96);
             this.rbSmooth.Name = "rbSmooth";
             this.rbSmooth.Size = new System.Drawing.Size(102, 18);
             this.rbSmooth.TabIndex = 2;
@@ -171,7 +180,7 @@
             // rbDifference
             // 
             this.rbDifference.AutoSize = true;
-            this.rbDifference.Location = new System.Drawing.Point(6, 41);
+            this.rbDifference.Location = new System.Drawing.Point(6, 70);
             this.rbDifference.Name = "rbDifference";
             this.rbDifference.Size = new System.Drawing.Size(109, 18);
             this.rbDifference.TabIndex = 1;
@@ -181,28 +190,26 @@
             // rbPolynomial
             // 
             this.rbPolynomial.AutoSize = true;
-            this.rbPolynomial.Checked = true;
-            this.rbPolynomial.Location = new System.Drawing.Point(6, 13);
+            this.rbPolynomial.Location = new System.Drawing.Point(6, 44);
             this.rbPolynomial.Name = "rbPolynomial";
             this.rbPolynomial.Size = new System.Drawing.Size(95, 18);
             this.rbPolynomial.TabIndex = 0;
-            this.rbPolynomial.TabStop = true;
             this.rbPolynomial.Text = "多项式拟合";
             this.rbPolynomial.UseVisualStyleBackColor = true;
             // 
-            // numericUpDown1
+            // tbxCutOffAngle
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(604, 267);
-            this.numericUpDown1.Maximum = new decimal(new int[] {
+            this.tbxCutOffAngle.Location = new System.Drawing.Point(85, 12);
+            this.tbxCutOffAngle.Maximum = new decimal(new int[] {
             90,
             0,
             0,
             0});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(39, 23);
-            this.numericUpDown1.TabIndex = 7;
-            this.numericUpDown1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.numericUpDown1.Value = new decimal(new int[] {
+            this.tbxCutOffAngle.Name = "tbxCutOffAngle";
+            this.tbxCutOffAngle.Size = new System.Drawing.Size(39, 23);
+            this.tbxCutOffAngle.TabIndex = 7;
+            this.tbxCutOffAngle.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.tbxCutOffAngle.Value = new decimal(new int[] {
             30,
             0,
             0,
@@ -211,31 +218,31 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(521, 271);
+            this.label2.Location = new System.Drawing.Point(1, 16);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(77, 14);
             this.label2.TabIndex = 8;
             this.label2.Text = "截止高度角";
             // 
-            // numericUpDown2
+            // tbxMinArcLen
             // 
-            this.numericUpDown2.Location = new System.Drawing.Point(595, 299);
-            this.numericUpDown2.Maximum = new decimal(new int[] {
+            this.tbxMinArcLen.Location = new System.Drawing.Point(76, 38);
+            this.tbxMinArcLen.Maximum = new decimal(new int[] {
             1440,
             0,
             0,
             0});
-            this.numericUpDown2.Minimum = new decimal(new int[] {
+            this.tbxMinArcLen.Minimum = new decimal(new int[] {
             10,
             0,
             0,
             0});
-            this.numericUpDown2.Name = "numericUpDown2";
-            this.numericUpDown2.Size = new System.Drawing.Size(48, 23);
-            this.numericUpDown2.TabIndex = 9;
-            this.numericUpDown2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.numericUpDown2.Value = new decimal(new int[] {
-            120,
+            this.tbxMinArcLen.Name = "tbxMinArcLen";
+            this.tbxMinArcLen.Size = new System.Drawing.Size(48, 23);
+            this.tbxMinArcLen.TabIndex = 9;
+            this.tbxMinArcLen.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.tbxMinArcLen.Value = new decimal(new int[] {
+            80,
             0,
             0,
             0});
@@ -243,21 +250,68 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(521, 303);
+            this.label3.Location = new System.Drawing.Point(1, 42);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(77, 14);
             this.label3.TabIndex = 10;
             this.label3.Text = "最短弧段长";
             // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusLabel,
+            this.progressBar});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 410);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.statusStrip1.Size = new System.Drawing.Size(741, 22);
+            this.statusStrip1.TabIndex = 11;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(27, 17);
+            this.statusLabel.Text = "1/1";
+            // 
+            // progressBar
+            // 
+            this.progressBar.Name = "progressBar";
+            this.progressBar.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.progressBar.Size = new System.Drawing.Size(100, 16);
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.tbxMinArcLen);
+            this.groupBox3.Controls.Add(this.tbxCutOffAngle);
+            this.groupBox3.Controls.Add(this.label2);
+            this.groupBox3.Controls.Add(this.label3);
+            this.groupBox3.Location = new System.Drawing.Point(598, 251);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(133, 68);
+            this.groupBox3.TabIndex = 12;
+            this.groupBox3.TabStop = false;
+            // 
+            // rbOriginalMeas
+            // 
+            this.rbOriginalMeas.AutoSize = true;
+            this.rbOriginalMeas.Checked = true;
+            this.rbOriginalMeas.Location = new System.Drawing.Point(6, 18);
+            this.rbOriginalMeas.Name = "rbOriginalMeas";
+            this.rbOriginalMeas.Size = new System.Drawing.Size(95, 18);
+            this.rbOriginalMeas.TabIndex = 3;
+            this.rbOriginalMeas.Text = "原始观测值";
+            this.rbOriginalMeas.UseVisualStyleBackColor = true;
+            // 
             // FrmIono
             // 
+            this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(651, 354);
-            this.Controls.Add(this.numericUpDown2);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.numericUpDown1);
+            this.ClientSize = new System.Drawing.Size(741, 432);
+            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.tbxMsg);
@@ -273,8 +327,12 @@
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbxCutOffAngle)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbxMinArcLen)).EndInit();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -294,10 +352,15 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.RadioButton rbDifference;
         private System.Windows.Forms.RadioButton rbPolynomial;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.NumericUpDown tbxCutOffAngle;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.NumericUpDown numericUpDown2;
+        private System.Windows.Forms.NumericUpDown tbxMinArcLen;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.RadioButton rbSmooth;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripProgressBar progressBar;
+        private System.Windows.Forms.ToolStripStatusLabel statusLabel;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.RadioButton rbOriginalMeas;
     }
 }

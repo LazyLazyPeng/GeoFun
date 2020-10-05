@@ -101,12 +101,6 @@ namespace GeoFun.GNSS
         {
             if (OFiles.Count <= 0) return;
 
-            /// 初步检查数据时间是否一致
-            //else if (OFiles.Min(o => o.Year) != OFiles.Max(o => o.Year))
-            //{
-            //    throw new Exception("测站数据跨年，暂时无法处理，测站为:" + OFiles[0].Header.markName);
-            //}
-
             //// 检查数据采样率是否一致
             else if (Math.Abs(OFiles.Min(o => o.Interval) - OFiles.Max(o => o.Interval)) > 0.001)
             {
@@ -115,7 +109,7 @@ namespace GeoFun.GNSS
 
             //// 将Ｏ文件按照观测起始时间排序(未检测文件重复的情况，会出错)
             OFiles = (from o in OFiles
-                      orderby o.StartTime.mjd.Seconds
+                      orderby o.DOY
                       select o).ToList();
 
             //// 将观测历元合并到一个大的数组
@@ -200,53 +194,19 @@ namespace GeoFun.GNSS
         {
             bool flag = true;
             if (DOYs.Count < 2) return true;
-            for (int i = 1; i < DOYs.Count; i++)
+
+            // 检查数据某天是否缺失
+            for(int i =1; i < DOYs.Count; i++)
             {
-                //// 判断doy是否连续
-                // 1.不跨年
-                if (DOYs[i].Year == DOYs[i - 1].Year)
+                int dayNum = DOYs[i] - DOYs[i - 1];
+                // 有缺失
+                if(dayNum>1)
                 {
-                    if (DOYs[i].Day - DOYs[i - 1].Day <= 1)
+                    for(int j = 0; j < dayNum-1;j++)
                     {
-                        continue;
-                    }
-                    else
-                    {
-                        flag = false;
-                        break;
-                    }
-                }
-
-                // 2.跨年
-                else if (DOYs[i].Year - DOYs[i - 1].Year > 1)
-                {
-                    flag = false;
-                    break;
-                }
-                else
-                {
-                    if (DOYs[i].Day != 1)
-                    {
-                        flag = false;
-                        break;
-                    }
-
-                    // 闰年最后一天
-                    if (DateTime.IsLeapYear(DOYs[i - 1].Year)
-                        && DOYs[i - 1].Day == 366)
-                    {
-                        continue;
-                    }
-                    // 非闰年最后一天
-                    else if (DateTime.IsLeapYear(DOYs[i - 1].Year)
-                        && DOYs[i - 1].Day == 365)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        flag = false;
-                        break;
+                        DOY doy = DOYs[i - 1].AddDays(j + 1);
+                        OFile file = OFile.CreateEmptyFile(Name, doy.Year, doy.Day,30);
+                        OFiles.Add(file);
                     }
                 }
             }
@@ -276,7 +236,7 @@ namespace GeoFun.GNSS
                     {
                         if (Math.Abs(arc[j]["SP4"]) > 1e-10)
                         {
-                            arc[j]["SP4"] = Iono.STEC2VTEC(9.52437 * arc[j]["SP4"], arc[j].Elevation);
+                            arc[j]["vtec"] = Iono.STEC2VTEC(9.52437 * arc[j]["SP4"], arc[j].Elevation);
                         }
                     }
                 }
@@ -471,7 +431,7 @@ namespace GeoFun.GNSS
 
         public void CalAzElIPP()
         {
-            if (Arcs is null) return;
+            if (Epoches is null) return;
             // 测站概略坐标错误，需要估计
             if (Math.Abs(ApproxPos[0]) < 1e-1
              || Math.Abs(ApproxPos[1]) < 1e-1
@@ -481,35 +441,24 @@ namespace GeoFun.GNSS
             Coordinate.XYZ2BLH(ApproxPos, out recb, out recl, out rech, Ellipsoid.ELLIP_WGS84);
 
             double az, el, ippb, ippl;
-            foreach (var prn in Arcs.Keys)
+            for (int i = 0; i < Epoches.Count; i++)
             {
-                for (int i = 0; i < Arcs[prn].Count; i++)
+                var epo = Epoches[i];
+                foreach (var prn in epo.AllSat.Keys)
                 {
-                    OArc arc = Arcs[prn][i];
-                    for (int j = 0; j < arc.Length; j++)
-                    {
-                        az = 0d;
-                        el = 0d;
-                        ippb = 0d;
-                        ippl = 0d;
+                    var sat = epo[prn];
+                    az = 0d;
+                    el = 0d;
+                    ippb = 0d;
+                    ippl = 0d;
 
-                        if (Math.Abs(arc[j].SatCoor[0]) < 1e-10) continue;
-                        if (Math.Abs(arc[j].SatCoor[1]) < 1e-10) continue;
-                        if (Math.Abs(arc[j].SatCoor[2]) < 1e-10) continue;
+                    MathHelper.CalAzEl(ApproxPos, sat.SatCoor, out az, out el);
+                    MathHelper.CalIPP(recb, recl, Common.EARTH_RADIUS2, Common.IONO_HIGH, az, el, out ippb, out ippl);
 
-                        MathHelper.CalAzEl(ApproxPos, arc[j].SatCoor, out az, out el);
-                        MathHelper.CalIPP(recb, recl, Common.EARTH_RADIUS2, Common.IONO_HIGH, az, el, out ippb, out ippl);
-
-                        arc[j].Azimuth = az;
-                        arc[j].Elevation = el;
-                        arc[j].IPP[0] = ippb;
-                        arc[j].IPP[1] = ippl;
-
-                        if (ippb < 0)
-                        {
-                            int b = 0;
-                        }
-                    }
+                    sat.Azimuth = az;
+                    sat.Elevation = el;
+                    sat.IPP[0] = ippl;
+                    sat.IPP[1] = ippb;
                 }
             }
         }
@@ -588,7 +537,7 @@ namespace GeoFun.GNSS
                 {
                     var arc = arcs[i];
 
-                    Smoother.Smooth(ref arc, "SP4", 5);
+                    Smoother.Smooth(ref arc, "vtec", 9);
                 }
             }
         }
@@ -612,7 +561,7 @@ namespace GeoFun.GNSS
                 // 只有一个历元
                 if (si == ei)
                 {
-                    arc[si]["SP4"] = 0d;
+                    arc[si]["vtec"] = 0d;
                     break;
                 }
 
@@ -621,7 +570,7 @@ namespace GeoFun.GNSS
                 List<int> index = new List<int>();
                 for (int i = si; i < ei; i++)
                 {
-                    sp4 = arc[i]["SP4"];
+                    sp4 = arc[i]["vtec"];
                     if (Math.Abs(sp4) > 1e-10)
                     {
                         x.Add(i);
@@ -639,11 +588,11 @@ namespace GeoFun.GNSS
                         // 剔粗差
                         if (Math.Abs(residue[i]) < 5 * sigma && Math.Abs(residue[i]) < 2.5)
                         {
-                            arc[index[i]]["SP4"] = residue[i];
+                            arc[index[i]]["vtec"] = residue[i];
                         }
                         else
                         {
-                            arc[index[i]]["SP4"] = 0d;
+                            arc[index[i]]["vtec"] = 0d;
                         }
                     }
                 }
@@ -682,7 +631,7 @@ namespace GeoFun.GNSS
                             sat.SatPRN,
                             (sat.IPP[1]*Angle.R2D).ToString("#.##########"),
                             (sat.IPP[0]*Angle.R2D).ToString("#.##########"),
-                            sat["SP4"].ToString("f4")
+                            sat["vtec"].ToString("f4")
                         });
                     }
                 }
@@ -738,9 +687,9 @@ namespace GeoFun.GNSS
 
                         if (!prn.StartsWith("G")) continue;
                         int index = int.Parse(prn.Substring(1)) - 1;
-                        line[index] = sta.Epoches[i].AllSat[prn]["SP4"].ToString("#.##########");
-                        lineb[index] = (sta.Epoches[i].AllSat[prn].IPP[1] * Angle.R2D).ToString("#.##########");
-                        linel[index] = (sta.Epoches[i].AllSat[prn].IPP[0] * Angle.R2D).ToString("#.##########");
+                        line[index] = sta.Epoches[i].AllSat[prn]["vtec"].ToString("#.##########");
+                        lineb[index] = (sta.Epoches[i].AllSat[prn].IPP[0] * Angle.R2D).ToString("#.##########");
+                        linel[index] = (sta.Epoches[i].AllSat[prn].IPP[1] * Angle.R2D).ToString("#.##########");
                     }
                     lines.Add(line);
                     linesB.Add(lineb);
@@ -817,7 +766,7 @@ namespace GeoFun.GNSS
                         var sat = sta.Epoches[i].AllSat[prn];
 
                         // 去掉高度角小于30°的
-                        if (sta.Epoches[i][prn].Elevation < 30 * Angle.D2R)
+                        if (sta.Epoches[i][prn].Elevation < Options.CutOffAngle * Angle.D2R)
                         {
                             continue;
                         }

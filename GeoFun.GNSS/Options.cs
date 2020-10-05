@@ -14,6 +14,11 @@ namespace GeoFun.GNSS
         public static int ARC_MIN_LENGTH = 100;
 
         /// <summary>
+        /// 截止高度角
+        /// </summary>
+        public static double CutOffAngle = 30;
+
+        /// <summary>
         /// 设置数据处理开始的时间
         /// </summary>
         public static GPST START_TIME = new GPST(2013,7,12,20,0,0m);
@@ -47,6 +52,11 @@ namespace GeoFun.GNSS
         /// 张小红, 郭斐, 李盼, et al. GNSS精密单点定位中的实时质量控制[J]. 武汉大学学报·信息科学版, 2012, 37(8): 940-944. ZHANG Xiaohong， GUO Fei， LI Pan， ZUO Xiang. Real-time Quality Control Procedure for GNSS Precise Point Positioning. GEOMATICS AND INFORMATION SCIENCE OF WUHAN UNIVERS, 2012, 37(8):940-944.
         /// </remarks>
         public static double OUTLIER_P1P2 = 30;
+
+        /// <summary>
+        /// gf组合周跳探测阈值(周)
+        /// </summary>
+        public static double Threshold_GF = 0.28;
 
         /// <summary>
         /// 卫星dcb处理方式(默认从文件读取)

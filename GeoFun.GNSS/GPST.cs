@@ -113,6 +113,49 @@ namespace GeoFun.GNSS
             }
         }
 
+        public int Year
+        {
+            get
+            {
+                return commonT.Year;
+            }
+        }
+        public int Month
+        {
+            get
+            {
+                return commonT.Month;
+            }
+        }
+        public int DayOfMonth
+        {
+            get
+            {
+                return commonT.Day;
+            }
+        }
+        public int Hour
+        {
+            get
+            {
+                return commonT.Hour;
+            }
+        }
+        public int Minute
+        {
+            get
+            {
+                return commonT.Minute;
+            }
+        }
+        public double Second
+        {
+            get
+            {
+                return (double)commonT.second;
+            }
+        }
+
 
         public GPST(int year, int month, int day, int hour, int minute, double second)
         {

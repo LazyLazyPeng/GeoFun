@@ -3,11 +3,14 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Data;
 
 namespace GeoFun.GNSS
 {
     public class DCBFile
     {
+        public string Type = "p1p2";
+
         /// <summary>
         /// DCB文件路径
         /// </summary>
@@ -30,6 +33,21 @@ namespace GeoFun.GNSS
         /// 月
         /// </summary>
         public int Month { get; set; } = 0;
+
+        public double this[string prn]
+        {
+            get
+            {
+                if(DCBList.ContainsKey(prn))
+                {
+                    return DCBList[prn];
+                }
+                else
+                {
+                    return 0d;
+                }
+            }
+        }
 
         public DCBFile(string path)
         {
@@ -57,7 +75,7 @@ namespace GeoFun.GNSS
             double dcb, dcbBias;
             for (int i = startLineNum; i < lines.Length; i++)
             {
-                if (!string.IsNullOrWhiteSpace(lines[i])) continue;
+                if (string.IsNullOrWhiteSpace(lines[i])) continue;
 
                 string[] segs = StringHelper.SplitFields(lines[i]);
                 if (segs.Length > 2)
