@@ -54,12 +54,14 @@
     <Compile Include="DownloaderTests.cs" />
     <Compile Include="DOYTests.cs" />
     <Compile Include="FileNameTests.cs" />
+    <Compile Include="LegendreTests.cs" />
     <Compile Include="MathTests.cs" />
     <Compile Include="ObservationTests.cs" />
     <Compile Include="OFileTests.cs" />
     <Compile Include="OStationTests.cs" />
     <Compile Include="PolynomialModelTests.cs" />
     <Compile Include="SP3FileTests.cs" />
+    <Compile Include="SphericalHamonicIonoModelTests.cs" />
     <Compile Include="TimeTests.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -386,6 +388,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="Data\ionex\codg0150.16I.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data\sp3\1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

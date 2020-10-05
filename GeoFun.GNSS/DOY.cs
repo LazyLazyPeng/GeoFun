@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
 
 namespace GeoFun.GNSS
@@ -10,6 +11,7 @@ namespace GeoFun.GNSS
     {
         public int Year { get; set; } = 1970;
         public int Day { get; set; } = 1;
+
         public int TotalDaysThisYear
         {
             get
@@ -43,12 +45,12 @@ namespace GeoFun.GNSS
                 day += dayNum;
                 while (day <= 0)
                 {
-                    day += Time.DayNumOfYear(year-1);
+                    day += Time.DayNumOfYear(year - 1);
                     year--;
                 }
             }
 
-            return new DOY(year,day);
+            return new DOY(year, day);
         }
 
         public DOY Copy()
@@ -62,7 +64,6 @@ namespace GeoFun.GNSS
             if (doy1 is null || doy2 is null) return false;
             return (doy1.Year == doy2.Year) && (doy1.Day == doy2.Day);
         }
-
         public static bool operator !=(DOY doy1, DOY doy2)
         {
             if (doy1 is null && doy2 is null) return false;
@@ -78,7 +79,7 @@ namespace GeoFun.GNSS
             {
                 if (doy1.Day >= doy2.Day) flag = false;
             }
-  
+
             return flag;
         }
         public static bool operator >(DOY doy1, DOY doy2)
@@ -102,10 +103,13 @@ namespace GeoFun.GNSS
             return doy1 > doy2 || doy1 == doy2;
         }
 
-        public static int operator-(DOY doy1, DOY doy2)
+        public static int operator -(DOY doy1, DOY doy2)
         {
-            DateTime dt1 = new DateTime(doy1.Year, doy1.GetMonth(), doy1.Day);
-            DateTime dt2 = new DateTime(doy2.Year, doy2.GetMonth(), doy2.Day);
+            int month, dom;
+            doy1.GetMonthDay(out month, out dom);
+            DateTime dt1 = new DateTime(doy1.Year, month, dom);
+            doy2.GetMonthDay(out month, out dom);
+            DateTime dt2 = new DateTime(doy2.Year, month,dom);
 
             var span = dt1 - dt2;
             return (int)span.TotalDays;
@@ -131,18 +135,34 @@ namespace GeoFun.GNSS
 
         public int GetMonth()
         {
-            int[] daysOfMonth = { 31,28,31,30,31,30,31,31,30,31,30,31};
+            int[] daysOfMonth = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
             if (DateTime.IsLeapYear(Year)) daysOfMonth[1] = 29;
 
             int month = 1;
             int dayNum = 0;
-            while(dayNum+daysOfMonth[month-1]<Day)
+            while (dayNum + daysOfMonth[month - 1] < Day)
             {
-                dayNum += daysOfMonth[month-1];
+                dayNum += daysOfMonth[month - 1];
                 month++;
             }
 
             return month;
+        }
+
+        public void GetMonthDay(out int month, out int dom)
+        {
+            int[] daysOfMonth = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+            if (DateTime.IsLeapYear(Year)) daysOfMonth[1] = 29;
+
+            month = 1;
+            int dayNum = 0;
+            while (dayNum + daysOfMonth[month - 1] < Day)
+            {
+                dayNum += daysOfMonth[month - 1];
+                month++;
+            }
+
+            dom = Day - dayNum;
         }
     }
 }

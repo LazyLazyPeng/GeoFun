@@ -55,7 +55,7 @@ namespace GIon
             ObsHelper.CalL4(ref oFile.Epoches);
             ObsHelper.DetectOutlier(ref oFile.Epoches);
 
-            oFile.SearchAllArcs();
+            oFile.DetectAllArcs();
             var arcs = oFile.Arcs;
             foreach (var prn in arcs.Keys)
             {

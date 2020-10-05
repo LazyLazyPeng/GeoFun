@@ -73,16 +73,24 @@
     <Compile Include="FrmIono.Designer.cs">
       <DependentUpon>FrmIono.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmMain.Designer.cs">
+      <DependentUpon>FrmMain.cs</DependentUpon>
+    </Compile>
     <Compile Include="IonoHelper.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="MessageHelper.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="ProgressHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="Properties\DataSources\GeoFun.GNSS.Coor3.datasource" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GeoFun.GNSS.Net\GeoFun.GNSS.Net.csproj">
@@ -111,6 +119,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmIono.resx">
       <DependentUpon>FrmIono.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmMain.resx">
+      <DependentUpon>FrmMain.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

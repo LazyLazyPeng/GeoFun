@@ -177,7 +177,7 @@ namespace GeoFun.MathUtils
             }
             else
             {
-                az = Atan(y / x);
+                az = Math.Atan2(y, x);
                 el = Atan(z / (x * Cos(az) + y * Sin(az)));
             }
 

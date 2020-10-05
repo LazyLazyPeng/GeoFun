@@ -47,6 +47,10 @@ namespace GeoFun.GNSS.Net
             // 本地缓存路径
             string localTempPath = Path.Combine(Common.TEMP_DIR, "weekly", week.ToString(), name);
 
+            // 创建文件夹
+            PathHelper.CreateBaseFolder(localPathZ);
+            PathHelper.CreateBaseFolder(localTempPath);
+
             string cmd = "";
             CMDHelper cmdH = new CMDHelper();
             if (!File.Exists(localTempPath))
@@ -131,6 +135,9 @@ namespace GeoFun.GNSS.Net
             string localPathZ = Path.Combine(Path.GetFullPath(outPath), name);
             string localPath = localPathZ.Substring(0, localPathZ.Length - 2);
             if (File.Exists(localPath) && !overwrite) return true;
+
+            // 创建文件夹
+            PathHelper.CreateBaseFolder(localPathZ);
 
             // 本地缓存路径
             string cmd = "";
@@ -335,6 +342,10 @@ namespace GeoFun.GNSS.Net
             // 本地缓存路径
             string localTempPath = Path.Combine(Common.TEMP_DIR, "daily", year4.ToString(), doy.ToString(), year2.ToString("D2") + "n", name);
 
+            // 创建文件夹
+            PathHelper.CreateBaseFolder(localPathZ);
+            PathHelper.CreateBaseFolder(localTempPath);
+
             // 下载文件到临时目录
             string cmd = "";
             CMDHelper cmdH = new CMDHelper();
@@ -459,7 +470,7 @@ namespace GeoFun.GNSS.Net
             { }
             return true;
         }
-        public static bool DownloadI(int year, int doy, string outPath = "temp", string center = "IGS")
+        public static bool DownloadI(int year, int doy, string outPath = "temp", string center = "IGS",bool overwrite=false)
         {
             int year2 = 0;
             int year4 = 0;
@@ -497,13 +508,18 @@ namespace GeoFun.GNSS.Net
             /// 文件名
             string name = UrlHelper.GetFileName(remoteFullPath);//string.Format("brdc{0}0.{1}n.Z", doy, year2);
 
-            // 本地路径,压缩后
+            // 本地路径,解压前
             string localPathZ = Path.Combine(Path.GetFullPath(outPath), name);
             // 本地路径,解压后
             string localPath = localPathZ.Substring(0, localPathZ.Length - 2);
-
             // 本地缓存路径
             string localTempPath = Path.Combine(Common.TEMP_DIR, "daily", year4.ToString(), doy.ToString(), year2.ToString("D2") + "n", name);
+
+            if (File.Exists(localPath) && !overwrite) return true;
+
+            // 创建文件夹
+            PathHelper.CreateBaseFolder(localPathZ);
+            PathHelper.CreateBaseFolder(localTempPath);
 
             // 下载文件到临时目录
             string cmd = "";

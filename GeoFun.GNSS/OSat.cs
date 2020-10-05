@@ -31,6 +31,20 @@ namespace GeoFun.GNSS
         public Dictionary<string, double> SatData = new Dictionary<string, double>();
         /// <summary>
         /// 失锁标识符
+        /// Loss of lock ndicator(LLI). Range:0-7
+        /// 0 or blank: OK or not known 
+        ///  Bit 0 set : Lost lock between previous and     
+        ///              current observation: cycle slip    
+        ///              possible                           
+        ///  Bit 1 set : Opposite wavelength factor to the  
+        ///              one defined for the satellite by a 
+        ///              previous WAVELENGTH FACT L1/2 line 
+        ///              or opposite to the default.        
+        ///              Valid for the current epoch only.  
+        ///  Bit 2 set : Observation under Antispoofing     
+        ///              (may suffer from increased noise)  
+        ///                                                 
+        ///  Bits 0 and 1 for phase only.
         /// </summary>
         public Dictionary<string, int> LLI;
         /// <summary>
@@ -117,7 +131,27 @@ namespace GeoFun.GNSS
                 }
                 else
                 {
-                    return 0d;
+                    switch (obsType)
+                    {
+                        case "MW":
+                        case "mw":
+                            return 0d;
+                        case "GF":
+                        case "gf":
+                            if (SatData.ContainsKey("L1") && SatData.ContainsKey("L2"))
+                            {
+                                double l1 = SatData["L1"];
+                                double l2 = SatData["L2"];
+
+                                if (l1 != 0 && l2 != 0)
+                                {
+                                    return l1 - l2 * Common.GPS_F1 / Common.GPS_F2;
+                                }
+                            }
+                            return 0d;
+                        default:
+                            return 0d;
+                    }
                 }
             }
             set

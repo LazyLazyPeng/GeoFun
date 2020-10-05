@@ -10,6 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using GeoFun.GNSS.Net;
+using GeoFun;
 
 namespace GIon
 {
@@ -30,7 +32,7 @@ namespace GIon
             }
 
             var messHelper = new MessageHelper(tbxMsg);
-            Common.msgBox = messHelper;
+            GeoFun.GNSS.Common.msgBox = messHelper;
             MessHelper = messHelper;
 
             enumSolutionType solType = enumSolutionType.SingleStationSingleDay;
@@ -43,7 +45,11 @@ namespace GIon
                 solType = enumSolutionType.MultiStationMultiDay;
             }
 
-            enumFitType fitType = enumFitType.Polynomial;
+            enumFitType fitType = enumFitType.None;
+            if(rbOriginalMeas.Checked)
+            {
+                fitType = enumFitType.None;
+            }
             if (rbDifference.Checked)
             {
                 fitType = enumFitType.DoubleDifference;
@@ -53,16 +59,18 @@ namespace GIon
                 fitType = enumFitType.Smooth;
             }
 
-            //DirectoryInfo root = new DirectoryInfo(@"E:\Data\Graduation\chapter3\igs");
-            //var dirs = root.GetDirectories();
-            DirectoryInfo dir = new DirectoryInfo(tbxFolderIn.Text);
+            GeoFun.GNSS.Options.CutOffAngle = (double)tbxCutOffAngle.Value*Angle.D2R;
+            GeoFun.GNSS.Options.ARC_MIN_LENGTH = (int)tbxMinArcLen.Value;
 
+            DirectoryInfo dir = new DirectoryInfo(tbxFolderIn.Text);
             Task task = new Task(() =>
             {
                 string folder = tbxFolderIn.Text;
                 Case ionoCase = new Case(dir.FullName);
                 ionoCase.FitType = fitType;
-                MessHelper.Print("正在计算台风:" + dir.Name);
+                ionoCase.SetProgressMax = SetProgressMax;
+                ionoCase.SetProgressValue = SetProgressValue;
+                MessHelper.Print("正在计算:" + dir.Name);
 
                 switch (solType)
                 {
@@ -86,7 +94,7 @@ namespace GIon
         private void btnOpen_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
-            fbd.SelectedPath = @"E:\Data\Typhoon\";
+            fbd.SelectedPath = @"E:\Data\Graduation\chapter3\igs\";
             if (Directory.Exists(tbxFolderIn.Text))
             {
                 fbd.SelectedPath = tbxFolderIn.Text;
@@ -99,7 +107,26 @@ namespace GIon
 
         private void FrmIono_Load(object sender, EventArgs e)
         {
+            //GeoFun.GNSS.Net.Common.TEMP_DIR = Application.StartupPath + "\\temp";
+        }
 
+        public void SetProgressMax(int max)
+        {
+            Invoke(new Action(() =>
+            {
+                progressBar.Maximum = max;
+                statusLabel.Text = string.Format("{0}/{1}",progressBar.Value,progressBar.Maximum);
+            }));
+        }
+
+        public void SetProgressValue(int value)
+        {
+            Invoke(new Action(() =>
+            {
+                progressBar.Value = value;
+
+                statusLabel.Text = string.Format("{0}/{1}",progressBar.Value,progressBar.Maximum);
+            }));
         }
     }
 }

@@ -84,6 +84,28 @@ namespace GeoFun.GNSS
             else { }
         }
 
+        public static void DCBCorrect(ref List<OEpoch> epoches,DCBFile file)
+        {
+            double p2;
+            double p1p2;
+            for(int i =0; i < epoches.Count; i++)
+            {
+                var epo = epoches[i];
+
+                foreach(var prn in epo.AllSat.Keys)
+                {
+                    var sat = epo[prn];
+                    p2 = sat["P2"];
+
+                    if(Math.Abs(p2)>0.001)
+                    {
+                        p1p2 = file[prn] * 1e-9;
+                        sat["P2"] = p2 + p1p2 * Common.C0;
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// 探测粗差
         /// </summary>
@@ -176,10 +198,15 @@ namespace GeoFun.GNSS
                 1 / Math.Pow(f1 + f2, 2) * (f1 * f1 * dP1 + f2 * f2 + dP2)
                 );
 
+            // 前一历元gf值
+            double lstGF = arc[0]["GF"];
+            // 当前历元gf值
+            double curGF = arc[0]["GF"];
+
             int arcLen = arc.Length - 1;
             for (int i = 1; i < arcLen; i++)
             {
-                if (!GetMeas(arc[i + 1], out vp1, out vp2, out vl1, out vl2, out dP1))
+                if (!GetMeas(arc[i + 1], out vp1, out vp2, out vl1, out vl2, out _))
                 {
                     index = i + 1;
                     return true;
@@ -192,6 +219,7 @@ namespace GeoFun.GNSS
 
                 delta2 = Math.Sqrt(delta1 * delta1 * i / (i + 1) + Math.Pow(NW2 - NW1, 2) / (i + 1));
 
+                // MW探测
                 if (Math.Abs(NW2 - NW1) > 4 * delta1)
                 {
                     if (Math.Abs(NW3 - NW2) < 1)
@@ -214,6 +242,28 @@ namespace GeoFun.GNSS
                 NW1 = NW1 * i / (i + 1) + NW2 / (i + 1);
                 NW2 = NW3;
                 delta1 = delta2;
+
+                lstGF = curGF;
+                curGF = arc[i]["GF"];
+                if (arc[i].CycleSlip || arc[i].Outlier) continue;
+
+                // GF探测
+                if (!arc[i].CycleSlip)
+                {
+                    if (Math.Abs(curGF - lstGF) > Options.Threshold_GF)
+                    {
+                        arc[i].CycleSlip = true;
+                    }
+                }
+
+                // 检查LLI
+                if (!arc[i].CycleSlip)
+                {
+                    if (arc[i]["L1"] == 1 || arc[i]["L2"] == 1)
+                    {
+                        arc[i].CycleSlip = true;
+                    }
+                }
             }
             return false;
         }

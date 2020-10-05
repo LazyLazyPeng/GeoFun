@@ -15,7 +15,7 @@ namespace GeoFun.GNSS.Tests
             string path = AppDomain.CurrentDomain.BaseDirectory + "\\Data\\rinex";
             OStation sta = new OStation();
             sta.Name = "fjxp";
-            sta.ReadAllObs(@"C:\Users\Administrator\Desktop\soulik");
+            //sta.ReadAllObs(@"C:\Users\Administrator\Desktop\soulik");
             sta.SortObs();
             sta.Preprocess();
             foreach(var prn in sta.Arcs.Keys)

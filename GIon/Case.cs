@@ -15,6 +15,9 @@ namespace GIon
 {
     public class Case
     {
+        public Action<int> SetProgressMax { get; set; }
+        public Action<int> SetProgressValue { get; set; }
+
         /// <summary>
         /// 根路径(文件夹)
         /// </summary>
@@ -46,6 +49,8 @@ namespace GIon
         private string logFolder { get; set; } = "";
 
         public enumFitType FitType = enumFitType.Polynomial;
+        public double CutAngle { get; set; } = 15d;
+        public int MinArcLen { get; set; } = 120;
 
         public Observation Obs;
         public Orbit Orb;
@@ -79,76 +84,77 @@ namespace GIon
         /// </summary>
         public void MultiStationMultiDay()
         {
-            Obs = new Observation(obsFolder);
-            Orb = new Orbit(orbFolder);
-
-            /** 1.预处理
-                  1.1 下载星历、钟差、dcb、电离层文件
-                  1.2  转换rinex版本(调用gfzrnx程序)
-            */
-            Obs.SearchFiles();
-            Obs.CheckDataConsit();
-            if (!Download(Obs.DOYs)) return;
-            Orb.GetAllSp3Files();
-
-            /** 2.读取数据
-             *    2.1 读观测文件
-             *    2.2 读星历、钟差、dcb
-             */
-            FrmIono.MessHelper.Print("\r\n读取文件");
-            ReadFiles();
-            FrmIono.MessHelper.Print("\r\n读取文件完成");
-
-            /** 3.误差改正、粗差剔除
-                  3.1 粗差探测
-                  3.2 钟跳探测
-                  3.3 周跳探测
-             */
-
-            /** 4.中间量计算
-                  4.1 相位平滑伪距观测值
-                  4.2 高度角，方位角
-             */
-
-            FrmIono.MessHelper.Print("\r\n计算卫星轨道");
-            foreach (var station in Obs.Stations)
+            if (!Directory.Exists(obsFolder))
             {
-                for (int i = 0; i < station.EpochNum; i++)
-                {
-                    OEpoch oepo = station.Epoches[i];
-                    Orb.GetSatPos(ref oepo);
-                }
+                PrintWithTime("文件夹不存在，结束解算!");
+                return;
             }
-            FrmIono.MessHelper.Print("\r\n预处理...");
-            Obs.Preprocess();
-            FrmIono.MessHelper.Print("\r\n计算穿刺点...");
-            Obs.CalAzElIPP();
-            FrmIono.MessHelper.Print("\r\n相位平滑伪距...");
-            Obs.SmoothP4();
-            FrmIono.MessHelper.Print("\r\n计算VTEC...");
-            Obs.CalVTEC();
+            DirectoryInfo obsDir = new DirectoryInfo(obsFolder);
 
-            FrmIono.MessHelper.Print("\r\n多项式拟合...");
-            Obs.Fit();
+            PrintWithTime("正在搜索o文件...");
+            FileInfo[] files = obsDir.GetFiles("*.??o");
+            PrintWithTime(string.Format("共找到{0}个o文件", files.Length));
 
-            /** 5.列法方程并求解DCB
-                  5.1 列出单天解的法方程
-                  5.2 多天解法方程叠加
-             */
+            SetProgressMax(files.Count());
+            Orbit orb;
+            int year, doy;
+            string stationName;
+            DCBHelper dcb = new DCBHelper();
+            for (int i = 0; i < files.Length; i++)
+            {
+                SetProgressValue(i);
+                orb = new Orbit(orbFolder);
 
-            /** 6.代入DCB，求解TEC
-             */
+                OFile file = new OFile(files[i].FullName);
+                file.TryRead();
 
-            /** 7.将结果写出到文件
-            FrmMain.MessHelper.Print("多项式拟合...");
-                  7.1 将结果写出到txt文本
-                  7,2 分析结果并绘图
-             */
-            FrmIono.MessHelper.Print("\r\n结果输出...");
+                // 下载数据
+                FileName.ParseRinex2(files[i].Name, out stationName, out doy, out year);
+                var doys = new List<DOY> { new DOY(year, doy) };
+                Download(doys);
 
-            // Obs.WriteTECMap(resFolder, 10);
-            Obs.WriteP4(obsFolder);
+                // 读取DCB
+                PrintWithTime("读取卫星DCB...");
+                int month, dom;
+                Time.DOY2MonthDay(year, doy, out month, out dom);
+                DCBFile dcbf = dcb.GetDCB(year, month);
+                if (dcbf is null)
+                {
+                    string dcbFileName = string.Format("P1P2{0:D2}{1:D2}.DCB", year - 2000, month);
+                    string dcbFilePath = Path.Combine(orbFolder, dcbFileName);
+                    dcbf = new DCBFile(dcbFilePath);
 
+                    if (!File.Exists(dcbFilePath)||!dcbf.TryRead())
+                    {
+                        PrintWithTime("DCB文件读取失败:"+dcbFileName);
+                        continue;
+                    }
+                }
+
+                // 读取星历
+                DOY curDOY = new DOY(year, doy);
+                orb.GetAllSp3Files(orbFolder, curDOY.AddDays(-1), curDOY.AddDays(1));
+                orb.Read(orbFolder);
+
+                PrintWithTime("正在计算轨道...");
+                for (int j = 0; j < file.Epoches.Count; j++)
+                {
+                    var epo = file.Epoches[j];
+                    orb.GetSatPos(ref epo);
+                }
+
+                file.CalAzElIPP();
+                file.DCBCorrect(dcbf);
+                file.DetectOutlier();
+                file.DetectAllArcs();
+                file.DetectCycleSlip();
+                file.CalSP4();
+                file.CalVTEC();
+
+                file.WriteMeas("vtec", tmpFolder);
+
+                SetProgressValue(i + 1);
+            }
         }
 
         /// <summary>
@@ -158,17 +164,24 @@ namespace GIon
         {
             var staNames = GetStationNames(obsFolder);
             if (staNames.Count <= 0) return;
+            if (SetProgressMax != null) SetProgressMax(staNames.Count);
+
 
             for (int i = 0; i < staNames.Count; i++)
             {
+                if (SetProgressValue != null) SetProgressValue(i + 1);
+
                 var staName = staNames[i];
-                Print(string.Format("\r\n\r\n开始解算第{0}个测站,共{1}个:{2}", i + 1, staNames.Count + 1, staName));
+                Print(string.Format("\r\n\r\n开始解算第{0}个测站,共{1}个:{2}", i + 1, staNames.Count, staName));
                 PrintWithTime("正在搜索观测文件...");
 
                 OStation sta = new OStation(staName);
                 sta.SearchAllOFiles(obsFolder);
                 PrintWithTime(string.Format("共找到{0}个文件:", sta.FileNum));
-                sta.OFiles.ForEach(f => { Print("\r\n   " + f.Path); });
+                for (int j = 0; j < sta.OFiles.Count; j++)
+                {
+                    Print(string.Format("\r\n    {0} {1}", j + 1, sta.OFiles[j].Path));
+                }
                 if (sta.FileNum <= 0) return;
 
                 if (!sta.CheckDataConsist())
@@ -177,9 +190,10 @@ namespace GIon
                     continue;
                 }
 
+                PrintWithTime("正在下载辅助文件...");
                 if (!Download(sta.DOYs))
                 {
-                    PrintWithTime("错误！下载星历失败");
+                    PrintWithTime("错误！下载辅助文件失败");
                 }
 
                 PrintWithTime("读取星历文件...");
@@ -207,6 +221,8 @@ namespace GIon
                     OEpoch oepo = sta.Epoches[j];
                     Orb.GetSatPos(ref oepo);
                 }
+                PrintWithTime("\r\n穿刺点计算...");
+                sta.CalAzElIPP();
 
                 PrintWithTime("粗差探测...");
                 sta.DetectOutlier();
@@ -214,11 +230,13 @@ namespace GIon
                 sta.DetectArcs();
                 PrintWithTime("周跳探测...");
                 sta.DetectCycleSlip();
-                PrintWithTime("\r\n穿刺点计算...");
-                sta.CalAzElIPP();
                 PrintWithTime("相位平滑伪距计算...");
                 sta.SmoothP4();
-                if (FitType == enumFitType.Polynomial)
+                if(FitType == enumFitType.None)
+                {
+                    sta.CalVTEC();
+                }
+                else if (FitType == enumFitType.Polynomial)
                 {
                     PrintWithTime("VTEC计算...");
                     sta.CalVTEC();
@@ -229,7 +247,7 @@ namespace GIon
                 {
                     PrintWithTime("VTEC计算...");
                     sta.CalVTEC();
-                    PrintWithTime("多项式拟合计算...");
+                    PrintWithTime("滑动平均计算...");
                     sta.Smooth();
                 }
                 else if (FitType == enumFitType.DoubleDifference)
@@ -238,7 +256,7 @@ namespace GIon
                     sta.DoubleDiff();
                 }
 
-                string measName = "SP4";
+                string measName = "vtec";
                 if (FitType == enumFitType.DoubleDifference)
                 {
                     measName = "L6";
@@ -305,7 +323,7 @@ namespace GIon
                         of.DetectOutlier();
 
                         // 探测弧段
-                        of.SearchAllArcs();
+                        of.DetectAllArcs();
 
                         // 探测周跳
                         PrintWithTime("正在探测周跳...");
@@ -322,8 +340,19 @@ namespace GIon
                         of.CalVTEC();
 
                         // 多项式拟合
-                        //Print("正在拟合多项式...");
-                        of.Fit();
+                        Print("正在拟合多项式...");
+                        if (FitType == enumFitType.Polynomial)
+                        {
+                            of.Fit();
+                        }
+                        else if (FitType == enumFitType.DoubleDifference)
+                        {
+                            of.DoubleDifference();
+                        }
+                        else if (FitType == enumFitType.Smooth)
+                        {
+                            of.Smooth();
+                        }
 
                         // 输出结果
                         PrintWithTime("正在写入文件...");
@@ -422,6 +451,18 @@ namespace GIon
                 try
                 {
                     file.CopyTo(newFile, false);
+                    file.Delete();
+                }
+                catch
+                { }
+            }
+            foreach (var file in dir.GetFiles("*.??d*"))
+            {
+                string newFile = Path.Combine(obsFolder, file.Name);
+                try
+                {
+                    file.CopyTo(newFile, false);
+                    file.Delete();
                 }
                 catch
                 { }
@@ -432,6 +473,7 @@ namespace GIon
                 try
                 {
                     file.CopyTo(newFile, false);
+                    file.Delete();
                 }
                 catch
                 { }
@@ -442,6 +484,7 @@ namespace GIon
                 try
                 {
                     file.CopyTo(newFile, false);
+                    file.Delete();
                 }
                 catch
                 { }
@@ -452,16 +495,32 @@ namespace GIon
                 try
                 {
                     file.CopyTo(newFile, false);
+                    file.Delete();
                 }
                 catch
                 { }
             }
 
             string cmd;
+
+            // 解压o文件
             cmd = string.Format("7z.exe x \"{0}\\*.Z\" &exit", obsFolder);
             CMDHelper.ExecuteThenWait(cmd);
-            cmd = string.Format("7z.exe x \"{0}\\*.Z\" &exit", obsFolder);
+
+            // 解压星历钟差等文件
+            cmd = string.Format("7z.exe x \"{0}\\*.Z\" &exit", orbFolder);
             CMDHelper.ExecuteThenWait(cmd);
+
+            // 解压d文件
+            DirectoryInfo obsDir = new DirectoryInfo(obsFolder);
+            foreach (var file in obsDir.GetFiles("*.??d"))
+            {
+                string filePathO = file.FullName.Substring(0, file.FullName.Length - 1) + "o";
+                if (File.Exists(filePathO)) continue;
+
+                cmd = string.Format("crx2rnx.exe -s -f \"{0}\" &exit", file.FullName);
+                CMDHelper.ExecuteThenWait(cmd);
+            }
         }
 
         public List<string> GetStationNames(string folder)
@@ -516,11 +575,7 @@ namespace GIon
 
             while (start <= end)
             {
-                Downloader.DownloadSp3DOY(start.Year, start.Day, orbFolder);
-                Downloader.DownloadClkDOY(start.Year, start.Day, orbFolder);
-                Downloader.DownloadI(start.Year, start.Day, orbFolder);
-                Downloader.DownloadDCB(start.Year, start.GetMonth(), "P1C1", orbFolder);
-                Downloader.DownloadDCB(start.Year, start.GetMonth(), "P1P2", orbFolder);
+                Download(start.Year, start.Day);
 
                 start = start.AddDays(1);
             }
@@ -540,15 +595,40 @@ namespace GIon
 
             while (start <= end)
             {
-                Downloader.DownloadSp3DOY(start.Year, start.Day, orbFolder);
-                Downloader.DownloadClkDOY(start.Year, start.Day, orbFolder);
-                Downloader.DownloadI(start.Year, start.Day, orbFolder);
-                Downloader.DownloadDCB(start.Year, start.GetMonth(), "P1C1", orbFolder);
-                Downloader.DownloadDCB(start.Year, start.GetMonth(), "P1P2", orbFolder);
-
+                Print("\r\n    正在下载第"+start.Day.ToString()+"天...");
+                Download(start.Year, start.Day);
                 start = start.AddDays(1);
             }
 
+            return true;
+        }
+        public bool Download(int year, int doy)
+        {
+            int month, dom;
+            Time.DOY2MonthDay(year, doy, out month, out dom);
+
+            Print("\r\n        下载SP3...");
+            if (!Downloader.DownloadSp3DOY(year, doy, orbFolder))
+            {
+                Print(string.Format("\r\n        sp3下载失败..."));
+            }
+            Print("\r\n        下载ionex...");
+            if (!Downloader.DownloadI(year, doy, orbFolder))
+            {
+                Print(string.Format("\r\n        ionex下载失败..."));
+            }
+            Print("\r\n        下载p1c1...");
+            if (!Downloader.DownloadDCB(year, month, "P1C1", orbFolder))
+            {
+
+                Print(string.Format("\r\n        p1c1下载失败..."));
+            }
+            Print("\r\n        下载p1p2...");
+            if (!Downloader.DownloadDCB(year, month, "P1P2", orbFolder))
+            {
+
+                Print(string.Format("\r\n        p1p2下载失败..."));
+            }
             return true;
         }
 

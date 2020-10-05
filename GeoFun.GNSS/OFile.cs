@@ -1,10 +1,12 @@
 using GeoFun.IO;
 using GeoFun.MathUtils;
+using MathNet.Numerics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data.Odbc;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
@@ -35,6 +37,10 @@ namespace GeoFun.GNSS
             get
             {
                 return Header.interval;
+            }
+            set
+            {
+                Header.interval = value;
             }
         }
 
@@ -81,7 +87,7 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 文件头
         /// </summary>
-        public OHeader Header;
+        public OHeader Header = new OHeader();
 
         /// <summary>
         /// 所有历元的观测数据
@@ -99,11 +105,11 @@ namespace GeoFun.GNSS
 
             try
             {
-                if(File.Exists(path))
+                if (File.Exists(path))
                 {
                     FileInfo info = new FileInfo(path);
 
-                    int year,  doy;
+                    int year, doy;
                     string stationName;
                     FileName.ParseRinex2(info.Name, out stationName, out doy, out year);
 
@@ -116,8 +122,51 @@ namespace GeoFun.GNSS
             { }
         }
 
+        /// <summary>
+        /// 生成一个空的o文件
+        /// </summary>
+        /// <param name="stationName"></param>
+        /// <param name="year"></param>
+        /// <param name="doy"></param>
+        /// <param name="interval"></param>
+        /// <returns></returns>
+        public static OFile CreateEmptyFile(string stationName, int year, int doy, double interval)
+        {
+            OFile file = new OFile("");
+            file.Interval = interval;
+            file.StationName = stationName;
+            file.Year = year;
+            file.DOY = doy;
+
+            return file;
+        }
+
+        /// <summary>
+        /// 初始化历元
+        /// </summary>
+        public void InitEpoches()
+        {
+            GPST epoStart = new GPST(Year, DOY);
+            int epochNum = (int)Math.Floor((Time.SecondsPerDay + 0.1d) / Interval);
+            Epoches = new List<OEpoch>(epochNum * 2);
+            for (int i = 0; i < epochNum; i++)
+            {
+                var curEpo = new GPST(epoStart);
+                curEpo.AddSeconds(Header.interval * epochNum);
+                var obsEpo = new OEpoch();
+                obsEpo.Epoch = curEpo;
+                Epoches.Add(obsEpo);
+            }
+        }
+
         public bool TryRead()
         {
+            if (!File.Exists(Path))
+            {
+                InitEpoches();
+                return false;
+            }
+
             int month, dom;
             Time.DOY2MonthDay(Year, DOY, out month, out dom);
             GPST startTime = new GPST(Year, month, dom, 0, 0, 0m);
@@ -202,17 +251,7 @@ namespace GeoFun.GNSS
                         line = sr.ReadLine();
                     }//头已读取完
 
-                    GPST epoStart = new GPST(Year, DOY);
-                    Epoches = new List<OEpoch>(2880 * 2);
-                    int epochNum = (int)Math.Floor((Time.SecondsPerDay+0.1d) / Header.interval);
-                    for (int i = 0; i < epochNum; i++)
-                    {
-                        var curEpo = new GPST(epoStart); 
-                        curEpo.AddSeconds(Header.interval*epochNum);
-                        var obsEpo = new OEpoch();
-                        obsEpo.Epoch = curEpo;
-                        Epoches.Add(obsEpo);
-                    }
+                    InitEpoches();
 
                     //读取观测值
                     line = sr.ReadLine();
@@ -377,6 +416,10 @@ namespace GeoFun.GNSS
         public string ReadLine(StreamReader sr)
         {
             string line = sr.ReadLine();
+            if (line is null)
+            {
+                line = " ".PadRight(80);
+            }
             if (line.Length < 80)
             {
                 line = line.PadRight(80);
@@ -399,7 +442,7 @@ namespace GeoFun.GNSS
             }
         }
 
-        public int SearchAllArcs(int arcLength = 0)
+        public int DetectAllArcs(int arcLength = 0)
         {
             // 弧段最短长度
             if (arcLength == 0) arcLength = Options.ARC_MIN_LENGTH;
@@ -411,7 +454,8 @@ namespace GeoFun.GNSS
                 for (int i = 1; i < 33; i++)
                 {
                     string prn = "G" + i.ToString("0#");
-                    allArc.Add(prn, SearchArcs(prn));
+                    var arcs = SearchArcs(prn);
+                    allArc.Add(prn, arcs);
                 }
             }
             Arcs = allArc;
@@ -445,8 +489,6 @@ namespace GeoFun.GNSS
                 {
                     if (arc.Length >= arcLen)
                     {
-                        arc.StartIndex += 40;
-                        arc.EndIndex -= 10;
                         arcs.Add(arc);
                     }
                     startIndex = arc.EndIndex + 1;
@@ -475,7 +517,8 @@ namespace GeoFun.GNSS
                         (Epoches[i][prn]["P1"] != 0 ||
                         Epoches[i][prn]["C1"] != 0) &&
                         !Epoches[i][prn].Outlier &&
-                        !Epoches[i][prn].CycleSlip
+                        !Epoches[i][prn].CycleSlip &&
+                        Epoches[i][prn].Elevation > Options.CutOffAngle
                         )
                     {
                         flag = true;
@@ -521,6 +564,11 @@ namespace GeoFun.GNSS
         public int CompareTo(OFile other)
         {
             return StartTime.CompareTo(other.StartTime);
+        }
+
+        public void DCBCorrect(DCBFile file)
+        {
+            ObsHelper.DCBCorrect(ref Epoches, file);
         }
 
         public void DetectOutlier()
@@ -576,6 +624,41 @@ namespace GeoFun.GNSS
             }
         }
 
+        public void CalAzElIPP()
+        {
+            if (Epoches is null) return;
+            double[] ApproxPos = { Header.approxPos.X, Header.approxPos.Y, Header.approxPos.Z };
+            // 测站概略坐标错误，需要估计
+            if (Math.Abs(ApproxPos[0]) < 1e-1
+             || Math.Abs(ApproxPos[1]) < 1e-1
+             || Math.Abs(ApproxPos[2]) < 1e-1) return;
+
+            double recb, recl, rech;
+            Coordinate.XYZ2BLH(ApproxPos, out recb, out recl, out rech, Ellipsoid.ELLIP_WGS84);
+
+            double az, el, ippb, ippl;
+            for (int i = 0; i < Epoches.Count; i++)
+            {
+                var epo = Epoches[i];
+                foreach (var prn in epo.AllSat.Keys)
+                {
+                    var sat = epo[prn];
+                    az = 0d;
+                    el = 0d;
+                    ippb = 0d;
+                    ippl = 0d;
+
+                    MathHelper.CalAzEl(ApproxPos, sat.SatCoor, out az, out el);
+                    MathHelper.CalIPP(recb, recl, Common.EARTH_RADIUS2, Common.IONO_HIGH, az, el, out ippb, out ippl);
+
+                    sat.Azimuth = az;
+                    sat.Elevation = el;
+                    sat.IPP[0] = ippb;
+                    sat.IPP[1] = ippl;
+                }
+            }
+        }
+
         public void CalIPP()
         {
             if (Arcs is null) return;
@@ -613,7 +696,6 @@ namespace GeoFun.GNSS
             }
         }
 
-
         public void CalSP4()
         {
             ObsHelper.CalL4(ref Epoches);
@@ -641,7 +723,7 @@ namespace GeoFun.GNSS
                     {
                         if (Math.Abs(arc[j]["SP4"]) > 1e-10)
                         {
-                            arc[j]["SP4"] = Iono.STEC2VTEC(9.52437 * arc[j]["SP4"], arc[j].Elevation);
+                            arc[j]["vtec"] = Iono.STEC2VTEC(9.52437 * arc[j]["SP4"], arc[j].Elevation);
                         }
                     }
                 }
@@ -717,6 +799,34 @@ namespace GeoFun.GNSS
             }
         }
 
+        public void DoubleDifference()
+        {
+            foreach (var prn in Arcs.Keys)
+            {
+                var arcs = Arcs[prn];
+                for (int i = 0; i < arcs.Count; i++)
+                {
+                    var arc = arcs[i];
+
+                    ObsHelper.CalDoubleDiff(ref arc);
+                }
+            }
+        }
+
+        public void Smooth()
+        {
+            foreach (var prn in Arcs.Keys)
+            {
+                var arcs = Arcs[prn];
+                for (int i = 0; i < arcs.Count; i++)
+                {
+                    var arc = arcs[i];
+
+                    Smoother.Smooth(ref arc, "SP4", 5);
+                }
+            }
+        }
+
         public void WriteTEC(string folder)
         {
             var sta = this;
@@ -756,12 +866,12 @@ namespace GeoFun.GNSS
                     linesL.Add(linel);
                 }
 
-                string fileName = string.Format("{0}_{1}.meas.p4.txt",StationName,DOY);
+                string fileName = string.Format("{0}_{1}.meas.p4.txt", StationName, DOY);
                 string filePath = System.IO.Path.Combine(folder, fileName);
                 FileHelper.WriteLines(filePath, lines, ',');
 
-                string fileNameB = string.Format("{0}_{1}.ipp.b.txt",StationName,DOY);
-                string fileNameL = string.Format("{0}_{1}.ipp.l.txt",StationName,DOY);
+                string fileNameB = string.Format("{0}_{1}.ipp.b.txt", StationName, DOY);
+                string fileNameL = string.Format("{0}_{1}.ipp.l.txt", StationName, DOY);
 
                 string filePathB = System.IO.Path.Combine(folder, fileNameB);
                 string filePathL = System.IO.Path.Combine(folder, fileNameL);
@@ -771,6 +881,61 @@ namespace GeoFun.GNSS
             }
 
 
+        }
+
+        /// <summary>
+        /// 将观测值写入文件
+        /// </summary>
+        /// <param name="meas"></param>
+        /// <param name="st"></param>
+        /// <param name="et"></param>
+        public void WriteMeas(string meas, string outFolder)
+        {
+            // 每一段的长度(历元数)
+            int segEpoNum = 240;
+
+            int startIndex = 0;
+            int endIndex = segEpoNum;
+
+            int allEpoNum = Epoches.Count;
+            while (startIndex < allEpoNum)
+            {
+                if (endIndex > allEpoNum) endIndex = allEpoNum;
+
+                OSat sat;
+                OEpoch epo;
+                double value;
+                List<string> lines = new List<string>(2000);
+                for (int i = startIndex; i < endIndex; i++)
+                {
+                    epo = Epoches[i];
+                    foreach (var prn in epo.AllSat.Keys)
+                    {
+                        sat = epo[prn];
+                        value = sat[meas];
+                        if (Math.Abs(value) > 1e-3)
+                        {
+                            string line = string.Format("{0},{1:f10},{2:f10},{3:f3}", prn, sat.IPP[0] * Angle.R2D, sat.IPP[1] * Angle.R2D, value);
+                            lines.Add(line);
+                        }
+                    }
+                }
+
+                GPST st = Epoches[startIndex].Epoch;
+                GPST et = Epoches[endIndex - 1].Epoch;
+                string outFileName = string.Format("{0}_{1}{2:D3}{3:D2}{4:D2}{5:D2}_{6}{7:D3}{8:D2}{9:D2}{10}.meas.{11}.txt",
+                    StationName,
+                    st.Year, st.DayOfYear, st.Hour, st.Minute, (int)st.Second,
+                    et.Year, et.DayOfYear, et.Hour, et.Minute, (int)et.Second,
+                    meas);
+
+                string outFilePath = System.IO.Path.Combine(outFolder, outFileName);
+
+                File.WriteAllLines(outFilePath, lines.ToArray());
+
+                startIndex = endIndex;
+                endIndex += segEpoNum;
+            }
         }
     }
 }
