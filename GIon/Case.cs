@@ -98,6 +98,7 @@ namespace GIon
             SetProgressMax(files.Count());
             Orbit orb;
             int year, doy;
+            List<DOY> allDOY = new List<DOY>();
             string stationName;
             DCBHelper dcb = new DCBHelper();
             for (int i = 0; i < files.Length; i++)
@@ -107,11 +108,17 @@ namespace GIon
 
                 OFile file = new OFile(files[i].FullName);
                 file.TryRead();
+                // 检查观测数据采样率
+                if (file.Interval != 30d) continue;
 
-                // 下载数据
+                // 下载星历、DCB
                 FileName.ParseRinex2(files[i].Name, out stationName, out doy, out year);
                 var doys = new List<DOY> { new DOY(year, doy) };
                 Download(doys);
+                if (!allDOY.Any(d => d.Year == year && d.Day == doy))
+                {
+                    allDOY.Add(doys[0]);
+                }
 
                 // 读取DCB
                 PrintWithTime("读取卫星DCB...");
@@ -124,17 +131,27 @@ namespace GIon
                     string dcbFilePath = Path.Combine(orbFolder, dcbFileName);
                     dcbf = new DCBFile(dcbFilePath);
 
-                    if (!File.Exists(dcbFilePath)||!dcbf.TryRead())
+                    if (!File.Exists(dcbFilePath) || !dcbf.TryRead())
                     {
-                        PrintWithTime("DCB文件读取失败:"+dcbFileName);
+                        PrintWithTime("DCB文件读取失败:" + dcbFileName);
                         continue;
                     }
                 }
 
                 // 读取星历
-                DOY curDOY = new DOY(year, doy);
-                orb.GetAllSp3Files(orbFolder, curDOY.AddDays(-1), curDOY.AddDays(1));
-                orb.Read(orbFolder);
+                if (orb != null
+                    && orb.StartTime != null
+                    && orb.EndTime != null
+                    && orb.StartTime < file.StartTime
+                    && orb.EndTime > file.EndTime)
+                {
+                }
+                else
+                {
+                    DOY curDOY = new DOY(year, doy);
+                    orb.GetAllSp3Files(orbFolder, curDOY.AddDays(-1), curDOY.AddDays(1));
+                    orb.Read(orbFolder);
+                }
 
                 PrintWithTime("正在计算轨道...");
                 for (int j = 0; j < file.Epoches.Count; j++)
@@ -155,6 +172,8 @@ namespace GIon
 
                 SetProgressValue(i + 1);
             }
+
+            int a = 0;
         }
 
         /// <summary>
@@ -169,100 +188,112 @@ namespace GIon
 
             for (int i = 0; i < staNames.Count; i++)
             {
-                if (SetProgressValue != null) SetProgressValue(i + 1);
-
-                var staName = staNames[i];
-                Print(string.Format("\r\n\r\n开始解算第{0}个测站,共{1}个:{2}", i + 1, staNames.Count, staName));
-                PrintWithTime("正在搜索观测文件...");
-
-                OStation sta = new OStation(staName);
-                sta.SearchAllOFiles(obsFolder);
-                PrintWithTime(string.Format("共找到{0}个文件:", sta.FileNum));
-                for (int j = 0; j < sta.OFiles.Count; j++)
+                try
                 {
-                    Print(string.Format("\r\n    {0} {1}", j + 1, sta.OFiles[j].Path));
+                    if (SetProgressValue != null) SetProgressValue(i + 1);
+
+                    var staName = staNames[i];
+                    Print(string.Format("\r\n\r\n开始解算第{0}个测站,共{1}个:{2}", i + 1, staNames.Count, staName));
+                    PrintWithTime("正在搜索观测文件...");
+
+                    OStation sta = new OStation(staName);
+                    sta.SearchAllOFiles(obsFolder);
+                    PrintWithTime(string.Format("共找到{0}个文件:", sta.FileNum));
+                    for (int j = 0; j < sta.OFiles.Count; j++)
+                    {
+                        Print(string.Format("\r\n    {0} {1}", j + 1, sta.OFiles[j].Path));
+                    }
+                    if (sta.FileNum <= 0) return;
+
+                    if (!sta.CheckDataConsist())
+                    {
+                        PrintWithTime("错误！本站数据不连续");
+                        continue;
+                    }
+
+                    PrintWithTime("正在下载辅助文件...");
+                    if (!Download(sta.DOYs))
+                    {
+                        PrintWithTime("错误！下载辅助文件失败");
+                    }
+
+                    PrintWithTime("读取星历文件...");
+                    Orb = new Orbit(orbFolder);
+                    Orb.GetAllSp3Files(orbFolder, sta.StartDOY, sta.EndDOY);
+                    Orb.Read(orbFolder);
+
+                    PrintWithTime("读取观测文件...");
+                    sta.ReadAllObs();
+                    sta.SortObs();
+
+                    PrintWithTime(string.Format("共读取到{0}个历元", sta.EpochNum));
+                    if (sta.EpochNum > 0)
+                    {
+                        sta.StartTime = sta.Epoches[0].Epoch;
+                    }
+                    else
+                    {
+                        return;
+                    }
+
+                    PrintWithTime("计算卫星轨道...");
+                    for (int j = 0; j < sta.EpochNum; j++)
+                    {
+                        OEpoch oepo = sta.Epoches[j];
+                        Orb.GetSatPos(ref oepo);
+                    }
+                    PrintWithTime("\r\n穿刺点计算...");
+                    sta.CalAzElIPP();
+
+                    PrintWithTime("粗差探测...");
+                    sta.DetectOutlier();
+                    PrintWithTime("弧段探测...");
+                    sta.DetectArcs();
+                    PrintWithTime("周跳探测...");
+                    sta.DetectCycleSlip();
+                    PrintWithTime("相位平滑伪距计算...");
+                    sta.SmoothP4();
+                    if (FitType == enumFitType.None)
+                    {
+                        sta.CalVTEC();
+                        PrintWithTime(string.Format("{0}观测值写入文件", "sp4"));
+                        sta.WriteMeas(resFolder, "SP4");
+                    }
+                    else if (FitType == enumFitType.Polynomial)
+                    {
+                        PrintWithTime("VTEC计算...");
+                        sta.CalVTEC();
+                        PrintWithTime("多项式拟合计算...");
+                        sta.Fit();
+                        PrintWithTime(string.Format("{0}观测值写入文件", "vtec"));
+                        sta.WriteMeas(resFolder, "vtec");
+                        PrintWithTime(string.Format("{0}观测值写入文件", "dtec"));
+                        sta.WriteMeas(resFolder, "dtec");
+                    }
+                    else if (FitType == enumFitType.Smooth)
+                    {
+                        PrintWithTime("VTEC计算...");
+                        sta.CalVTEC();
+                        PrintWithTime("滑动平均计算...");
+                        sta.Smooth();
+                        PrintWithTime(string.Format("{0}观测值写入文件", "vtec"));
+                        sta.WriteMeas(resFolder, "vtec");
+                        PrintWithTime(string.Format("{0}观测值写入文件", "dtec"));
+                        sta.WriteMeas(resFolder, "dtec");
+                    }
+                    else if (FitType == enumFitType.DoubleDifference)
+                    {
+                        PrintWithTime("二阶差分计算...");
+                        sta.DoubleDiff();
+                        PrintWithTime(string.Format("{0}观测值写入文件", "l6"));
+                        sta.WriteMeas1(resFolder, "L6");
+                    }
                 }
-                if (sta.FileNum <= 0) return;
-
-                if (!sta.CheckDataConsist())
+                catch(Exception e)
                 {
-                    PrintWithTime("错误！本站数据不连续");
+                    PrintWithTime("未知异常("+e.ToString()+")");
                     continue;
                 }
-
-                PrintWithTime("正在下载辅助文件...");
-                if (!Download(sta.DOYs))
-                {
-                    PrintWithTime("错误！下载辅助文件失败");
-                }
-
-                PrintWithTime("读取星历文件...");
-                Orb = new Orbit(orbFolder);
-                Orb.GetAllSp3Files(orbFolder, sta.StartDOY, sta.EndDOY);
-                Orb.Read(orbFolder);
-
-                PrintWithTime("读取观测文件...");
-                sta.ReadAllObs();
-                sta.SortObs();
-
-                PrintWithTime(string.Format("共读取到{0}个历元", sta.EpochNum));
-                if (sta.EpochNum > 0)
-                {
-                    sta.StartTime = sta.Epoches[0].Epoch;
-                }
-                else
-                {
-                    return;
-                }
-
-                PrintWithTime("计算卫星轨道...");
-                for (int j = 0; j < sta.EpochNum; j++)
-                {
-                    OEpoch oepo = sta.Epoches[j];
-                    Orb.GetSatPos(ref oepo);
-                }
-                PrintWithTime("\r\n穿刺点计算...");
-                sta.CalAzElIPP();
-
-                PrintWithTime("粗差探测...");
-                sta.DetectOutlier();
-                PrintWithTime("弧段探测...");
-                sta.DetectArcs();
-                PrintWithTime("周跳探测...");
-                sta.DetectCycleSlip();
-                PrintWithTime("相位平滑伪距计算...");
-                sta.SmoothP4();
-                if(FitType == enumFitType.None)
-                {
-                    sta.CalVTEC();
-                }
-                else if (FitType == enumFitType.Polynomial)
-                {
-                    PrintWithTime("VTEC计算...");
-                    sta.CalVTEC();
-                    PrintWithTime("多项式拟合计算...");
-                    sta.Fit();
-                }
-                else if (FitType == enumFitType.Smooth)
-                {
-                    PrintWithTime("VTEC计算...");
-                    sta.CalVTEC();
-                    PrintWithTime("滑动平均计算...");
-                    sta.Smooth();
-                }
-                else if (FitType == enumFitType.DoubleDifference)
-                {
-                    PrintWithTime("二阶差分计算...");
-                    sta.DoubleDiff();
-                }
-
-                string measName = "vtec";
-                if (FitType == enumFitType.DoubleDifference)
-                {
-                    measName = "L6";
-                }
-                PrintWithTime(string.Format("{0}观测值写入文件", measName));
-                sta.WriteMeas(resFolder, measName);
             }
         }
 
@@ -595,7 +626,7 @@ namespace GIon
 
             while (start <= end)
             {
-                Print("\r\n    正在下载第"+start.Day.ToString()+"天...");
+                Print("\r\n    正在下载第" + start.Day.ToString() + "天...");
                 Download(start.Year, start.Day);
                 start = start.AddDays(1);
             }
@@ -612,11 +643,11 @@ namespace GIon
             {
                 Print(string.Format("\r\n        sp3下载失败..."));
             }
-            Print("\r\n        下载ionex...");
-            if (!Downloader.DownloadI(year, doy, orbFolder))
-            {
-                Print(string.Format("\r\n        ionex下载失败..."));
-            }
+            //Print("\r\n        下载ionex...");
+            //if (!Downloader.DownloadI(year, doy, orbFolder))
+            //{
+            //    Print(string.Format("\r\n        ionex下载失败..."));
+            //}
             Print("\r\n        下载p1c1...");
             if (!Downloader.DownloadDCB(year, month, "P1C1", orbFolder))
             {

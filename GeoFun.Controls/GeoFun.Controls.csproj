@@ -44,6 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DateTimeChoser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DateTimeChoser.Designer.cs">
+      <DependentUpon>DateTimeChoser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Filter.cs" />
     <Compile Include="OpenFileDialogEx.cs">
       <SubType>Form</SubType>

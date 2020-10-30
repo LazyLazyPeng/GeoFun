@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GeoFun
 {
-    public class StringG:Object
+    public class StringG:object
     {
         private StringBuilder internalString = new StringBuilder("");
 

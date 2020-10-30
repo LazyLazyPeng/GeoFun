@@ -61,6 +61,7 @@ namespace GIon
 
             GeoFun.GNSS.Options.CutOffAngle = (double)tbxCutOffAngle.Value*Angle.D2R;
             GeoFun.GNSS.Options.ARC_MIN_LENGTH = (int)tbxMinArcLen.Value;
+            GeoFun.GNSS.Net.Common.TEMP_DIR = Application.StartupPath + "\\temp";
 
             DirectoryInfo dir = new DirectoryInfo(tbxFolderIn.Text);
             Task task = new Task(() =>

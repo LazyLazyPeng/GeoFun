@@ -136,6 +136,34 @@ namespace GeoFun.IO
             return true;
         }
 
+        public static void WriteMatrix(string path,double[,] data,string[] format=null,char seperator=',')
+        {
+            using(FileStream fs = new FileStream(path,FileMode.Create,FileAccess.Write))
+            {
+                using(StreamWriter writer = new StreamWriter(fs,Encoding.ASCII))
+                {
+                    StringBuilder line = null;
+                    int rowMax = data.GetLength(0);
+                    int colMax = data.GetLength(1);
+
+                    if (format != null && format.Length >= colMax)
+                    {
+                        for (int i = 0; i < rowMax; i++)
+                        {
+                            line = new StringBuilder();
+                            for (int j = 0; j < colMax; j++)
+                            {
+                                line.AppendFormat(format[j],data[i,j]); ;
+                            }
+                            line.Append("\n");
+
+                            writer.WriteLine(line);
+                        }
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// 复制文件，输出文件夹不存在时尝试创建
         /// </summary>

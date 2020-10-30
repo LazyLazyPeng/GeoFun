@@ -188,14 +188,14 @@ namespace GeoFun.GNSS
             {
                 int weekNum = (int)Math.Ceiling(sec / Time.SecondsPerWeek);
                 week.Weeks -= weekNum;
-                Week.Seconds += weekNum*Time.SecondsPerWeek;
+                Week.Seconds += weekNum * Time.SecondsPerWeek;
                 Week = Week;
             }
             else
             {
                 int weekNum = (int)Math.Floor(sec / Time.SecondsPerWeek);
                 week.Weeks += weekNum;
-                Week.Seconds -=  weekNum * Time.SecondsPerWeek;
+                Week.Seconds -= weekNum * Time.SecondsPerWeek;
                 Week = Week;
             }
         }
@@ -260,7 +260,25 @@ namespace GeoFun.GNSS
         override
         public string ToString()
         {
-            return string.Format("{0}-{1:0#}-{2:0#} {3:0#}:{4:0#}:{5:00.000}",commonT.Year,commonT.Month,commonT.Day,commonT.Hour,commonT.Minute,commonT.second);
+            return string.Format("{0}-{1:0#}-{2:0#} {3:0#}:{4:0#}:{5:00.000}", commonT.Year, commonT.Month, commonT.Day, commonT.Hour, commonT.Minute, commonT.second);
+        }
+
+        public static bool operator <(GPST t1, GPST t2)
+        {
+            if(t1 is null || t2 is null)
+            {
+                throw new Exception("无法比较null");
+            }
+            return t1.TotalSeconds < t2.TotalSeconds;
+        }
+
+        public static bool operator >(GPST t1, GPST t2)
+        {
+            if(t1 is null || t2 is null)
+            {
+                throw new Exception("无法比较null");
+            }
+            return t1.TotalSeconds > t2.TotalSeconds;
         }
 
     }
