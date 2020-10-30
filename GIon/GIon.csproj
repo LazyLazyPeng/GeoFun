@@ -79,6 +79,12 @@
     <Compile Include="FrmMain.Designer.cs">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmTIDDetect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmTIDDetect.Designer.cs">
+      <DependentUpon>FrmTIDDetect.cs</DependentUpon>
+    </Compile>
     <Compile Include="IonoHelper.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="MessageHelper.cs" />
@@ -90,9 +96,12 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-    <None Include="Properties\DataSources\GeoFun.GNSS.Coor3.datasource" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GeoFun.Controls\GeoFun.Controls.csproj">
+      <Project>{c431e105-d431-4a57-a617-c1fa5d038b7d}</Project>
+      <Name>GeoFun.Controls</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GeoFun.GNSS.Net\GeoFun.GNSS.Net.csproj">
       <Project>{5406f13b-7702-4cce-a05b-0b00396e7495}</Project>
       <Name>GeoFun.GNSS.Net</Name>
@@ -111,6 +120,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Properties\DataSources\" />
     <Folder Include="Tools\" />
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +132,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmTIDDetect.resx">
+      <DependentUpon>FrmTIDDetect.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

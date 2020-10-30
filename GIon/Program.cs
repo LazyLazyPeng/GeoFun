@@ -21,10 +21,11 @@ namespace GIon
             //case1.GetStationDOY();
             //case1.Download();
             //case1.ReadFiles();
+            string a = string.Format(",{0:D2}",2);
 
             //IonoHelper.Calculate(@"E:\Data\Typhoon\Case\ramasun\gnss\qion1971.140");
             Application.EnableVisualStyles();
-            Application.Run(new FrmIono());
+            Application.Run(new FrmTIDDetect());
         }
     }
 }

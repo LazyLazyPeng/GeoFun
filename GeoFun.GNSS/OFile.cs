@@ -72,7 +72,20 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 观测结束时间
         /// </summary>
-        public GPST EndTime;
+        public GPST EndTime
+        {
+            get
+            {
+                if(Epoches is null || Epoches.Count == 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    return Epoches[Epoches.Count - 1].Epoch;
+                }
+            }
+        }
 
         /// <summary>
         /// 第一个历元的索引
@@ -822,7 +835,7 @@ namespace GeoFun.GNSS
                 {
                     var arc = arcs[i];
 
-                    Smoother.Smooth(ref arc, "SP4", 5);
+                    Smoother.Smooth(ref arc, "SP4", 9);
                 }
             }
         }

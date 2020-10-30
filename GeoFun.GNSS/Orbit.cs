@@ -26,6 +26,17 @@ namespace GeoFun.GNSS
                 return Files[0].StartTime;
             }
         }
+        public GPST EndTime
+        {
+            get
+            {
+                if(Files is null || Epoches.Count==0)
+                {
+                    return null;
+                }
+                return Epoches[EpochNum - 1].Epoch;
+            }
+        }
         public int EpochNum
         {
             get

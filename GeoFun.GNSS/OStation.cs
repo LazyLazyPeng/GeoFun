@@ -196,16 +196,16 @@ namespace GeoFun.GNSS
             if (DOYs.Count < 2) return true;
 
             // 检查数据某天是否缺失
-            for(int i =1; i < DOYs.Count; i++)
+            for (int i = 1; i < DOYs.Count; i++)
             {
                 int dayNum = DOYs[i] - DOYs[i - 1];
                 // 有缺失
-                if(dayNum>1)
+                if (dayNum > 1)
                 {
-                    for(int j = 0; j < dayNum-1;j++)
+                    for (int j = 0; j < dayNum - 1; j++)
                     {
                         DOY doy = DOYs[i - 1].AddDays(j + 1);
-                        OFile file = OFile.CreateEmptyFile(Name, doy.Year, doy.Day,30);
+                        OFile file = OFile.CreateEmptyFile(Name, doy.Year, doy.Day, 30);
                         OFiles.Add(file);
                     }
                 }
@@ -537,7 +537,7 @@ namespace GeoFun.GNSS
                 {
                     var arc = arcs[i];
 
-                    Smoother.Smooth(ref arc, "vtec", 9);
+                    Smoother.Smooth(ref arc, "vtec", 29);
                 }
             }
         }
@@ -722,60 +722,67 @@ namespace GeoFun.GNSS
             //var matL2 = new DenseMatrix(EpochNum, 32);
             //var matP4 = new DenseMatrix(EpochNum, 32);
 
-            var sta = this;
+            List<string[]> lines = new List<string[]>();
+            List<string[]> linesB = new List<string[]>();
+            List<string[]> linesL = new List<string[]>();
+
+            for (int i = 0; i < EpochNum; i++)
             {
-                List<string[]> lines = new List<string[]>();
-                List<string[]> linesB = new List<string[]>();
-                List<string[]> linesL = new List<string[]>();
-
-                for (int i = 0; i < sta.EpochNum; i++)
+                string[] line = new string[38];
+                string[] lineb = new string[38];
+                string[] linel = new string[38];
+                for (int j = 0; j < 38; j++)
                 {
-                    string[] line = new string[38];
-                    string[] lineb = new string[38];
-                    string[] linel = new string[38];
-                    for (int j = 0; j < 38; j++)
+                    line[j] = "0.0000000000";
+                    lineb[j] = "0.0000000000";
+                    linel[j] = "0.0000000000";
+                }
+
+                line[0] = Epoches[i].Epoch.CommonT.Year.ToString();
+                line[1] = Epoches[i].Epoch.CommonT.Month.ToString("0#");
+                line[2] = Epoches[i].Epoch.CommonT.Day.ToString("0#");
+                line[3] = Epoches[i].Epoch.CommonT.Hour.ToString("0#");
+                line[4] = Epoches[i].Epoch.CommonT.Minute.ToString("0#");
+                line[5] = Epoches[i].Epoch.CommonT.Second.ToString("0#.##########");
+
+                lineb[0] = Epoches[i].Epoch.CommonT.Year.ToString();
+                lineb[1] = Epoches[i].Epoch.CommonT.Month.ToString("0#");
+                lineb[2] = Epoches[i].Epoch.CommonT.Day.ToString("0#");
+                lineb[3] = Epoches[i].Epoch.CommonT.Hour.ToString("0#");
+                lineb[4] = Epoches[i].Epoch.CommonT.Minute.ToString("0#");
+                lineb[5] = Epoches[i].Epoch.CommonT.Second.ToString("0#.##########");
+
+                linel[0] = Epoches[i].Epoch.CommonT.Year.ToString();
+                linel[1] = Epoches[i].Epoch.CommonT.Month.ToString("0#");
+                linel[2] = Epoches[i].Epoch.CommonT.Day.ToString("0#");
+                linel[3] = Epoches[i].Epoch.CommonT.Hour.ToString("0#");
+                linel[4] = Epoches[i].Epoch.CommonT.Minute.ToString("0#");
+                linel[5] = Epoches[i].Epoch.CommonT.Second.ToString("0#.##########");
+
+                lines.Add(line);
+                linesB.Add(lineb);
+                linesL.Add(linel);
+            }
+
+            OSat sat;
+            string prn;
+            int rowIndex;
+            int colIndex;
+            foreach (var item in Arcs)
+            {
+                prn = item.Key;
+                foreach (var arc in item.Value)
+                {
+                    for (int i = 0; i < arc.Length; i++)
                     {
-                        line[j] = "0.0000000000";
-                        lineb[j] = "0.0000000000";
-                        linel[j] = "0.0000000000";
-                    }
+                        sat = arc[i];
 
-                    line[0] = sta.Epoches[i].Epoch.CommonT.Year.ToString();
-                    line[1] = sta.Epoches[i].Epoch.CommonT.Month.ToString("0#");
-                    line[2] = sta.Epoches[i].Epoch.CommonT.Day.ToString("0#");
-                    line[3] = sta.Epoches[i].Epoch.CommonT.Hour.ToString("0#");
-                    line[4] = sta.Epoches[i].Epoch.CommonT.Minute.ToString("0#");
-                    line[5] = sta.Epoches[i].Epoch.CommonT.Second.ToString("0#.##########");
+                        rowIndex = i + arc.StartIndex;
+                        colIndex = int.Parse(prn.Substring(1)) - 1 + 6;
 
-                    lineb[0] = sta.Epoches[i].Epoch.CommonT.Year.ToString();
-                    lineb[1] = sta.Epoches[i].Epoch.CommonT.Month.ToString("0#");
-                    lineb[2] = sta.Epoches[i].Epoch.CommonT.Day.ToString("0#");
-                    lineb[3] = sta.Epoches[i].Epoch.CommonT.Hour.ToString("0#");
-                    lineb[4] = sta.Epoches[i].Epoch.CommonT.Minute.ToString("0#");
-                    lineb[5] = sta.Epoches[i].Epoch.CommonT.Second.ToString("0#.##########");
-
-                    linel[0] = sta.Epoches[i].Epoch.CommonT.Year.ToString();
-                    linel[1] = sta.Epoches[i].Epoch.CommonT.Month.ToString("0#");
-                    linel[2] = sta.Epoches[i].Epoch.CommonT.Day.ToString("0#");
-                    linel[3] = sta.Epoches[i].Epoch.CommonT.Hour.ToString("0#");
-                    linel[4] = sta.Epoches[i].Epoch.CommonT.Minute.ToString("0#");
-                    linel[5] = sta.Epoches[i].Epoch.CommonT.Second.ToString("0#.##########");
-
-                    foreach (var prn in sta.Epoches[i].AllSat.Keys)
-                    {
-                        var sat = sta.Epoches[i].AllSat[prn];
-
-                        // 去掉高度角小于30°的
-                        if (sta.Epoches[i][prn].Elevation < Options.CutOffAngle * Angle.D2R)
-                        {
-                            continue;
-                        }
-
-                        if (!prn.StartsWith("G")) continue;
-                        int index = int.Parse(prn.Substring(1)) - 1+6;
-                        line[index] = sta.Epoches[i].AllSat[prn][meas].ToString("#.##########");
-                        lineb[index] = (sta.Epoches[i].AllSat[prn].IPP[1] * Angle.R2D).ToString("#.##########");
-                        linel[index] = (sta.Epoches[i].AllSat[prn].IPP[0] * Angle.R2D).ToString("#.##########");
+                        lines[rowIndex][colIndex] = sat[meas].ToString("#.##########");
+                        linesB[rowIndex][colIndex] = (sat.IPP[1] * Angle.R2D).ToString("#.##########");
+                        linesL[rowIndex][colIndex] = (sat.IPP[0] * Angle.R2D).ToString("#.##########");
 
                         //matP1[i, index] = sat["P1"];
                         //matP2[i, index] = sat["P2"];
@@ -785,17 +792,14 @@ namespace GeoFun.GNSS
                         //matLat[i, index] = sat.IPP[0] * Angle.R2D;
                         //matLon[i, index] = sat.IPP[1] * Angle.R2D;
                     }
-                    lines.Add(line);
-                    linesB.Add(lineb);
-                    linesL.Add(linel);
                 }
 
-                string fileName = string.Format("{0}.meas.{1}.txt", sta.Name, meas.ToLower());
+                string fileName = string.Format("{0}.meas.{1}.txt", Name, meas.ToLower());
                 string filePath = Path.Combine(folder, fileName);
                 FileHelper.WriteLines(filePath, lines, ',');
 
-                string fileNameB = sta.Name + ".ipp.b.txt";
-                string fileNameL = sta.Name + ".ipp.l.txt";
+                string fileNameB = Name + ".ipp.b.txt";
+                string fileNameL = Name + ".ipp.l.txt";
 
                 string filePathB = Path.Combine(folder, fileNameB);
                 string filePathL = Path.Combine(folder, fileNameL);
@@ -816,6 +820,100 @@ namespace GeoFun.GNSS
 
                 //MatlabWriter.Store(Path.Combine(folder, Name + ".mat"), mats);
             }
+        }
+
+
+        public void WriteMeas1(string folder, string meas)
+        {
+            double[,] data = new double[EpochNum, 38];
+            double[,] dataB = new double[EpochNum, 38];
+            double[,] dataL = new double[EpochNum, 38];
+
+            string[] format = new string[38];
+            format[0] = "{0:0000}";
+            format[1] = ",{0:00}";
+            format[2] = ",{0:00}";
+            format[3] = ",{0:00}";
+            format[4] = ",{0:00}";
+            format[5] = ",{0:00.0000000000}";
+            for (int i = 0; i < 32; i++)
+            {
+                format[i + 6] = ",{0:000.000}";
+            }
+
+            for(int i = 0; i < EpochNum; i++)
+            {
+                data[i, 0] = Epoches[i].Epoch.Year;
+                data[i, 1] = Epoches[i].Epoch.Month;
+                data[i, 2] = Epoches[i].Epoch.DayOfMonth;
+                data[i, 3] = Epoches[i].Epoch.Hour;
+                data[i, 4] = Epoches[i].Epoch.Minute;
+                data[i, 5] = Epoches[i].Epoch.Second;
+
+                dataB[i, 0] = Epoches[i].Epoch.Year;
+                dataB[i, 1] = Epoches[i].Epoch.Month;
+                dataB[i, 2] = Epoches[i].Epoch.DayOfMonth;
+                dataB[i, 3] = Epoches[i].Epoch.Hour;
+                dataB[i, 4] = Epoches[i].Epoch.Minute;
+                dataB[i, 5] = Epoches[i].Epoch.Second;
+
+                dataL[i, 0] = Epoches[i].Epoch.Year;
+                dataL[i, 1] = Epoches[i].Epoch.Month;
+                dataL[i, 2] = Epoches[i].Epoch.DayOfMonth;
+                dataL[i, 3] = Epoches[i].Epoch.Hour;
+                dataL[i, 4] = Epoches[i].Epoch.Minute;
+                dataL[i, 5] = Epoches[i].Epoch.Second;
+            }
+
+            OSat sat;
+            string prn;
+            int rowIndex;
+            int colIndex;
+            foreach (var item in Arcs)
+            {
+                prn = item.Key;
+                foreach (var arc in item.Value)
+                {
+                    for (int i = 0; i < arc.Length; i++)
+                    {
+                        sat = arc[i];
+
+                        rowIndex = i + arc.StartIndex;
+                        colIndex = int.Parse(prn.Substring(1)) - 1 + 6;
+
+                        data[rowIndex, colIndex] = sat[meas];
+                        dataB[rowIndex, colIndex] = sat.IPP[1] * Angle.R2D;
+                        dataL[rowIndex, colIndex] = sat.IPP[0] * Angle.R2D;
+                    }
+                }
+
+                string fileName = string.Format("{0}.meas.{1}.txt", Name, meas.ToLower());
+                string filePath = Path.Combine(folder, fileName);
+                FileHelper.WriteMatrix(filePath, data, format, ',');
+
+                string fileNameB = Name + ".ipp.b.txt";
+                string fileNameL = Name + ".ipp.l.txt";
+
+                string filePathB = Path.Combine(folder, fileNameB);
+                string filePathL = Path.Combine(folder, fileNameL);
+
+                FileHelper.WriteMatrix(filePathB, dataB,format, ',');
+                FileHelper.WriteMatrix(filePathL, dataL,format, ',');
+
+                //List<MatlabMatrix> mats = new List<MatlabMatrix>
+                //{
+                //    MatlabWriter.Pack(matP1,"p1"),
+                //    MatlabWriter.Pack(matP2,"p2"),
+                //    MatlabWriter.Pack(matL1,"l1"),
+                //    MatlabWriter.Pack(matL2,"l2"),
+                //    MatlabWriter.Pack(matP1,"p4"),
+                //    MatlabWriter.Pack(matLat,"lat"),
+                //    MatlabWriter.Pack(matLon,"lon"),
+                //};
+
+                //MatlabWriter.Store(Path.Combine(folder, Name + ".mat"), mats);
+            }
+
         }
     }
 }

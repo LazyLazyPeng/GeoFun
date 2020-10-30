@@ -94,7 +94,7 @@ namespace GeoFun.GNSS
                     l4 = arc[i]["L4"];
                     if (p4 != 0 && l4 != 0)
                     {
-                        p4l4 += p4+l4;
+                        p4l4 += p4 + l4;
                         n++;
                     }
                     p4l4All[i] = p4 + l4;
@@ -110,7 +110,7 @@ namespace GeoFun.GNSS
                     arc[j].SatData["SP4"] = 0;
                     if (p4 != 0 && l4 != 0)
                     {
-                        arc[j].SatData["SP4"] =p4l4-l4;
+                        arc[j].SatData["SP4"] = p4l4 - l4;
                     }
                 }
             }
@@ -192,21 +192,30 @@ namespace GeoFun.GNSS
                 left = right = (order - 1) / 2;
             }
 
+            double[] values = new double[arc.Length];
+            double[] values1 = new double[arc.Length];
             for (int i = left; i < arc.Length - right; i++)
             {
-                double mean = 0d;
+                values[i] = arc[i][meas];
+
                 int k = 0;
+                double mean = 0d;
                 for (int j = i - left; j < i + right + 1; j++)
                 {
                     if (Math.Abs(arc[j][meas]) < 1e-10) continue;
-                    //if (Math.Abs(arc[j][meas]) > 1) continue;
 
                     mean = mean * k / (k + 1) + arc[j][meas] / (k + 1);
                     k++;
                 }
 
-                arc[i][meas] = mean;
+                values[i] = mean;
             }
+            for (int i = 0; i < arc.Length; i++)
+            {
+                arc[i]["dtec"] = arc[i][meas] - values[i];
+                arc[i][meas] = values[i];
+            }
+
             arc.StartIndex += left;
             arc.EndIndex -= right;
         }
