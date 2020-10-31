@@ -330,7 +330,7 @@ namespace GeoFun.GNSS
         /// 每几个历元输出一张图
         /// </summary>
         /// <param name="epoNum"></param>
-        public void WriteTECMap(string outFvsvimolder, int epoNum = 10)
+        public void WriteTECMap(string outFolder, int epoNum = 10)
         {
             List<int> startIndex = new List<int>();
 

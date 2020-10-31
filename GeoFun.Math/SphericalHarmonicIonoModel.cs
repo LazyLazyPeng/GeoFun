@@ -1,5 +1,6 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
+using MathNet.Numerics.LinearAlgebra.Solvers;
 using System;
 using System.Collections.Generic;
 
@@ -8,10 +9,10 @@ namespace GeoFun.MathUtils
     /// <summary>
     /// 球谐函数模型
     /// </summary>
-    public class SphericalHamonicIonoModel
+    public class SphericalHarmonicIonoModel
     {
-        public uint Degree { get; set; } = 0;
-        public uint Order { get; set; } = 0;
+        public int Degree { get; set; } = 0;
+        public int Order { get; set; } = 0;
 
         /// <summary>
         /// 模型参数,完全归一化,一维，排列顺序为 A00 B00 A10 B10 ......
@@ -19,7 +20,7 @@ namespace GeoFun.MathUtils
         public Vector<double> Factor = null;
 
         /// <summary>
-        /// 根据提供的数据采用最小二乘拟合球谐函数模型
+        /// 最小二乘拟合球谐函数模型(单站,不估DCB)
         /// </summary>
         /// <param name="degree">阶</param>
         /// <param name="order">次</param>
@@ -27,7 +28,7 @@ namespace GeoFun.MathUtils
         /// <param name="lon">经度(弧度)</param>
         /// <param name="vtec">VTEC(TECU)</param>
         /// <returns></returns>
-        public static SphericalHamonicIonoModel CalculateModel(uint degree, uint order,
+        public static SphericalHarmonicIonoModel CalculateModel(int degree, int order,
             List<double> lat, List<double> lon, List<double> vtec)
         {
             if (degree != order) throw new Exception("球谐函数阶数!=次数,暂时无法计算");
@@ -35,7 +36,7 @@ namespace GeoFun.MathUtils
 
             //// 检测观测值个数是否满足要求
             int minCount = System.Math.Min(System.Math.Min(lat.Count, lon.Count), vtec.Count);
-            uint paraNum = (degree + 1) * (degree + 1);
+            int paraNum = (degree + 1) * (degree + 1);
             if (minCount == 0) return null;
             if (minCount < paraNum)
             {
@@ -70,7 +71,7 @@ namespace GeoFun.MathUtils
             var btbi = btb.Inverse();
             Vector<double> x = (B.Transpose() * B).Inverse() * (B.Transpose() * L);
 
-            SphericalHamonicIonoModel model = new SphericalHamonicIonoModel();
+            SphericalHarmonicIonoModel model = new SphericalHarmonicIonoModel();
             model.Degree = degree;
             model.Order = order;
             model.Factor = x;

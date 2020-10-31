@@ -57,7 +57,7 @@
     <Compile Include="PolynomialModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SphericalHamonicIonoModel.cs" />
+    <Compile Include="SphericalHarmonicIonoModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GeoFun\GeoFun.csproj">
