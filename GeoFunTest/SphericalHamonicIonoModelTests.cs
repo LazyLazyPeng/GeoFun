@@ -33,7 +33,7 @@ namespace GeoFun.MathUtils.Tests
                 }
             }
 
-            SphericalHamonicIonoModel sm = SphericalHamonicIonoModel.CalculateModel(15,15,b,l,tec);
+            SphericalHarmonicIonoModel sm = SphericalHarmonicIonoModel.CalculateModel(15,15,b,l,tec);
             var res = sm.Calculate(87.5 * Angle.D2R,-180d * Angle.D2R);
             Console.WriteLine(res-23);
         }
