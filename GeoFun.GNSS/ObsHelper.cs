@@ -1,4 +1,8 @@
-﻿using System;
+﻿using GeoFun.MathUtils;
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Double;
+using MathNet.Numerics.Statistics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -71,6 +75,49 @@ namespace GeoFun.GNSS
             arc.EndIndex -= 1;
         }
 
+        /// <summary>
+        /// 计算ROTI
+        /// </summary>
+        /// <param name="arc"></param>
+        /// <remarks>
+        /// 2019.研究台风引起电离层扰动的形态特征.许九靖. 安徽理工大学.
+        /// </remarks>
+        public static void CalROTI(ref OArc arc)
+        {
+            if (arc is null) return;
+
+            // 利用相位观测值计算相对STEC信号
+            for (int i = 1; i < arc.Length - 1; i++)
+            {
+                if (Math.Abs(arc[i - 1]["L4"]) < 1e-13 ||
+                    Math.Abs(arc[i]["L4"]) < 1e-13 ||
+                    Math.Abs(arc[i + 1]["L4"]) < 1e-13)
+                {
+                    continue;
+                }
+
+                arc[i]["ltec"] = 9.52437 * (arc[i + 1]["L4"] - arc[i]["L4"]);
+            }
+
+            int order = 9;
+            int left, right;
+            left = right = (order - 1) / 2;
+            Vector<double> seg = new DenseVector(order);
+            for (int i = left; i < arc.Length - right; i++)
+            {
+                for (int j = 0; j < order; j++)
+                {
+                    seg[j] = arc[i - left + j]["ltec"];
+                }
+
+                arc[i]["roti"] = Math.Sqrt(seg.DotProduct(seg) / order - Math.Pow(seg.Mean(), 2));
+            }
+
+            arc.StartIndex += left + 1;
+            arc.EndIndex -= right + 1;
+
+        }
+
         public static void GetMeas(ref List<OEpoch> epoches, string measName)
         {
             if (measName == "P4")
@@ -84,20 +131,20 @@ namespace GeoFun.GNSS
             else { }
         }
 
-        public static void DCBCorrect(ref List<OEpoch> epoches,DCBFile file)
+        public static void DCBCorrect(ref List<OEpoch> epoches, DCBFile file)
         {
             double p2;
             double p1p2;
-            for(int i =0; i < epoches.Count; i++)
+            for (int i = 0; i < epoches.Count; i++)
             {
                 var epo = epoches[i];
 
-                foreach(var prn in epo.AllSat.Keys)
+                foreach (var prn in epo.AllSat.Keys)
                 {
                     var sat = epo[prn];
                     p2 = sat["P2"];
 
-                    if(Math.Abs(p2)>0.001)
+                    if (Math.Abs(p2) > 0.001)
                     {
                         p1p2 = file[prn] * 1e-9;
                         sat["P2"] = p2 + p1p2 * Common.C0;

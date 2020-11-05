@@ -16,23 +16,24 @@ namespace GeoFun.MathUtils
 
         }
 
-        public bool CalSphericalHarmonicModel(
+        public static bool CalSphericalHarmonicModel(
             int degree, int order,
             List<string> stations,
             List<LinkedList<int>> prn,
             List<LinkedList<double>> lat,
             List<LinkedList<double>> lon,
-            List<LinkedList<double>> vtec,
+            List<LinkedList<double>> sp4,
+            List<LinkedList<double>> ele,
             out SphericalHarmonicIonoModel spm,
             out Dictionary<string, double> receiverDCB,
             out Dictionary<string, double> satelliteDCB)
         {
-            spm = new SphericalHarmonicIonoModel();
+            spm = null;
             receiverDCB = new Dictionary<string, double>();
             satelliteDCB = new Dictionary<string, double>();
 
             if (degree != order) throw new Exception("球谐函数阶数!=次数,暂时无法计算");
-            if (vtec is null || vtec.Count() <= 0) return false;
+            if (sp4 is null || sp4.Count() <= 0) return false;
 
             // 获取到本次观测中的所有卫星编号，以估计卫星DCB
             // hashset是非重复集合，自动剔除重复元素
@@ -50,7 +51,7 @@ namespace GeoFun.MathUtils
             // 卫星数量
             int satelliteNum = prns.Count();
             // 观测值数量
-            int obsNum = (from item in vtec
+            int obsNum = (from item in sp4
                           select item.Count()).Sum();
 
             // 球谐系数参数个数
@@ -80,27 +81,29 @@ namespace GeoFun.MathUtils
             int obsIndex = 0;
             int satIndex = 0;
             int recIndex = 0;
-            for (int i = 0; i < vtec.Count(); i++)
+            for (int i = 0; i < sp4.Count(); i++)
             {
+                for(int j =0; j < paraNum; j++)
+                {
+                    B[i, j] = 0d;
+                }
+
                 recIndex = i;
 
-                var teci = vtec[i].First;
+                var sp4i = sp4[i].First;
                 var lati = lat[i].First;
                 var loni = lon[i].First;
                 var prni = prn[i].First;
-                for (int j = 0; j < vtec[i].Count; j++)
+                var elei = ele[i].First;
+                for (int j = 0; j < sp4[i].Count; j++)
                 {
                     satIndex = prni.Value;
 
-                    double vtecj = teci.Value;
+                    double sp4j = sp4i.Value;
                     double latj = lati.Value;
                     double lonj = loni.Value;
-
-
-                    teci = teci.Next;
-                    lati = lati.Next;
-                    loni = loni.Next;
-                    prni = prni.Next;
+                    double elej = elei.Value;
+                    double fz = MathHelper.CalIonoFactor(elej);
 
                     // Anm，Bnm系数
                     int col = 0;
@@ -108,29 +111,38 @@ namespace GeoFun.MathUtils
                     {
                         for (int m = 0; m <= n; m++)
                         {
-                            double Pnm = Legendre.lpmv(n, m, System.Math.PI / 2d - lati.Value);
-                            B[obsIndex, col] = Pnm * System.Math.Cos(m * loni.Value);
+                            double Pnm = Legendre.lpmv(n, m, System.Math.PI / 2d - latj);
+                            B[obsIndex, col] = Pnm * System.Math.Cos(m * lonj) * fz;
                             col++;
                             // Bn0不需要估计,因为sin(0)乘任何数都是0
                             if (m == 0) continue;
-                            B[obsIndex, col] = Pnm * System.Math.Sin(m * loni.Value);
+                            B[obsIndex, col] = Pnm * System.Math.Sin(m * lonj) * fz;
                             col++;
-
                         }
                     }
 
                     // 接收机DCB系数
-                    B[obsIndex, recStart + recIndex] = 1;
+                    B[obsIndex, recStart + recIndex] = 9.52437;
                     // 卫星DCB系数
-                    B[obsIndex, satStart + satIndex - 1] = 1;
+                    B[obsIndex, satStart + satIndex - 1] = -9.52437;
 
-                    L[obsIndex] = teci.Value;
+                    L[obsIndex] = sp4j * 9.52437;
 
                     obsIndex++;
+
+                    sp4i = sp4i.Next;
+                    lati = lati.Next;
+                    loni = loni.Next;
+                    prni = prni.Next;
+                    elei = elei.Next;
                 }
             }
 
             // 加入卫星DCB之和为0的约束
+            for(int i =0; i < paraNum; i++)
+            {
+                B[obsNum, i] = 0d;
+            }
             foreach (var p in prns)
             {
                 B[obsNum, satStart + p - 1] = 1;
@@ -143,7 +155,7 @@ namespace GeoFun.MathUtils
 
             // 提取球谐系数
             Vector<double> spmFactor = new DenseVector(spmParaNum);
-            for(int i =0; i < spmParaNum; i++)
+            for (int i = 0; i < spmParaNum; i++)
             {
                 spmFactor[i] = x[i];
             }
@@ -152,16 +164,16 @@ namespace GeoFun.MathUtils
             model.Order = order;
             model.Factor = spmFactor;
 
-            // 提取卫星DCB
-            for (int i = 0; i < stations.Count; i++)
+            // 提取接收机dcb
+            for(int i =0; i < stationNum; i++)
             {
-                receiverDCB.Add(stations[i], x[spmParaNum + i]);
+                receiverDCB.Add(stations[i], x[recStart + i]);
             }
 
-            // 提取接收机DCB
+            // 提取卫星DCB
             foreach (var p in prns)
             {
-                receiverDCB.Add(string.Format("G{0#}", p), x[spmParaNum + recParaNum + p - 1]);
+                satelliteDCB.Add(string.Format("G{0:00}", p), x[satStart + p - 1]);
             }
 
             return true;

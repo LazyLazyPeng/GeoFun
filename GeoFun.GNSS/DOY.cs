@@ -53,6 +53,46 @@ namespace GeoFun.GNSS
             return new DOY(year, day);
         }
 
+        /// <summary>
+        /// 计算一定天数以后的DOY
+        /// </summary>
+        /// <param name="doy">数字表示的DOY,例如2020001</param>
+        /// <param name="dayNum">增加的天数(可以为负数)</param>
+        /// <returns></returns>
+        public static int AddDays(int doy, int dayNum)
+        {
+            if (doy < 0) throw new ArgumentException("参数doy必须大于0");
+            if (dayNum == 0) return doy;
+
+            int day = doy % 1000;
+            int year = doy / 1000;
+
+            day += dayNum;
+            if (dayNum > 0)
+            {
+                int dayNumOfYear = DateTime.IsLeapYear(year) ? 366 : 365;
+                while (day > dayNumOfYear)
+                {
+                    year++;
+                    day -= dayNumOfYear;
+                    dayNumOfYear = DateTime.IsLeapYear(year) ? 366 : 365;
+                }
+            }
+
+            else
+            {
+                int dayNumOfYear = DateTime.IsLeapYear(year-1) ? 366 : 365;
+                while (day <= 0)
+                {
+                    year--;
+                    day += dayNumOfYear;
+                    dayNumOfYear = DateTime.IsLeapYear(year-1) ? 366 : 365;
+                }
+            }
+
+            return year * 1000 + day;
+        }
+
         public DOY Copy()
         {
             return new DOY(Year, Day);
@@ -109,7 +149,7 @@ namespace GeoFun.GNSS
             doy1.GetMonthDay(out month, out dom);
             DateTime dt1 = new DateTime(doy1.Year, month, dom);
             doy2.GetMonthDay(out month, out dom);
-            DateTime dt2 = new DateTime(doy2.Year, month,dom);
+            DateTime dt2 = new DateTime(doy2.Year, month, dom);
 
             var span = dt1 - dt2;
             return (int)span.TotalDays;
@@ -164,5 +204,36 @@ namespace GeoFun.GNSS
 
             dom = Day - dayNum;
         }
+
+        public static DOY FromInt(int doy)
+        {
+            if (doy < 0) throw new ArgumentException("年积日必须大于0");
+            int year = doy / 1000;
+            int day = doy % 1000;
+            return new DOY(year, day);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is DOY)
+            {
+                DOY doy = obj as DOY;
+                if (doy is null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return this.Year == doy.Year && this.Day == doy.Day;
+                }
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return Year * 1000 + Day;
+        }
+
     }
 }

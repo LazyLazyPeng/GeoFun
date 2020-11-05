@@ -58,10 +58,14 @@ namespace GIon
             {
                 fitType = enumFitType.Smooth;
             }
+            else if(rbROTI.Checked)
+            {
+                fitType = enumFitType.ROTI;
+            }
 
             GeoFun.GNSS.Options.CutOffAngle = (double)tbxCutOffAngle.Value*Angle.D2R;
             GeoFun.GNSS.Options.ARC_MIN_LENGTH = (int)tbxMinArcLen.Value;
-            GeoFun.GNSS.Net.Common.TEMP_DIR = Application.StartupPath + "\\temp";
+            //GeoFun.GNSS.Net.Common.TEMP_DIR = Application.StartupPath + "\\temp";
 
             DirectoryInfo dir = new DirectoryInfo(tbxFolderIn.Text);
             Task task = new Task(() =>

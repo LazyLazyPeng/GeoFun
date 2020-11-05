@@ -47,7 +47,6 @@ namespace GeoFun.GNSS
         /// <param name="ionoH"></param>
         public static void CalIPP(double xSat, double ySat, double zSat,
             double xRec, double yRec, double zRec,
-
             out double x, out double y, out double z,
             double earthR = 63781000, double ionoH = 450000)
         {

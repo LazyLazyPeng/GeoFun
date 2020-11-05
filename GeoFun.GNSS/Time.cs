@@ -379,5 +379,10 @@ namespace GeoFun.GNSS
             doy = dt.DayOfYear;
         }
 
+        public static int GetYear2(int year4)
+        {
+            if (year4 >= 2000) return year4 - 2000;
+            else return year4 - 1900;
+        }
     }
 }

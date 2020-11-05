@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DCBHelper.cs" />
+    <Compile Include="enumIonoSingleLayerModel.cs" />
     <Compile Include="FileName.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="CommonT.cs" />

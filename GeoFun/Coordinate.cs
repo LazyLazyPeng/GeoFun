@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
+using MathNet.Numerics.Statistics.Mcmc;
 
 namespace GeoFun
 {
@@ -295,10 +297,100 @@ namespace GeoFun
         /// <param name="gmt">时区 东8区为+8 西8区为-8</param>
         public static double SunLon(int hour, int minute, double second, int gmt)
         {
-            double l = (hour - gmt + minute / 60d + second / 3600d) * 15 / 360 * 2 * Math.PI;
+            double l = Math.PI - (hour - gmt + minute / 60d + second / 3600d) * 15 / 360 * 2 * Math.PI;
             if (l < -Math.PI) l += Math.PI * 2;
             if (l > Math.PI) l -= Math.PI * 2;
             return l;
+        }
+
+        /// <summary>
+        /// 将地理坐标系坐标转为地磁坐标系坐标
+        /// </summary>
+        /// <param name="inB">待求点B(弧度)</param>
+        /// <param name="inL">待求点L(弧度)</param>
+        /// <param name="geomagB">地磁北极B(弧度)</param>
+        /// <param name="geomagL">地磁北极L(弧度)</param>
+        /// <param name="outB">输出B(弧度)</param>
+        /// <param name="outL">输出L(弧段)</param>
+        /// <param name="ell">椭球</param>
+        public static void Geomagnetic(double inB, double inL, double geomagB, double geomagL, out double outB, out double outL, Ellipsoid ell)
+        {
+            if (ell is null) ell = Ellipsoid.ELLIP_WGS84;
+
+            double x, y, z;
+            BLH2XYZ(inB, inL, 0, out x, out y, out z, ell);
+            Vector<double> xx = new DenseVector(3);
+            xx[0] = x;
+            xx[1] = y;
+            xx[2] = z;
+
+            Matrix<double> r1 = new DenseMatrix(3, 3);
+            r1[0, 0] = Math.Cos(geomagL);
+            r1[0, 1] = Math.Sin(geomagL);
+            r1[0, 2] = 0;
+            r1[1, 0] = -Math.Sin(geomagL);
+            r1[1, 1] = Math.Cos(geomagL);
+            r1[1, 2] = 0;
+            r1[2, 0] = 0;
+            r1[2, 1] = 0;
+            r1[2, 2] = 1;
+
+            Matrix<double> r2 = new DenseMatrix(3, 3);
+            r2[0, 0] = Math.Cos(Angle.PI / 2 - geomagB);
+            r2[0, 1] = 0;
+            r2[0, 2] = -Math.Sin(Angle.PI / 2 - geomagB);
+            r2[1, 0] = 0;
+            r2[1, 1] = 1;
+            r2[1, 2] = 0;
+            r2[2, 0] = Math.Sin(Angle.PI / 2 - geomagB);
+            r2[2, 1] = 0;
+            r2[2, 2] = Math.Cos(Angle.PI / 2 - geomagB);
+
+            Vector<double> result = r1 * r2 * xx;
+
+            x = result[0];
+            y = result[1];
+            z = result[2];
+
+            double h;
+            XYZ2BLH(x, y, z, out outB, out outL, out h, ell);
+        }
+
+        /// <summary>
+        /// 将参心地固坐标系转换到日固地磁坐标系
+        /// </summary>
+        /// <param name="b">待求点b(弧度)</param>
+        /// <param name="l">待求点l(弧度)</param>
+        /// <param name="hour">时 (UTC)</param>
+        /// <param name="minute">分</param>
+        /// <param name="second">秒</param>
+        /// <param name="geomagB">地磁纬度(弧度)</param>
+        /// <param name="geomagL">地磁经度(弧度)</param>
+        /// <param name="sgb">输出纬度(弧度)</param>
+        /// <param name="sgl">输出经度(弧度)</param>
+        /// <remarks>
+        /// 耿长江，利用地基GNSS数据实时监测电离层延迟理论与方法研究，武汉大学，2011
+        /// </remarks>
+        public static void SunGeomagnetic(
+            double b, double l,
+            int hour, int minute, double second,
+            double geomagB, double geomagL,
+            out double sgb, out double sgl)
+        {
+            // 计算此时太阳经纬度(太阳直射经度，赤道)
+            double sunB = 0;
+            double sunL = SunLon(hour, minute, second, 0);
+
+            // 计算太阳点在地磁坐标系下的坐标
+            double sunGB, sunGL;
+            Geomagnetic(sunB, sunL, geomagB, geomagL, out sunGB, out sunGL, Ellipsoid.ELLIP_WGS84);
+
+            // 待求点在地磁坐标系下的坐标
+            double inGB, inGL;
+            Geomagnetic(b, l, geomagB, geomagL, out inGB, out inGL, Ellipsoid.ELLIP_WGS84);
+
+            sgb = inGB;
+            sgl = inGL - sunGL;
         }
     }
 }

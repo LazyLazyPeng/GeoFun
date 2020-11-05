@@ -38,6 +38,7 @@
             this.rbSingleStationMultiDay = new System.Windows.Forms.RadioButton();
             this.rbSingleStationSingleDay = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.rbOriginalMeas = new System.Windows.Forms.RadioButton();
             this.rbSmooth = new System.Windows.Forms.RadioButton();
             this.rbDifference = new System.Windows.Forms.RadioButton();
             this.rbPolynomial = new System.Windows.Forms.RadioButton();
@@ -49,7 +50,7 @@
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.progressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.rbOriginalMeas = new System.Windows.Forms.RadioButton();
+            this.rbROTI = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tbxCutOffAngle)).BeginInit();
@@ -70,7 +71,7 @@
             // btnOpen
             // 
             this.btnOpen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOpen.Location = new System.Drawing.Point(598, 12);
+            this.btnOpen.Location = new System.Drawing.Point(597, 12);
             this.btnOpen.Name = "btnOpen";
             this.btnOpen.Size = new System.Drawing.Size(78, 25);
             this.btnOpen.TabIndex = 1;
@@ -84,13 +85,13 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxFolderIn.Location = new System.Drawing.Point(109, 14);
             this.tbxFolderIn.Name = "tbxFolderIn";
-            this.tbxFolderIn.Size = new System.Drawing.Size(479, 23);
+            this.tbxFolderIn.Size = new System.Drawing.Size(478, 23);
             this.tbxFolderIn.TabIndex = 2;
             // 
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(624, 344);
+            this.btnOK.Location = new System.Drawing.Point(626, 381);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 37);
             this.btnOK.TabIndex = 3;
@@ -107,7 +108,7 @@
             this.tbxMsg.Multiline = true;
             this.tbxMsg.Name = "tbxMsg";
             this.tbxMsg.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.tbxMsg.Size = new System.Drawing.Size(573, 361);
+            this.tbxMsg.Size = new System.Drawing.Size(572, 406);
             this.tbxMsg.TabIndex = 4;
             // 
             // groupBox1
@@ -116,7 +117,7 @@
             this.groupBox1.Controls.Add(this.rbMultiStationMultiDay);
             this.groupBox1.Controls.Add(this.rbSingleStationMultiDay);
             this.groupBox1.Controls.Add(this.rbSingleStationSingleDay);
-            this.groupBox1.Location = new System.Drawing.Point(598, 45);
+            this.groupBox1.Location = new System.Drawing.Point(597, 45);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(133, 84);
             this.groupBox1.TabIndex = 5;
@@ -157,15 +158,28 @@
             // groupBox2
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.rbROTI);
             this.groupBox2.Controls.Add(this.rbOriginalMeas);
             this.groupBox2.Controls.Add(this.rbSmooth);
             this.groupBox2.Controls.Add(this.rbDifference);
             this.groupBox2.Controls.Add(this.rbPolynomial);
-            this.groupBox2.Location = new System.Drawing.Point(598, 130);
+            this.groupBox2.Location = new System.Drawing.Point(597, 130);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(133, 120);
+            this.groupBox2.Size = new System.Drawing.Size(133, 152);
             this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
+            // 
+            // rbOriginalMeas
+            // 
+            this.rbOriginalMeas.AutoSize = true;
+            this.rbOriginalMeas.Checked = true;
+            this.rbOriginalMeas.Location = new System.Drawing.Point(6, 18);
+            this.rbOriginalMeas.Name = "rbOriginalMeas";
+            this.rbOriginalMeas.Size = new System.Drawing.Size(95, 18);
+            this.rbOriginalMeas.TabIndex = 3;
+            this.rbOriginalMeas.TabStop = true;
+            this.rbOriginalMeas.Text = "原始观测值";
+            this.rbOriginalMeas.UseVisualStyleBackColor = true;
             // 
             // rbSmooth
             // 
@@ -261,10 +275,10 @@
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statusLabel,
             this.progressBar});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 410);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 455);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.statusStrip1.Size = new System.Drawing.Size(741, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(740, 22);
             this.statusStrip1.TabIndex = 11;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -287,29 +301,28 @@
             this.groupBox3.Controls.Add(this.tbxCutOffAngle);
             this.groupBox3.Controls.Add(this.label2);
             this.groupBox3.Controls.Add(this.label3);
-            this.groupBox3.Location = new System.Drawing.Point(598, 251);
+            this.groupBox3.Location = new System.Drawing.Point(597, 282);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(133, 68);
             this.groupBox3.TabIndex = 12;
             this.groupBox3.TabStop = false;
             // 
-            // rbOriginalMeas
+            // rbROTI
             // 
-            this.rbOriginalMeas.AutoSize = true;
-            this.rbOriginalMeas.Checked = true;
-            this.rbOriginalMeas.Location = new System.Drawing.Point(6, 18);
-            this.rbOriginalMeas.Name = "rbOriginalMeas";
-            this.rbOriginalMeas.Size = new System.Drawing.Size(95, 18);
-            this.rbOriginalMeas.TabIndex = 3;
-            this.rbOriginalMeas.Text = "原始观测值";
-            this.rbOriginalMeas.UseVisualStyleBackColor = true;
+            this.rbROTI.AutoSize = true;
+            this.rbROTI.Location = new System.Drawing.Point(6, 120);
+            this.rbROTI.Name = "rbROTI";
+            this.rbROTI.Size = new System.Drawing.Size(53, 18);
+            this.rbROTI.TabIndex = 4;
+            this.rbROTI.Text = "ROTI";
+            this.rbROTI.UseVisualStyleBackColor = true;
             // 
             // FrmIono
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(741, 432);
+            this.ClientSize = new System.Drawing.Size(740, 477);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.groupBox2);
@@ -362,5 +375,6 @@
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.RadioButton rbOriginalMeas;
+        private System.Windows.Forms.RadioButton rbROTI;
     }
 }

@@ -7,10 +7,35 @@ namespace GeoFun.GNSS
 {
     public class PRNCode
     {
-        public enumGNSSSystem System { get; set; } = enumGNSSSystem.GPS;
+        // 系统类型
+        public enumGNSSSystem system { get; set; } = enumGNSSSystem.GPS;
 
-        public int Num { get; set; } = 1;
+        private int prnNum = 1;
+        // 卫星编号数字
+        public int PRNNum
+        {
+            get
+            {
+                return prnNum;
+            }
+            set
+            {
+                prnNum = value;
+            }
+        }
 
-        public string PRN { get; set; }
+        private string prnString = "G01";
+        // 卫星编号字符
+        public string PRNString
+        {
+            get
+            {
+                return prnString;
+            }
+            set 
+            {
+                prnString = value;
+            }
+        }
     }
 }
