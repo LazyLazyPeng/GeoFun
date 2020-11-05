@@ -84,6 +84,11 @@ namespace GeoFun.GNSS
             }
         }
 
+        public void Read(string folder, int doyStart, int doyEnd)
+        {
+
+        }
+
         public void GetAllSp3Files(string folder = null,DOY start=null,DOY end = null)
         {
             if (folder == null)
@@ -149,6 +154,13 @@ namespace GeoFun.GNSS
 
             // 星历不连续
             if (!CheckConsist()) return;
+        }
+
+        public void GetAllSp3Files(string folder = null,int start = -1,int end = -2)
+        {
+            if (start < 0 || end < 0) return;
+
+            GetAllSp3Files(folder, DOY.FromInt(start), DOY.FromInt(end));
         }
 
         public bool CheckConsist()

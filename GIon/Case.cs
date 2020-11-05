@@ -10,6 +10,10 @@ using GeoFun.GNSS;
 using GeoFun.GNSS.Net;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Data;
+using DevComponents.DotNetBar.MicroCharts;
+using GeoFun;
+using GeoFun.MathUtils;
 
 namespace GIon
 {
@@ -95,85 +99,265 @@ namespace GIon
             FileInfo[] files = obsDir.GetFiles("*.??o");
             PrintWithTime(string.Format("共找到{0}个o文件", files.Length));
 
-            SetProgressMax(files.Count());
-            Orbit orb;
-            int year, doy;
-            List<DOY> allDOY = new List<DOY>();
+            Dictionary<int, List<string>> stationsPerDOY = new Dictionary<int, List<string>>();
+            Dictionary<string, List<int>> doysPerStation = new Dictionary<string, List<int>>();
             string stationName;
-            DCBHelper dcb = new DCBHelper();
-            for (int i = 0; i < files.Length; i++)
+            int year, day, doy;
+            foreach (var file in files)
             {
-                SetProgressValue(i);
-                orb = new Orbit(orbFolder);
-
-                OFile file = new OFile(files[i].FullName);
-                file.TryRead();
-                // 检查观测数据采样率
-                if (file.Interval != 30d) continue;
-
-                // 下载星历、DCB
-                FileName.ParseRinex2(files[i].Name, out stationName, out doy, out year);
-                var doys = new List<DOY> { new DOY(year, doy) };
-                Download(doys);
-                if (!allDOY.Any(d => d.Year == year && d.Day == doy))
+                FileName.ParseRinex2(file.Name, out stationName, out day, out year);
+                doy = year * 1000 + day;
+                if (!stationsPerDOY.ContainsKey(doy))
                 {
-                    allDOY.Add(doys[0]);
+                    stationsPerDOY[doy] = new List<string>();
+                }
+                if (!doysPerStation.ContainsKey(stationName))
+                {
+                    doysPerStation[stationName] = new List<int>();
                 }
 
-                // 读取DCB
-                PrintWithTime("读取卫星DCB...");
-                int month, dom;
-                Time.DOY2MonthDay(year, doy, out month, out dom);
-                DCBFile dcbf = dcb.GetDCB(year, month);
-                if (dcbf is null)
-                {
-                    string dcbFileName = string.Format("P1P2{0:D2}{1:D2}.DCB", year - 2000, month);
-                    string dcbFilePath = Path.Combine(orbFolder, dcbFileName);
-                    dcbf = new DCBFile(dcbFilePath);
+                stationsPerDOY[doy].Add(stationName);
+                doysPerStation[stationName].Add(doy);
+            }
 
-                    if (!File.Exists(dcbFilePath) || !dcbf.TryRead())
+            // 观测值起止时间
+            int minObsDOY = (from d in stationsPerDOY
+                             select d.Key).Min();
+            int maxObsDOY = (from d in stationsPerDOY
+                             select d.Key).Max();
+
+            // 轨道起止时间
+            int minOrbDOY = DOY.AddDays(minObsDOY, -1);
+            int maxOrbDOY = DOY.AddDays(maxObsDOY, 1);
+
+            // 下载星历,钟差
+            Download(DOY.AddDays(minObsDOY, -1), DOY.AddDays(maxObsDOY, 1));
+
+            // 估计DCB
+            List<OFile> ofiles = new List<OFile>();
+            foreach (var station in stationsPerDOY[minObsDOY])
+            {
+                year = minObsDOY / 1000;
+                day = minObsDOY % 1000;
+
+                string strStart = string.Format("{0}{1:00#}", station, day);
+                string strEnd = string.Format(".{0:0#}o", Time.GetYear2(year));
+
+                FileInfo file = files.First(f => f.Name.StartsWith(strStart) && f.Name.EndsWith(strEnd));
+                if (file is null)
+                { }
+                else
+                {
+                    OFile of = new OFile(file.FullName);
+                    ofiles.Add(of);
+                }
+            }
+
+            for (int i = 0; i < ofiles.Count(); i++)
+            {
+                if (!ofiles[i].TryRead())
+                {
+                    continue;
+                }
+            }
+
+            PrintWithTime("读取星历文件...");
+            Orbit Orb = new Orbit(orbFolder);
+            Orb.GetAllSp3Files(orbFolder, minOrbDOY, maxOrbDOY);
+            Orb.Read(orbFolder);
+
+            OEpoch epo;
+            foreach (var of in ofiles)
+            {
+                for (int i = 0; i < of.Epoches.Count; i++)
+                {
+                    epo = of.Epoches[i];
+                    Orb.GetSatPos(ref epo);
+                }
+            }
+
+            foreach (var of in ofiles)
+            {
+                of.CalAzElIPP();
+                of.DetectOutlier();
+                of.DetectAllArcs();
+                of.DetectCycleSlip();
+
+                of.CalSP4();
+            }
+
+            List<string> stationNames = new List<string>(ofiles.Count * 2);
+            List<LinkedList<int>> prn = new List<LinkedList<int>>();
+            List<LinkedList<double>> lat = new List<LinkedList<double>>();
+            List<LinkedList<double>> lon = new List<LinkedList<double>>();
+            List<LinkedList<double>> sp4 = new List<LinkedList<double>>();
+            List<LinkedList<double>> ele = new List<LinkedList<double>>();
+
+            double b, l;
+            int prnNum = 0;
+            foreach (var of in ofiles)
+            {
+                stationNames.Add(of.StationName);
+                LinkedList<int> prns = new LinkedList<int>();
+                LinkedList<double> lats = new LinkedList<double>();
+                LinkedList<double> lons = new LinkedList<double>();
+                LinkedList<double> tecs = new LinkedList<double>();
+                LinkedList<double> eles = new LinkedList<double>();
+                foreach (var p in of.Arcs.Keys)
+                {
+                    prnNum = int.Parse(p.Substring(1));
+                    var arcs = of.Arcs[p];
+                    foreach (var arc in arcs)
                     {
-                        PrintWithTime("DCB文件读取失败:" + dcbFileName);
-                        continue;
+                        for (int i = 0; i < arc.Length; i++)
+                        {
+                            if (arc[i]["SP4"] > 0)
+                            {
+                                Coordinate.SunGeomagnetic(arc[i].IPP[0], arc[i].IPP[1],
+                                    arc[i].Epoch.Hour, arc[i].Epoch.Minute, arc[i].Epoch.Second,
+                                    GeoFun.GNSS.Common.GEOMAGNETIC_POLE_LAT, GeoFun.GNSS.Common.GEOMAGENTIC_POLE_LON,
+                                    out b, out l);
+                                prns.AddLast(prnNum);
+                                tecs.AddLast(arc[i]["SP4"]);
+                                lats.AddLast(arc[i].IPP[0]);
+                                lons.AddLast(arc[i].IPP[1]);
+                                eles.AddLast(arc[i].Elevation);
+                            }
+                        }
                     }
                 }
 
-                // 读取星历
-                if (orb != null
-                    && orb.StartTime != null
-                    && orb.EndTime != null
-                    && orb.StartTime < file.StartTime
-                    && orb.EndTime > file.EndTime)
-                {
-                }
-                else
-                {
-                    DOY curDOY = new DOY(year, doy);
-                    orb.GetAllSp3Files(orbFolder, curDOY.AddDays(-1), curDOY.AddDays(1));
-                    orb.Read(orbFolder);
-                }
-
-                PrintWithTime("正在计算轨道...");
-                for (int j = 0; j < file.Epoches.Count; j++)
-                {
-                    var epo = file.Epoches[j];
-                    orb.GetSatPos(ref epo);
-                }
-
-                file.CalAzElIPP();
-                file.DCBCorrect(dcbf);
-                file.DetectOutlier();
-                file.DetectAllArcs();
-                file.DetectCycleSlip();
-                file.CalSP4();
-                file.CalVTEC();
-
-                file.WriteMeas("vtec", tmpFolder);
-
-                SetProgressValue(i + 1);
+                prn.Add(prns);
+                lat.Add(lats);
+                lon.Add(lons);
+                sp4.Add(tecs);
+                ele.Add(eles);
             }
 
-            int a = 0;
+            SphericalHarmonicIonoModel spm;
+            Dictionary<string, double> recDCB, satDCB;
+            IonoModel.CalSphericalHarmonicModel(9, 9, stationNames, prn, lat, lon, sp4, ele,
+                out spm, out recDCB, out satDCB);
+
+            string recDCBName = "0station_dcb.txt";
+            string satDCBName = "0satellite_dcb.txt";
+            string recDCBPath = Path.Combine(resFolder, recDCBName);
+            string satDCBPath = Path.Combine(resFolder, satDCBName);
+
+            string txt = "";
+            double dcb = 0d;
+            foreach (var rec in recDCB.Keys)
+            {
+                dcb=recDCB[rec] / GeoFun.GNSS.Common.C0*1e9;
+                txt += rec + "," + dcb.ToString("#.0000000000") + "\n";
+            }
+            using (FileStream fs = new FileStream(recDCBPath, FileMode.Create, FileAccess.Write))
+            {
+                using (StreamWriter writer = new StreamWriter(fs))
+                {
+                    writer.Write(txt);
+                    writer.Close();
+                    fs.Close();
+                }
+            }
+
+            txt = "";
+            foreach (var sat in satDCB.Keys)
+            {
+                dcb=satDCB[sat] / GeoFun.GNSS.Common.C0*1e9;
+                txt += sat + "," + dcb.ToString("#.0000000000") + "\n";
+            }
+            using (FileStream fs = new FileStream(satDCBPath, FileMode.Create, FileAccess.Write))
+            {
+                using (StreamWriter writer = new StreamWriter(fs))
+                {
+                    writer.Write(txt);
+                    writer.Close();
+                    fs.Close();
+                }
+            }
+
+            double a = 0;
+
+
+            //SetProgressMax(files.Count());
+            //Orbit orb;
+            //List<DOY> allDOY = new List<DOY>();
+            //string stationName;
+            //DCBHelper dcb = new DCBHelper();
+            //for (int i = 0; i < files.Length; i++)
+            //{
+            //    SetProgressValue(i);
+            //    orb = new Orbit(orbFolder);
+
+            //    OFile file = new OFile(files[i].FullName);
+            //    file.TryRead();
+            //    // 检查观测数据采样率
+            //    if (file.Interval != 30d) continue;
+
+            //    // 下载星历、DCB
+            //    FileName.ParseRinex2(files[i].Name, out stationName, out doy, out year);
+            //    var doys = new List<DOY> { new DOY(year, doy) };
+            //    Download(doys);
+            //    if (!allDOY.Any(d => d.Year == year && d.Day == doy))
+            //    {
+            //        allDOY.Add(doys[0]);
+            //    }
+
+            //    // 读取DCB
+            //    PrintWithTime("读取卫星DCB...");
+            //    int month, dom;
+            //    Time.DOY2MonthDay(year, doy, out month, out dom);
+            //    DCBFile dcbf = dcb.GetDCB(year, month);
+            //    if (dcbf is null)
+            //    {
+            //        string dcbFileName = string.Format("P1P2{0:D2}{1:D2}.DCB", year - 2000, month);
+            //        string dcbFilePath = Path.Combine(orbFolder, dcbFileName);
+            //        dcbf = new DCBFile(dcbFilePath);
+
+            //        if (!File.Exists(dcbFilePath) || !dcbf.TryRead())
+            //        {
+            //            PrintWithTime("DCB文件读取失败:" + dcbFileName);
+            //            continue;
+            //        }
+            //    }
+
+            //    // 读取星历
+            //    if (orb != null
+            //        && orb.StartTime != null
+            //        && orb.EndTime != null
+            //        && orb.StartTime < file.StartTime
+            //        && orb.EndTime > file.EndTime)
+            //    {
+            //    }
+            //    else
+            //    {
+            //        DOY curDOY = new DOY(year, doy);
+            //        orb.GetAllSp3Files(orbFolder, curDOY.AddDays(-1), curDOY.AddDays(1));
+            //        orb.Read(orbFolder);
+            //    }
+
+            //    PrintWithTime("正在计算轨道...");
+            //    for (int j = 0; j < file.Epoches.Count; j++)
+            //    {
+            //        var epo = file.Epoches[j];
+            //        orb.GetSatPos(ref epo);
+            //    }
+
+            //    file.CalAzElIPP();
+            //    file.DCBCorrect(dcbf);
+            //    file.DetectOutlier();
+            //    file.DetectAllArcs();
+            //    file.DetectCycleSlip();
+            //    file.CalSP4();
+            //    file.CalVTEC();
+
+            //    file.WriteMeas("vtec", tmpFolder);
+
+            //    SetProgressValue(i + 1);
+            //}
+
+            //int a = 0;
         }
 
         /// <summary>
@@ -288,10 +472,17 @@ namespace GIon
                         PrintWithTime(string.Format("{0}观测值写入文件", "l6"));
                         sta.WriteMeas1(resFolder, "L6");
                     }
+                    else if(FitType == enumFitType.ROTI)
+                    {
+                        PrintWithTime("计算ROTI...");
+                        sta.ROTI();
+                        PrintWithTime(string.Format("{0}观测值写入文件", "l6"));
+                        sta.WriteMeas(resFolder, "roti");
+                    }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
-                    PrintWithTime("未知异常("+e.ToString()+")");
+                    PrintWithTime("未知异常(" + e.ToString() + ")");
                     continue;
                 }
             }
@@ -606,7 +797,7 @@ namespace GIon
 
             while (start <= end)
             {
-                Download(start.Year, start.Day);
+                DownloadDay(start.Year, start.Day);
 
                 start = start.AddDays(1);
             }
@@ -627,13 +818,31 @@ namespace GIon
             while (start <= end)
             {
                 Print("\r\n    正在下载第" + start.Day.ToString() + "天...");
-                Download(start.Year, start.Day);
+                DownloadDay(start.Year, start.Day);
                 start = start.AddDays(1);
             }
 
             return true;
         }
-        public bool Download(int year, int doy)
+        public bool Download(int start, int end)
+        {
+            if (end < start) return true;
+
+            int year, day;
+            while (start <= end)
+            {
+                year = start / 1000;
+                day = start % 1000;
+
+                Print(string.Format("\r\n    DOY:{0}", start));
+
+                DownloadDay(year, day);
+
+                start = DOY.AddDays(start, 1);
+            }
+            return true;
+        }
+        public bool DownloadDay(int year, int doy)
         {
             int month, dom;
             Time.DOY2MonthDay(year, doy, out month, out dom);
@@ -643,11 +852,11 @@ namespace GIon
             {
                 Print(string.Format("\r\n        sp3下载失败..."));
             }
-            //Print("\r\n        下载ionex...");
-            //if (!Downloader.DownloadI(year, doy, orbFolder))
-            //{
-            //    Print(string.Format("\r\n        ionex下载失败..."));
-            //}
+            Print("\r\n        下载ionex...");
+            if (!Downloader.DownloadI(year, doy, orbFolder))
+            {
+                Print(string.Format("\r\n        ionex下载失败..."));
+            }
             Print("\r\n        下载p1c1...");
             if (!Downloader.DownloadDCB(year, month, "P1C1", orbFolder))
             {

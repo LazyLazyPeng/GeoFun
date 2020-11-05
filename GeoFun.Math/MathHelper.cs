@@ -8,6 +8,7 @@ using GeoFun;
 using System.Xml.Schema;
 using System.Runtime.ExceptionServices;
 using System.Net.Cache;
+using System.Text.RegularExpressions;
 
 namespace GeoFun.MathUtils
 {
@@ -204,6 +205,29 @@ namespace GeoFun.MathUtils
             //穿刺点位置
             bb = Asin(Sin(b) * Cos(phi) + Cos(b) * Sin(phi) * Cos(az));
             ll = l + Asin(Sin(phi) * Sin(az) / Cos(phi));
+        }
+
+        /// <summary>
+        /// 计算电离层投影系数 (Modified Single Layer Model, MSLM)
+        /// </summary>
+        /// <param name="elevation"></param>
+        /// <remarks>
+        /// 耿长江,利用GNSS数据实时监测电离层延迟理论与方法研究.武汉大学.2011.
+        /// https://doi.org/10.1016/j.geog.2019.02.002
+        /// </remarks>
+        public static double CalIonoFactor(double elevation)
+        {
+            double alpha = 0.9782;
+            double earthRadius = 6378000;
+            double ionosphereHeight = 506700;
+
+            double a = alpha;
+            double re = earthRadius;
+            double hi = ionosphereHeight;
+
+            double sinzz = hi / (re + hi) * Math.Sin(a * (Angle.PI/2d-elevation));
+            double coszz = Math.Sqrt(1 - sinzz * sinzz);
+            return 1d/coszz;
         }
     }
 }

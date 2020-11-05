@@ -38,7 +38,7 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 磁北极经度(弧度)
         /// </summary>
-        public static readonly double GEOMAGENTIC_POLE_LON = 291d * Angle.D2R;
+        public static readonly double GEOMAGENTIC_POLE_LON = 166.3 * Angle.D2R;
 
         /// <summary>
         /// GPS基频(Hz)

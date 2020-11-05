@@ -14,6 +14,7 @@ namespace GeoFun.GNSS
         /// 历元时间
         /// </summary>
         public GPST Epoch;
+        public PRNCode PRN = new PRNCode();
         /// <summary>
         /// 卫星PRN号
         /// </summary>

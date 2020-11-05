@@ -526,7 +526,6 @@ namespace GeoFun.GNSS
                     ObsHelper.CalDoubleDiff(ref arc);
                 }
             }
-
         }
         public void Smooth()
         {
@@ -540,6 +539,20 @@ namespace GeoFun.GNSS
                     Smoother.Smooth(ref arc, "vtec", 29);
                 }
             }
+        }
+        public void ROTI()
+        {
+            foreach (var prn in Arcs.Keys)
+            {
+                var arcs = Arcs[prn];
+                for (int i = 0; i < arcs.Count; i++)
+                {
+                    var arc = arcs[i];
+
+                    ObsHelper.CalROTI(ref arc);
+                }
+            }
+
         }
 
         /// <summary>

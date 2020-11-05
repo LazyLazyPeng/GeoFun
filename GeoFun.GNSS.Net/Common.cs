@@ -28,6 +28,7 @@ namespace GeoFun.GNSS.Net
             {"IGS_ZPD","ftp://cddis.gsfc.nasa.gov/gps/products/troposphere/zpd/%Y/%n/%s%n0.%yzpd.gz"},
             {"IGS_TEC","ftp://cddis.gsfc.nasa.gov/gps/products/ionex/%Y/%n/igsg%n0.%yi.Z"},
             {"IGR_TEC","ftp://cddis.gsfc.nasa.gov/gps/products/ionex/%Y/%n/igrg%n0.%yi.Z"},
+            {"COD_TEC","ftp://ftp.aiub.unibe.ch/CODE/%Y/CODG%n0.%yi.Z"},
             {"COD_EPH","ftp://cddis.gsfc.nasa.gov/gps/products/%W/cod%W%D.eph.Z"},
             {"COD_CLK","ftp://cddis.gsfc.nasa.gov/gps/products/%W/cod%W%D.clk.Z"},
             {"COD_CLK_5S","ftp://ftp.unibe.ch/aiub/CODE/%Y/COD%W%D.CLK_05S.Z"},
