@@ -13,7 +13,7 @@
         ReadFromFile,
 
         /// <summary>
-        /// 忽略
+        /// 忽略/估计
         /// </summary>
         Regardless,
     }

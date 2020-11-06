@@ -92,7 +92,14 @@ namespace GIon
                         break;
                 }
             });
-            task.ContinueWith(t => MessageBox.Show("解算完成"), TaskContinuationOptions.ExecuteSynchronously);
+            task.ContinueWith(t => 
+            { 
+                MessageBox.Show("解算完成");
+                btnOK.Invoke(new Action(()=> {
+                    btnOK.Enabled = true;
+                }));
+            }, TaskContinuationOptions.ExecuteSynchronously);
+            btnOK.Enabled = false;
             task.Start();
         }
 

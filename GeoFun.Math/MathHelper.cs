@@ -225,7 +225,7 @@ namespace GeoFun.MathUtils
             double re = earthRadius;
             double hi = ionosphereHeight;
 
-            double sinzz = hi / (re + hi) * Math.Sin(a * (Angle.PI/2d-elevation));
+            double sinzz = re / (re + hi) * Math.Sin(a * (Angle.PI/2d-elevation));
             double coszz = Math.Sqrt(1 - sinzz * sinzz);
             return 1d/coszz;
         }

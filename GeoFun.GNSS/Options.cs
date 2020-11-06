@@ -66,5 +66,10 @@ namespace GeoFun.GNSS
         /// 接收机dcb的处理方式(默认作为未知数估计)
         /// </summary>
         public enumDCBOption RecDCB = enumDCBOption.Estimation;
+
+        /// <summary>
+        /// 二维电离层建模
+        /// </summary>
+        public enumIonoModel IonoModel = enumIonoModel.SphericalHarmonic;
     }
 }
