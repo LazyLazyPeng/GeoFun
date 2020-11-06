@@ -55,6 +55,7 @@
     <Compile Include="DOYTests.cs" />
     <Compile Include="FileNameTests.cs" />
     <Compile Include="LegendreTests.cs" />
+    <Compile Include="MathHelperTests.cs" />
     <Compile Include="MathTests.cs" />
     <Compile Include="ObservationTests.cs" />
     <Compile Include="OFileTests.cs" />
