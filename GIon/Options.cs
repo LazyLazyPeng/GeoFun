@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 
@@ -62,10 +63,31 @@ namespace GIon
         /// <summary>
         /// 卫星dcb处理方式(默认从文件读取)
         /// </summary>
-        public enumDCBOption SatDCB = enumDCBOption.ReadFromFile;
+        public enumDCBOption SatDCB = enumDCBOption.Estimation;
         /// <summary>
         /// 接收机dcb的处理方式(默认作为未知数估计)
         /// </summary>
         public enumDCBOption RecDCB = enumDCBOption.Estimation;
+
+        /// <summary>
+        /// 建模区域(度)
+        /// </summary>
+        public double MODEL_AREA_LEFT = 0d;
+        /// <summary>
+        /// 建模区域(度)
+        /// </summary>
+        public double MODEL_AREA_RIGHT = 0d;
+        /// <summary>
+        /// 建模区域(度)
+        /// </summary>
+        public double MODEL_AREA_TOP = 0d;
+        /// <summary>
+        /// 建模区域(度)
+        /// </summary>
+        public double MODEL_AREA_BOTTOM = 0d;
+        /// <summary>
+        /// 模型分辨率(度)
+        /// </summary>
+        public double MODEL_RESOLUTION = 0.05;
     }
 }

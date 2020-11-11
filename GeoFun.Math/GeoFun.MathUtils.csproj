@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common.cs" />
     <Compile Include="Fitter.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="Interp.cs" />

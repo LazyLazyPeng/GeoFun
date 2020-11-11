@@ -3,6 +3,8 @@ using MathNet.Numerics.LinearAlgebra.Double;
 using MathNet.Numerics.LinearAlgebra.Solvers;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 namespace GeoFun.MathUtils
 {
@@ -109,6 +111,32 @@ namespace GeoFun.MathUtils
 
             result = B.DotProduct(Factor);
             return result;
+        }
+
+        public void SaveAs(string path)
+        {
+            string content = string.Format("{0} {1}\n",Degree,Order);
+
+            double cnm, snm;
+            int index = 0;
+            for(int i = 0; i < Order; i++)
+            {
+                for (int j = 0; j < Order; j++)
+                {
+                    cnm = Factor[index];
+                    index++;
+
+                    snm = 0d;
+                    if (j != 0)
+                    {
+                        snm = Factor[index];
+                        index++;
+                    }
+                    content += string.Format("{0} {1} {2} {3}\n",i,j,cnm,snm);
+                }
+            }
+
+            File.WriteAllText(path, content, Encoding.UTF8);
         }
     }
 }
