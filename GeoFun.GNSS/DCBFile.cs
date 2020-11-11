@@ -19,7 +19,7 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 硬件延迟(ns)
         /// </summary>
-        public Dictionary<string, double> DCBList = new Dictionary<string, double>();
+        public Dictionary<string, double> DCBDict = new Dictionary<string, double>();
         /// <summary>
         /// 硬件延迟bias(ns)
         /// </summary>
@@ -38,9 +38,9 @@ namespace GeoFun.GNSS
         {
             get
             {
-                if(DCBList.ContainsKey(prn))
+                if(DCBDict.ContainsKey(prn))
                 {
-                    return DCBList[prn];
+                    return DCBDict[prn];
                 }
                 else
                 {
@@ -82,7 +82,7 @@ namespace GeoFun.GNSS
                 {
                     if(double.TryParse(segs[1],out dcb))
                     {
-                        DCBList.Add(segs[0], dcb);
+                        DCBDict.Add(segs[0], dcb);
                     }
 
                     if(double.TryParse(segs[2],out dcbBias))

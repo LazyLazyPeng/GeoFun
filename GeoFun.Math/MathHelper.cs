@@ -1,14 +1,5 @@
-﻿using MathNet.Numerics.Distributions;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using GeoFun;
-using System.Xml.Schema;
-using System.Runtime.ExceptionServices;
-using System.Net.Cache;
-using System.Text.RegularExpressions;
 
 namespace GeoFun.MathUtils
 {
@@ -178,7 +169,7 @@ namespace GeoFun.MathUtils
             }
             else
             {
-                az = Math.Atan2(y, x);
+                az = System.Math.Atan2(y, x);
                 el = Atan(z / (x * Cos(az) + y * Sin(az)));
             }
 
@@ -225,8 +216,8 @@ namespace GeoFun.MathUtils
             double re = earthRadius;
             double hi = ionosphereHeight;
 
-            double sinzz = re / (re + hi) * Math.Sin(a * (Angle.PI/2d-elevation));
-            double coszz = Math.Sqrt(1 - sinzz * sinzz);
+            double sinzz = re / (re + hi) * System.Math.Sin(a * (Angle.PI/2d-elevation));
+            double coszz = System.Math.Sqrt(1 - sinzz * sinzz);
             return 1d/coszz;
         }
     }

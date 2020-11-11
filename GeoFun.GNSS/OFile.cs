@@ -76,7 +76,7 @@ namespace GeoFun.GNSS
         {
             get
             {
-                if(Epoches is null || Epoches.Count == 0)
+                if (Epoches is null || Epoches.Count == 0)
                 {
                     return null;
                 }
@@ -172,7 +172,28 @@ namespace GeoFun.GNSS
             }
         }
 
-        public bool TryRead()
+        public string ReadLine(StreamReader sr)
+        {
+            string line = sr.ReadLine();
+            if (line is null)
+            {
+                line = " ".PadRight(80);
+            }
+            if (line.Length < 80)
+            {
+                line = line.PadRight(80);
+            }
+
+            return line;
+        }
+        /// <summary>
+        /// 读取观测值
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="readObsTypes"></param>
+        /// <returns></returns>
+        public bool TryRead(GPST start = null, GPST end = null, List<string> readObsTypes = null)
         {
             if (!File.Exists(Path))
             {
@@ -300,6 +321,9 @@ namespace GeoFun.GNSS
                             }
                             epoch.Epoch = epochT;
 
+                            if (start != null && epochT - start < -1e-3) continue;
+                            if (end != null || end - epochT < -1e-3) continue;
+
                             //// 历元标识
                             int epoFlag = 0;
                             if (int.TryParse(line.Substring(26, 3), out epoFlag))
@@ -339,6 +363,7 @@ namespace GeoFun.GNSS
                                 // 初始化观测值
                                 for (int i = 0; i < Header.obsTypeList.Count; i++)
                                 {
+                                    if (readObsTypes != null && !readObsTypes.Contains(Header.obsTypeList[i])) continue;
                                     oSat.SatData.Add(Header.obsTypeList[i], 0d);
                                     oSat.LLI.Add(Header.obsTypeList[i], 0);
                                     oSat.SignalStrength.Add(Header.obsTypeList[i], 0);
@@ -359,6 +384,11 @@ namespace GeoFun.GNSS
                                     {
                                         for (int j = 0; j < obsNumPerLine; j++)
                                         {
+                                            obsIndex = i * 5 + j;
+
+                                            // 只读取指定类型的观测值
+                                            if (readObsTypes != null && !readObsTypes.Contains(Header.obsTypeList[obsIndex])) continue;
+
                                             oSat.SatData[Header.obsTypeList[obsIndex]] = 0;
                                             oSat.LLI[Header.obsTypeList[obsIndex]] = 0;
                                             oSat.SignalStrength[Header.obsTypeList[obsIndex]] = 0;
@@ -373,6 +403,9 @@ namespace GeoFun.GNSS
 
                                         try
                                         {
+                                            // 只读取指定类型的观测值
+                                            if (readObsTypes != null && !readObsTypes.Contains(Header.obsTypeList[obsIndex])) continue;
+
                                             if (double.TryParse(line.Substring(j * 16, 14), out obsValue))
                                             {
                                                 oSat.SatData[Header.obsTypeList[obsIndex]] = obsValue;
@@ -425,20 +458,6 @@ namespace GeoFun.GNSS
 
             if (Epoches is null || Epoches.Count == 0) return false;
             return true;
-        }
-        public string ReadLine(StreamReader sr)
-        {
-            string line = sr.ReadLine();
-            if (line is null)
-            {
-                line = " ".PadRight(80);
-            }
-            if (line.Length < 80)
-            {
-                line = line.PadRight(80);
-            }
-
-            return line;
         }
 
         public static OFile Read(string path)

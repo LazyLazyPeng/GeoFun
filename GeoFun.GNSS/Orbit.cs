@@ -86,7 +86,8 @@ namespace GeoFun.GNSS
 
         public void Read(string folder, int doyStart, int doyEnd)
         {
-
+            GetAllSp3Files(folder, DOY.FromInt(doyStart), DOY.FromInt(doyEnd));
+            Read(folder);
         }
 
         public void GetAllSp3Files(string folder = null,DOY start=null,DOY end = null)
@@ -297,6 +298,30 @@ namespace GeoFun.GNSS
                 t0.AddSeconds(-pRange / Common.C0);
                 double[] satPos = GetSatPos(t0, sat.SatPRN);
                 sat.SatCoor = satPos;
+            }
+        }
+
+        public void GetSatPos(ref OFile of)
+        {
+            if (of is null || of.Epoches is null || of.Epoches.Count == 0) return;
+
+            OEpoch oe;
+            for(int i = 0; i < of.Epoches.Count;i++)
+            {
+                oe = of.Epoches[i];
+                GetSatPos(ref oe);
+            }
+        }
+
+        public void GetSatPos(ref OStation sta)
+        {
+            if (sta is null || sta.Epoches is null || sta.Epoches.Count == 0) return;
+
+            OEpoch oe;
+            for(int i =0; i<sta.Epoches.Count; i++)
+            {
+                oe = sta.Epoches[i];
+                GetSatPos(ref oe);
             }
         }
     }

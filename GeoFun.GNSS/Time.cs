@@ -294,6 +294,13 @@ namespace GeoFun.GNSS
                 month++;
             }
         }
+        public static void DOY2MonthDay(int doy, out int year,out int month, out int dom)
+        {
+            year = doy / 1000;
+            int day = doy % 1000;
+
+            DOY2MonthDay(year, day, out month, out dom);
+        }
         /// <summary>
         /// 年月日转换成年积日
         /// </summary>

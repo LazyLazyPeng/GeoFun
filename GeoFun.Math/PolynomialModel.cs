@@ -117,7 +117,7 @@ namespace GeoFun.MathUtils
             double sum = 0d;
             for (int i = 0; i < Factor.Count; i++)
             {
-                sum += Factor[i] * Math.Pow(x, i);
+                sum += Factor[i] * System.Math.Pow(x, i);
             }
             return sum;
         }
