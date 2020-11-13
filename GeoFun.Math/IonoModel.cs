@@ -71,7 +71,7 @@ namespace GeoFun.MathUtils
                           select item.Count()).Sum();
 
             // 球谐系数参数个数
-            int spmParaNum = (degree + 1) * (degree + 1) * 2 - (degree + 1);
+            int spmParaNum = (degree + 1) * (degree + 1);
             // 接收机DCB参数个数
             int recParaNum = stationNum;
             // 卫星DCB参数个数
@@ -169,6 +169,12 @@ namespace GeoFun.MathUtils
             var btbi = btb.Inverse();
             Vector<double> x = (B.Transpose() * B).Inverse() * (B.Transpose() * L);
 
+            // 单位权中误差(平方)
+            double sigma = x.DotProduct(x) / (obsNum + 1 - paraNum);
+            // 协因数阵
+            Matrix<double> Qxx = sigma * btbi;
+
+
             // 提取球谐系数
             Vector<double> spmFactor = new DenseVector(spmParaNum);
             for (int i = 0; i < spmParaNum; i++)
@@ -180,16 +186,20 @@ namespace GeoFun.MathUtils
             model.Order = order;
             model.Factor = spmFactor;
 
+            Dictionary<string, double> receiverDCBRMS = new Dictionary<string, double>();
+            Dictionary<string, double> satelliteDCBRMS = new Dictionary<string, double>();
             // 提取接收机dcb
             for (int i = 0; i < stationNum; i++)
             {
                 receiverDCB.Add(stations[i], x[recStart + i]);
+                receiverDCBRMS.Add(stations[i], Math.Sqrt(Qxx[recStart + i, recStart + i]));
             }
 
             // 提取卫星DCB
             foreach (var p in prns)
             {
                 satelliteDCB.Add(string.Format("G{0:00}", p), x[satStart + p - 1]);
+                satelliteDCBRMS.Add(string.Format("G{0:00}", p), Math.Sqrt(Qxx[satStart + p - 1, satStart + p - 1]));
             }
 
             return true;
@@ -256,7 +266,7 @@ namespace GeoFun.MathUtils
                           select item.Count()).Sum();
 
             // 球谐系数参数个数
-            int spmParaNum = (degree + 1) * (degree + 1) * 2 - (degree + 1);
+            int spmParaNum = (degree + 1) * (degree + 1);
 
             // 参数个数
             int paraNum = spmParaNum;
@@ -387,7 +397,7 @@ namespace GeoFun.MathUtils
                 satelliteDCB = new Dictionary<string, double>();
 
             Dictionary<int, double> satDCB = new Dictionary<int, double>();
-            foreach(var key in satelliteDCB.Keys)
+            foreach (var key in satelliteDCB.Keys)
             {
                 satDCB.Add(int.Parse(key.Substring(1)), satelliteDCB[key]);
             }
@@ -415,7 +425,7 @@ namespace GeoFun.MathUtils
                           select item.Count()).Sum();
 
             // 球谐系数参数个数
-            int spmParaNum = (degree + 1) * (degree + 1) * 2 - (degree + 1);
+            int spmParaNum = (degree + 1) * (degree + 1);
             // 接收机DCB参数个数
             int recParaNum = stationNum;
 
@@ -486,7 +496,7 @@ namespace GeoFun.MathUtils
                     // 接收机DCB系数
                     B[obsIndex, recStart + recIndex] = 9.52437;
 
-                    L[obsIndex] = sp4j * 9.52437 + 9.52437*sdcb*1e-9*Common.C0;
+                    L[obsIndex] = sp4j * 9.52437 + 9.52437 * sdcb;
 
                     obsIndex++;
 
