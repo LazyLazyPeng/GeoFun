@@ -119,9 +119,9 @@ namespace GeoFun.MathUtils
 
             double cnm, snm;
             int index = 0;
-            for(int i = 0; i < Order; i++)
+            for(int i = 0; i <= Order; i++)
             {
-                for (int j = 0; j < Order; j++)
+                for (int j = 0; j <= i; j++)
                 {
                     cnm = Factor[index];
                     index++;

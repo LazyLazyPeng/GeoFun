@@ -194,6 +194,7 @@ namespace GIon
                         of.DetectOutlier();
                         of.DetectAllArcs();
                         of.DetectCycleSlip();
+                        of.CalSP4();
                         oFiles.Add(of);
                     }
                     catch (Exception ex)
@@ -202,12 +203,14 @@ namespace GIon
                     }
                 }
 
+                double b, l;
                 OFile ofile;
                 SphericalHarmonicIonoModel spm;
                 int epoNum = oFiles[0].Epoches.Count;
                 int startIndex = 0, endIndex = epoSegNum;
                 while (startIndex < epoNum)
                 {
+                    PrintWithTime(string.Format("电离层二维模型计算 开始历元{0:0000} 结束历元{1:0000}", startIndex, endIndex));
                     List<string> stationNames = new List<string>(oFiles.Count * 2);
                     List<LinkedList<int>> prn = new List<LinkedList<int>>();
                     List<LinkedList<double>> lat = new List<LinkedList<double>>();
@@ -238,17 +241,22 @@ namespace GIon
                                 if (si > arc.EndIndex) continue;
                                 if (ei <= arc.StartIndex) continue;
 
-                                if (si < arc.StartIndex) si = 0;
-                                else si = si - arc.StartIndex;
+                                si = 0;
+                                if (startIndex > arc.StartIndex) si = startIndex - arc.StartIndex;
 
-                                if (ei >= arc.EndIndex + 1) ei = arc.Length;
-                                else ei = endIndex - startIndex;
+                                ei = endIndex - startIndex;
+                                if (ei > arc.Length) ei = arc.Length;
 
                                 for (int j = si; j < ei; j++)
                                 {
+                                    if (arc[j]["SP4"] <= 0) continue;
+                                    Coordinate.SunGeomagnetic(arc[i].IPP[0], arc[i].IPP[1],
+                                        arc[i].Epoch.Hour, arc[i].Epoch.Minute, arc[i].Epoch.Second,
+                                        GeoFun.GNSS.Common.GEOMAGNETIC_POLE_LAT, GeoFun.GNSS.Common.GEOMAGENTIC_POLE_LON,
+                                        out b, out l);
                                     prns.AddLast(prnNum);
-                                    lats.AddLast(arc[j].IPP[0]);
-                                    lons.AddLast(arc[j].IPP[1]);
+                                    lats.AddLast(b);
+                                    lons.AddLast(l);
                                     eles.AddLast(arc[j].Elevation);
                                     sp4s.AddLast(arc[j]["SP4"]);
                                 }
@@ -265,7 +273,7 @@ namespace GIon
                     IonoModel.CalSphericalHarmonicModel(9, 9, stationNames, prn,
                         lat, lon, sp4, ele, out spm, recDCB, satDCB);
 
-                    string outFileName = string.Format("{0}_{1:0000}.spm.txt",d,startIndex);
+                    string outFileName = string.Format("{0}_{1:0000}.spm.txt", d, startIndex);
                     string outFilePath = Path.Combine(resFolder, outFileName);
                     spm.SaveAs(outFilePath);
 
@@ -598,8 +606,8 @@ namespace GIon
                                     out b, out l);
                                 prns.AddLast(prnNum);
                                 tecs.AddLast(arc[i]["SP4"]);
-                                lats.AddLast(arc[i].IPP[0]);
-                                lons.AddLast(arc[i].IPP[1]);
+                                lats.AddLast(b);
+                                lons.AddLast(l);
                                 eles.AddLast(arc[i].Elevation);
                             }
                         }
@@ -628,6 +636,12 @@ namespace GIon
                 }
 
                 satelliteDCB = df.DCBDict;
+
+                // 将dcb单位转换为米
+                foreach(var p in satelliteDCB.Keys)
+                {
+                    satelliteDCB[p] *= GeoFun.GNSS.Common.C0;
+                }
             }
             // 忽略卫星dcb
             else if (satelliteDCBOpt.Option == enumDCBOption.Regardless)
