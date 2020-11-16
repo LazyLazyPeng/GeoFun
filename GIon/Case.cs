@@ -23,6 +23,12 @@ namespace GIon
         public Action<int> SetProgressMax { get; set; }
         public Action<int> SetProgressValue { get; set; }
 
+        public double lonMin = 70;
+        public double lonMax = 140;
+        public double latMin = 15;
+        public double latMax = 55;
+        public double resolution = 0.05;
+
         /// <summary>
         /// 根路径(文件夹)
         /// </summary>

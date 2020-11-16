@@ -138,5 +138,15 @@ namespace GeoFun.MathUtils
 
             File.WriteAllText(path, content, Encoding.UTF8);
         }
+
+        public static SphericalHarmonicIonoModel Load(string path)
+        {
+            if(!File.Exists(path))
+            {
+                throw new FileNotFoundException(path);
+            }
+
+
+        }
     }
 }
