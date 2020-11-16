@@ -79,6 +79,12 @@
     <Compile Include="FrmMain.Designer.cs">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmSPMModel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmSPMModel.Designer.cs">
+      <DependentUpon>FrmSPMModel.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmTIDDetect.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -114,6 +120,10 @@
       <Project>{3d465cb9-2115-4401-a3f2-c7d7a8aba846}</Project>
       <Name>GeoFun.MathUtils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GeoFun.Spatial\GeoFun.Spatial.csproj">
+      <Project>{d1d72b0e-d8eb-4636-9230-3e1b8d244c3e}</Project>
+      <Name>GeoFun.Spatial</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GeoFun\GeoFun.csproj">
       <Project>{d208a3e9-5bf4-414e-9807-7605898102a0}</Project>
       <Name>GeoFun</Name>
@@ -132,6 +142,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmSPMModel.resx">
+      <DependentUpon>FrmSPMModel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmTIDDetect.resx">
       <DependentUpon>FrmTIDDetect.cs</DependentUpon>
