@@ -7,6 +7,16 @@ namespace GeoFun.MathUtils
     {
         public static readonly double PI = 3.14159265358979323;
 
+        /// <summary>
+        /// 从1累加到n(包括n)的值
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static int Accumlation(int n)
+        {
+            return n * (n + 1) / 2;
+        }
+
         public static double Sqrt(double num)
         {
             return System.Math.Sqrt(num);

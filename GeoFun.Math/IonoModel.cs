@@ -176,6 +176,23 @@ namespace GeoFun.MathUtils
 
 
             // 提取球谐系数
+            int index = 0;
+            List<double[]> anm = new List<double[]>();
+            List<double[]> bnm = new List<double[]>();
+            for (int i = 0; i <= degree; i++)
+            {
+                anm.Add(new double[i + 1]);
+                bnm.Add(new double[i + 1]);
+                for (int j = 0; j <= i; j++)
+                {
+                    anm[i][j] = x[index];
+                    bnm[i][j] = 0d;
+                    if (j == 0) bnm[i][j] = x[index + 1];
+                    if (j == 0) index += 1;
+                    else index += 2;
+                }
+            }
+
             Vector<double> spmFactor = new DenseVector(spmParaNum);
             for (int i = 0; i < spmParaNum; i++)
             {
@@ -185,6 +202,8 @@ namespace GeoFun.MathUtils
             model.Degree = degree;
             model.Order = order;
             model.Factor = spmFactor;
+            model.Anm = anm;
+            model.Bnm = bnm;
 
             Dictionary<string, double> receiverDCBRMS = new Dictionary<string, double>();
             Dictionary<string, double> satelliteDCBRMS = new Dictionary<string, double>();
@@ -352,6 +371,25 @@ namespace GeoFun.MathUtils
             Vector<double> x = (B.Transpose() * B).Inverse() * (B.Transpose() * L);
 
             // 提取球谐系数
+            int index = 0;
+            List<double[]> anm = new List<double[]>();
+            List<double[]> bnm = new List<double[]>();
+            for (int i = 0; i <= degree; i++)
+            {
+                anm.Add(new double[i + 1]);
+                bnm.Add(new double[i + 1]);
+                for (int j = 0; j <= i; j++)
+                {
+                    anm[i][j] = x[index];
+                    bnm[i][j] = 0d;
+                    if (j == 0) bnm[i][j] = x[index + 1];
+                    if (j == 0) index += 1;
+                    else index += 2;
+                }
+            }
+
+
+            // 提取球谐系数
             Vector<double> spmFactor = new DenseVector(spmParaNum);
             for (int i = 0; i < spmParaNum; i++)
             {
@@ -360,6 +398,8 @@ namespace GeoFun.MathUtils
             spm.Degree = degree;
             spm.Order = order;
             spm.Factor = spmFactor;
+            spm.Anm = anm;
+            spm.Bnm = bnm;
 
             return true;
         }
@@ -513,6 +553,25 @@ namespace GeoFun.MathUtils
             var btbi = btb.Inverse();
             Vector<double> x = (B.Transpose() * B).Inverse() * (B.Transpose() * L);
 
+            //提取球谐系数
+            int index = 0;
+            List<double[]> anm = new List<double[]>();
+            List<double[]> bnm = new List<double[]>();
+            for (int i = 0; i <= degree; i++)
+            {
+                anm.Add(new double[i + 1]);
+                bnm.Add(new double[i + 1]);
+                for (int j = 0; j <= i; j++)
+                {
+                    anm[i][j] = x[index];
+                    bnm[i][j] = 0d;
+                    if (j == 0) bnm[i][j] = x[index + 1];
+                    if (j == 0) index += 1;
+                    else index += 2;
+                }
+            }
+
+
             // 提取球谐系数
             Vector<double> spmFactor = new DenseVector(spmParaNum);
             for (int i = 0; i < spmParaNum; i++)
@@ -523,6 +582,8 @@ namespace GeoFun.MathUtils
             model.Degree = degree;
             model.Order = order;
             model.Factor = spmFactor;
+            spm.Anm = anm;
+            spm.Bnm = bnm;
 
             // 提取接收机dcb
             for (int i = 0; i < stationNum; i++)
@@ -532,7 +593,5 @@ namespace GeoFun.MathUtils
 
             return true;
         }
-
-
     }
 }

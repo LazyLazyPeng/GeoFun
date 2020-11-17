@@ -53,11 +53,12 @@ namespace GIon
             int rowNum = (int)((latMax - latMin + 0.5) / res);
             int colNum = (int)((lonMax - lonMin + 0.5) / res);
 
-            ESRIASC ascf = new ESRIASC();
-            ascf.RowNum = (uint)rowNum;
-            ascf.ColNum = (uint)colNum;
+            ESRIASC ascf = new ESRIASC(rowNum,colNum);
+            ascf.XLLCenter = lonMin;
+            ascf.YLLCenter = latMin;
+            ascf.CellSize = double.Parse(tbxResolution.Text);
 
-            SphericalHarmonicIonoModel spm 
+            SphericalHarmonicIonoModel spm = SphericalHarmonicIonoModel.Load(tbxOpen.Text);
 
             int hour = 0;
             int minute = 0;
@@ -68,16 +69,21 @@ namespace GIon
             {
                 for (int j = 0; j < colNum; j++)
                 {
-                    b = latMin + i * res;
-                    l = lonMin + j * res;
+                    b = latMin-res/2d + i * res;
+                    l = lonMin-res/2d + j * res;
+
+                    b *= Angle.D2R;
+                    l *= Angle.D2R;
 
                     Coordinate.SunGeomagnetic(b, l, hour, minute, second,
-                        Common.GEOMAGNETIC_POLE_LAT, Common.GEOMAGENTIC_POLE_LON,
+                        GeoFun.GNSS.Common.GEOMAGNETIC_POLE_LAT, GeoFun.GNSS.Common.GEOMAGENTIC_POLE_LON,
                         out sgb, out sgl);
 
-                    ascf.Data[i,j] = 
+                    ascf.Data[i, j] = spm.Calculate(sgb, sgl);
                 }
             }
+
+            ascf.WriteAs(tbxSave.Text);
         }
 
         private void FrmSPMModel_Load(object sender, EventArgs e)

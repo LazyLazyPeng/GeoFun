@@ -36,6 +36,8 @@ namespace GIon
             this.dgTasks = new System.Windows.Forms.DataGridView();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.coor3BindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.电离层模型ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuSPM = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgTasks)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.coor3BindingSource)).BeginInit();
@@ -44,7 +46,8 @@ namespace GIon
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuIonosphere});
+            this.menuIonosphere,
+            this.电离层模型ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(8, 3, 0, 3);
@@ -77,7 +80,7 @@ namespace GIon
             this.dgTasks.BackgroundColor = System.Drawing.SystemColors.Control;
             this.dgTasks.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgTasks.Location = new System.Drawing.Point(0, 32);
-            this.dgTasks.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.dgTasks.Margin = new System.Windows.Forms.Padding(5);
             this.dgTasks.Name = "dgTasks";
             this.dgTasks.ReadOnly = true;
             this.dgTasks.RowTemplate.Height = 23;
@@ -97,6 +100,21 @@ namespace GIon
             // 
             this.coor3BindingSource.DataSource = typeof(GeoFun.GNSS.Coor3);
             // 
+            // 电离层模型ToolStripMenuItem
+            // 
+            this.电离层模型ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuSPM});
+            this.电离层模型ToolStripMenuItem.Name = "电离层模型ToolStripMenuItem";
+            this.电离层模型ToolStripMenuItem.Size = new System.Drawing.Size(80, 21);
+            this.电离层模型ToolStripMenuItem.Text = "电离层模型";
+            // 
+            // menuSPM
+            // 
+            this.menuSPM.Name = "menuSPM";
+            this.menuSPM.Size = new System.Drawing.Size(180, 22);
+            this.menuSPM.Text = "球谐函数模型";
+            this.menuSPM.Click += new System.EventHandler(this.menuSPM_Click);
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -107,7 +125,7 @@ namespace GIon
             this.Controls.Add(this.menuStrip1);
             this.Font = new System.Drawing.Font("SimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.Margin = new System.Windows.Forms.Padding(5);
             this.Name = "FrmMain";
             this.Text = "GNSSFun";
             this.menuStrip1.ResumeLayout(false);
@@ -127,5 +145,7 @@ namespace GIon
         private System.Windows.Forms.DataGridView dgTasks;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.BindingSource coor3BindingSource;
+        private System.Windows.Forms.ToolStripMenuItem 电离层模型ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem menuSPM;
     }
 }

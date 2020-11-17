@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Data.Common;
+using System.Linq;
 
 namespace GeoFun.MathUtils
 {
@@ -20,6 +22,9 @@ namespace GeoFun.MathUtils
         /// 模型参数,完全归一化,一维，排列顺序为 A00 B00 A10 B10 ......
         /// </summary>
         public Vector<double> Factor = null;
+
+        public List<double[]> Anm = null;
+        public List<double[]> Bnm = null;
 
         /// <summary>
         /// 最小二乘拟合球谐函数模型(单站,不估DCB)
@@ -91,48 +96,31 @@ namespace GeoFun.MathUtils
         {
             double result = 0d;
 
-            int index = 0;
-            Vector<double> B = new DenseVector((int)(Degree + 1) * (int)(Degree + 1));
             for (int n = 0; n <= Degree; n++)
             {
                 for (int m = 0; m <= n; m++)
                 {
                     double Pnm = Legendre.lpmv(n, m, System.Math.PI / 2d - lat);
-                    B[index] = System.Math.Cos(m * lon) * Pnm;
-                    index++;
-                    if (m == 0) B[index] = 0;
-                    else
-                    {
-                        B[index] = System.Math.Sin(m * lon) * Pnm;
-                        index++;
-                    }
+                    result += Anm[n][m]*System.Math.Cos(m * lon) * Pnm;
+                    result += Bnm[n][m]*System.Math.Sin(m * lon) * Pnm;
                 }
             }
 
-            result = B.DotProduct(Factor);
             return result;
         }
 
         public void SaveAs(string path)
         {
-            string content = string.Format("{0} {1}\n",Degree,Order);
+            string content = string.Format("{0} {1}\n", Degree, Order);
 
-            double cnm, snm;
-            int index = 0;
-            for(int i = 0; i <= Order; i++)
+            double anm, bnm;
+            for (int i = 0; i <= Order; i++)
             {
                 for (int j = 0; j <= i; j++)
                 {
-                    cnm = Factor[index];
-                    index++;
-
-                    snm = 0d;
-                    if (j != 0)
-                    {
-                        snm = Factor[index];
-                        index++;
-                    }
-                    content += string.Format("{0} {1} {2} {3}\n",i,j,cnm,snm);
+                    anm = Anm[i][j];
+                    bnm = Bnm[i][j];
+                    content += string.Format("{0} {1} {2} {3}\n", i, j, anm, bnm);
                 }
             }
 
@@ -141,12 +129,57 @@ namespace GeoFun.MathUtils
 
         public static SphericalHarmonicIonoModel Load(string path)
         {
-            if(!File.Exists(path))
+            if (!File.Exists(path))
             {
                 throw new FileNotFoundException(path);
             }
 
+            SphericalHarmonicIonoModel spm = new SphericalHarmonicIonoModel();
 
+            var lines = File.ReadAllLines(path);
+            string[] segs = lines[0].Replace('\n', ' ').Split(' ');
+            int degree, order;
+            if (segs.Length >= 2 &&
+                int.TryParse(segs[0], out degree) &&
+                int.TryParse(segs[1], out order))
+            {
+                spm.Degree = degree;
+                spm.Order = order;
+            }
+            else
+            {
+                return null;
+            }
+
+            spm.Anm = new List<double[]>(spm.Degree*2);
+            spm.Bnm = new List<double[]>(spm.Degree*2);
+
+            for(int i = 0; i <= spm.Degree; i++)
+            {
+                double[] anm = new double[i + 1];
+                double[] bnm = new double[i + 1];
+                for(int j = 0; j < anm.Length; j++)
+                {
+                    anm[j] = 0d;
+                    bnm[j] = 0d;
+                }
+                spm.Anm.Add(anm);
+                spm.Bnm.Add(bnm);
+            }
+
+            for(int i = 1; i<lines.Count(); i++)
+            {
+                segs = lines[i].Split();
+                if(segs.Length>=4)
+                {
+                    degree = int.Parse(segs[0]);
+                    order = int.Parse(segs[1]);
+                    spm.Anm[degree][order] = double.Parse(segs[2]);
+                    spm.Bnm[degree][order] = double.Parse(segs[3]);
+                }
+            }
+
+            return spm;
         }
     }
 }
