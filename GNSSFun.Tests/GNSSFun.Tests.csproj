@@ -91,6 +91,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controllers\HomeControllerTest.cs" />
+    <Compile Include="SphericalHarmonicIonoModelTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.config" />
@@ -99,6 +100,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GeoFun.Math\GeoFun.MathUtils.csproj">
+      <Project>{3D465CB9-2115-4401-A3F2-C7D7A8ABA846}</Project>
+      <Name>GeoFun.MathUtils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GNSSFun\GNSSFun.csproj">
       <Project>{8E1419E8-ABBE-47DC-BB09-E57CE657A8FA}</Project>
       <Name>GNSSFun</Name>

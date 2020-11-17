@@ -12,60 +12,14 @@ namespace GeoFun.Spatial
     /// </summary>
     public class ESRIASC : IRasterFile
     {
-        private uint rowNum = 0;
         /// <summary>
         /// 列数
         /// </summary>
-        public uint ColNum
-        {
-            get
-            {
-                return rowNum;
-            }
-            set
-            {
-                if(colNum!=value)
-                {
-                    colNum = value;
-
-                    if(rowNum>0 && colNum>0)
-                    {
-                        Data = new double[rowNum, colNum];
-                    }
-                    else
-                    {
-                        Data = null;
-                    }
-                }
-            }
-        }
-        private uint colNum = 0;
+        public uint ColNum { get; set; } = 0;
         /// <summary>
         /// 行数
         /// </summary>
-        public uint RowNum
-        {
-            get
-            {
-                return rowNum;
-            }
-            set
-            {
-                if (rowNum != value)
-                {
-                    rowNum = value;
-
-                    if (rowNum > 0 && colNum > 0)
-                    {
-                        Data = new double[rowNum, colNum];
-                    }
-                    else
-                    {
-                        Data = null;
-                    }
-                }
-            }
-        }
+        public uint RowNum { get; set; } = 0;
 
         /// <summary>
         /// 左下角(LowerLeft)格网中心点坐标X
@@ -135,6 +89,11 @@ namespace GeoFun.Spatial
             Data = new double[rowNum, colNum];
         }
 
+        public ESRIASC(int rowNum, int colNum) : this((uint)rowNum, (uint)colNum)
+        {
+
+        }
+
         public void Write()
         {
             WriteAs(Path);
@@ -148,26 +107,26 @@ namespace GeoFun.Spatial
             }
 
             PathHelper.CreateBaseFolder(otherPath);
-            using(FileStream fs = new FileStream(otherPath,FileMode.Create,FileAccess.Write))
+            using (FileStream fs = new FileStream(otherPath, FileMode.Create, FileAccess.Write))
             {
-                using(StreamWriter writer = new StreamWriter(fs))
+                using (StreamWriter writer = new StreamWriter(fs))
                 {
-                    for(int i =0; i < RowNum; i++)
-                    {
-                        writer.WriteLine(string.Format("NCOLS {0}\n", ColNum));
-                        writer.WriteLine(string.Format("NROWS {0}\n", RowNum));
-                        writer.WriteLine(string.Format("XLLCENTER {0}\n", XLLCenter));
-                        writer.WriteLine(string.Format("YLLCENTER {0}\n", YLLCenter));
-                        writer.WriteLine(string.Format("CELLSIZE {0}\n", CellSize));
-                        writer.WriteLine(string.Format("NODATA_VALUE {0}\n", NodataValue));
+                    writer.WriteLine(string.Format("NCOLS {0}", ColNum));
+                    writer.WriteLine(string.Format("NROWS {0}", RowNum));
+                    writer.WriteLine(string.Format("XLLCENTER {0}", XLLCenter));
+                    writer.WriteLine(string.Format("YLLCENTER {0}", YLLCenter));
+                    writer.WriteLine(string.Format("CELLSIZE {0}", CellSize));
+                    writer.WriteLine(string.Format("NODATA_VALUE {0}", NodataValue));
 
-                        writer.Write(Data[i,0]);
-                        for(int j = 1; j < ColNum; j++)
+                    for (int i = 0; i < RowNum; i++)
+                    {
+                        writer.Write(Data[i, 0]);
+                        for (int j = 1; j < ColNum; j++)
                         {
                             writer.Write(' ');
                             writer.Write(Data[i, j]);
                         }
-                        writer.Write('\n');
+                        writer.Write("\r\n");
                     }
                     writer.Close();
                     fs.Close();

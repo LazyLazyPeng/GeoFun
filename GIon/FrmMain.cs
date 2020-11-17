@@ -20,9 +20,13 @@ namespace GIon
         private void menuCreateTask_Click(object sender, EventArgs e)
         {
             FrmIono frm = new FrmIono();
-            if(frm.ShowDialog() == DialogResult.OK)
-            {
-            }
+            frm.Show();
+        }
+
+        private void menuSPM_Click(object sender, EventArgs e)
+        {
+            FrmSPMModel frmspm = new FrmSPMModel();
+            frmspm.Show();
         }
     }
 }

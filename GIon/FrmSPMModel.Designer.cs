@@ -40,11 +40,15 @@ namespace GIon
             this.tbxSave = new System.Windows.Forms.TextBox();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbxLatMax
             // 
-            this.tbxLatMax.Location = new System.Drawing.Point(155, 109);
+            this.tbxLatMax.Location = new System.Drawing.Point(102, 23);
             this.tbxLatMax.Name = "tbxLatMax";
             this.tbxLatMax.Size = new System.Drawing.Size(100, 21);
             this.tbxLatMax.TabIndex = 0;
@@ -53,7 +57,7 @@ namespace GIon
             // 
             // tbxLatMin
             // 
-            this.tbxLatMin.Location = new System.Drawing.Point(155, 198);
+            this.tbxLatMin.Location = new System.Drawing.Point(102, 112);
             this.tbxLatMin.Name = "tbxLatMin";
             this.tbxLatMin.Size = new System.Drawing.Size(100, 21);
             this.tbxLatMin.TabIndex = 1;
@@ -62,7 +66,7 @@ namespace GIon
             // 
             // tbxLonMin
             // 
-            this.tbxLonMin.Location = new System.Drawing.Point(55, 155);
+            this.tbxLonMin.Location = new System.Drawing.Point(18, 69);
             this.tbxLonMin.Name = "tbxLonMin";
             this.tbxLonMin.Size = new System.Drawing.Size(100, 21);
             this.tbxLonMin.TabIndex = 2;
@@ -71,7 +75,7 @@ namespace GIon
             // 
             // tbxLonMax
             // 
-            this.tbxLonMax.Location = new System.Drawing.Point(259, 155);
+            this.tbxLonMax.Location = new System.Drawing.Point(187, 69);
             this.tbxLonMax.Name = "tbxLonMax";
             this.tbxLonMax.Size = new System.Drawing.Size(100, 21);
             this.tbxLonMax.TabIndex = 3;
@@ -80,14 +84,14 @@ namespace GIon
             // 
             // tbxOpen
             // 
-            this.tbxOpen.Location = new System.Drawing.Point(12, 25);
+            this.tbxOpen.Location = new System.Drawing.Point(66, 25);
             this.tbxOpen.Name = "tbxOpen";
             this.tbxOpen.Size = new System.Drawing.Size(304, 21);
             this.tbxOpen.TabIndex = 4;
             // 
             // btnOpen
             // 
-            this.btnOpen.Location = new System.Drawing.Point(331, 23);
+            this.btnOpen.Location = new System.Drawing.Point(385, 23);
             this.btnOpen.Name = "btnOpen";
             this.btnOpen.Size = new System.Drawing.Size(70, 23);
             this.btnOpen.TabIndex = 5;
@@ -97,17 +101,17 @@ namespace GIon
             // 
             // tbxResolution
             // 
-            this.tbxResolution.Location = new System.Drawing.Point(107, 266);
+            this.tbxResolution.Location = new System.Drawing.Point(390, 145);
             this.tbxResolution.Name = "tbxResolution";
-            this.tbxResolution.Size = new System.Drawing.Size(100, 21);
+            this.tbxResolution.Size = new System.Drawing.Size(65, 21);
             this.tbxResolution.TabIndex = 6;
-            this.tbxResolution.Text = "0.05";
+            this.tbxResolution.Text = "0.2";
             this.tbxResolution.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 269);
+            this.label1.Location = new System.Drawing.Point(388, 117);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(89, 12);
             this.label1.TabIndex = 7;
@@ -115,14 +119,14 @@ namespace GIon
             // 
             // tbxSave
             // 
-            this.tbxSave.Location = new System.Drawing.Point(14, 64);
+            this.tbxSave.Location = new System.Drawing.Point(68, 64);
             this.tbxSave.Name = "tbxSave";
             this.tbxSave.Size = new System.Drawing.Size(304, 21);
             this.tbxSave.TabIndex = 8;
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(331, 62);
+            this.btnSave.Location = new System.Drawing.Point(385, 62);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(70, 23);
             this.btnSave.TabIndex = 9;
@@ -132,7 +136,7 @@ namespace GIon
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(337, 264);
+            this.btnOK.Location = new System.Drawing.Point(390, 201);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(70, 23);
             this.btnOK.TabIndex = 10;
@@ -140,12 +144,45 @@ namespace GIon
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(12, 28);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(53, 12);
+            this.label2.TabIndex = 11;
+            this.label2.Text = "输入文件";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(12, 67);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(53, 12);
+            this.label3.TabIndex = 12;
+            this.label3.Text = "输出文件";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.tbxLatMax);
+            this.groupBox1.Controls.Add(this.tbxLatMin);
+            this.groupBox1.Controls.Add(this.tbxLonMin);
+            this.groupBox1.Controls.Add(this.tbxLonMax);
+            this.groupBox1.Location = new System.Drawing.Point(66, 91);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(306, 143);
+            this.groupBox1.TabIndex = 13;
+            this.groupBox1.TabStop = false;
+            // 
             // FrmSPMModel
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(419, 321);
+            this.ClientSize = new System.Drawing.Size(492, 252);
+            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.tbxSave);
@@ -153,13 +190,11 @@ namespace GIon
             this.Controls.Add(this.tbxResolution);
             this.Controls.Add(this.btnOpen);
             this.Controls.Add(this.tbxOpen);
-            this.Controls.Add(this.tbxLonMax);
-            this.Controls.Add(this.tbxLonMin);
-            this.Controls.Add(this.tbxLatMin);
-            this.Controls.Add(this.tbxLatMax);
             this.Name = "FrmSPMModel";
             this.Text = "球谐函数模型计算";
             this.Load += new System.EventHandler(this.FrmSPMModel_Load);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -178,5 +213,8 @@ namespace GIon
         private System.Windows.Forms.TextBox tbxSave;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnOK;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.GroupBox groupBox1;
     }
 }

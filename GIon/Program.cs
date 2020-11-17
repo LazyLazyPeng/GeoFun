@@ -24,7 +24,7 @@ namespace GIon
 
             //IonoHelper.Calculate(@"E:\Data\Typhoon\Case\ramasun\gnss\qion1971.140");
             Application.EnableVisualStyles();
-            Application.Run(new FrmSPMModel());
+            Application.Run(new FrmMain());
         }
     }
 }

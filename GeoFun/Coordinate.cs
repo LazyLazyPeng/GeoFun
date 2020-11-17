@@ -391,6 +391,9 @@ namespace GeoFun
 
             sgb = inGB;
             sgl = inGL - sunGL;
+
+            if (sgl > Math.PI) sgl -= Math.PI;
+            if (sgl < -Math.PI) sgl += Math.PI;
         }
     }
 }

@@ -63,6 +63,7 @@
     <Compile Include="PolynomialModelTests.cs" />
     <Compile Include="SP3FileTests.cs" />
     <Compile Include="SphericalHamonicIonoModelTests.cs" />
+    <Compile Include="SphericalHarmonicIonoModelTests.cs" />
     <Compile Include="TimeTests.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -393,6 +394,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\sp3\1.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\spm\2016190_0000.spm.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
