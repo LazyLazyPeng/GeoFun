@@ -32,6 +32,15 @@
                     <MenuItem Name="btnDownload" Header="下载数据" Click="btnDownload_Click"></MenuItem >
                     <MenuItem Header="MenuItem6"></MenuItem >
                 </MenuItem >
+                <MenuItem Header="预处理">
+                    <MenuItem Header="P1C1改正"></MenuItem>
+                </MenuItem>
+                <MenuItem Header="观测值">
+                    <MenuItem Header="提取观测值"
+                              Name="menuObsExtract"
+                              Click="menuObsExtract_Click">
+                    </MenuItem>
+                </MenuItem>
             </Menu >
             <WrapPanel.ContextMenu>
                 <ContextMenu >

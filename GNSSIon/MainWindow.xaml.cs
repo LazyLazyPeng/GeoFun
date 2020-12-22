@@ -30,5 +30,11 @@ namespace GNSSIon
             WinDownload win = new WinDownload();
             win.Show();
         }
+
+        private void menuObsExtract_Click(object sender, RoutedEventArgs e)
+        {
+            WinObsExtract win = new WinObsExtract();
+            win.Show();
+        }
     }
 }

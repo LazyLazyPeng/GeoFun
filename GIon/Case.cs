@@ -663,8 +663,10 @@ namespace GIon
 
             if (satelliteDCBOpt.Option == enumDCBOption.Estimation)
             {
-                return IonoModel.CalSphericalHarmonicModel(9, 9, stationNames, prn, lat, lon, sp4, ele,
+                bool flag= IonoModel.CalSphericalHarmonicModel(9, 9, stationNames, prn, lat, lon, sp4, ele,
                     out spm, out receiverDCB, out satelliteDCB);
+                spm.SaveAs(@"C:\Users\Administrator\Desktop\data\out\0.spm.txt");
+                return flag;
             }
             else if (satelliteDCBOpt.Option == enumDCBOption.ReadFromFile ||
                     satelliteDCBOpt.Option == enumDCBOption.Regardless)

@@ -741,10 +741,10 @@ namespace GeoFun.GNSS
 
             for (int i = 0; i < EpochNum; i++)
             {
-                string[] line = new string[38];
-                string[] lineb = new string[38];
-                string[] linel = new string[38];
-                for (int j = 0; j < 38; j++)
+                string[] line = new string[39];
+                string[] lineb = new string[39];
+                string[] linel = new string[39];
+                for (int j = 0; j < 39; j++)
                 {
                     line[j] = "0.0000000000";
                     lineb[j] = "0.0000000000";
@@ -757,6 +757,7 @@ namespace GeoFun.GNSS
                 line[3] = Epoches[i].Epoch.CommonT.Hour.ToString("0#");
                 line[4] = Epoches[i].Epoch.CommonT.Minute.ToString("0#");
                 line[5] = Epoches[i].Epoch.CommonT.Second.ToString("0#.##########");
+                line[6] = Epoches[i].Epoch.DOYTime.ToString("00#.##########");
 
                 lineb[0] = Epoches[i].Epoch.CommonT.Year.ToString();
                 lineb[1] = Epoches[i].Epoch.CommonT.Month.ToString("0#");
@@ -764,6 +765,7 @@ namespace GeoFun.GNSS
                 lineb[3] = Epoches[i].Epoch.CommonT.Hour.ToString("0#");
                 lineb[4] = Epoches[i].Epoch.CommonT.Minute.ToString("0#");
                 lineb[5] = Epoches[i].Epoch.CommonT.Second.ToString("0#.##########");
+                lineb[6] = Epoches[i].Epoch.DOYTime.ToString("00#.##########");
 
                 linel[0] = Epoches[i].Epoch.CommonT.Year.ToString();
                 linel[1] = Epoches[i].Epoch.CommonT.Month.ToString("0#");
@@ -771,6 +773,7 @@ namespace GeoFun.GNSS
                 linel[3] = Epoches[i].Epoch.CommonT.Hour.ToString("0#");
                 linel[4] = Epoches[i].Epoch.CommonT.Minute.ToString("0#");
                 linel[5] = Epoches[i].Epoch.CommonT.Second.ToString("0#.##########");
+                linel[6] = Epoches[i].Epoch.DOYTime.ToString("00#.##########");
 
                 lines.Add(line);
                 linesB.Add(lineb);
@@ -791,7 +794,7 @@ namespace GeoFun.GNSS
                         sat = arc[i];
 
                         rowIndex = i + arc.StartIndex;
-                        colIndex = int.Parse(prn.Substring(1)) - 1 + 6;
+                        colIndex = int.Parse(prn.Substring(1)) - 1 + 7;
 
                         lines[rowIndex][colIndex] = sat[meas].ToString("#.##########");
                         linesB[rowIndex][colIndex] = (sat.IPP[1] * Angle.R2D).ToString("#.##########");

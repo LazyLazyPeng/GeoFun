@@ -58,6 +58,12 @@
     <Compile Include="WinDownload.xaml.cs">
       <DependentUpon>WinDownload.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WinObsExtract.xaml.cs">
+      <DependentUpon>WinObsExtract.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WinObsShow.xaml.cs">
+      <DependentUpon>WinObsShow.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -71,6 +77,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="WinDownload.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WinObsExtract.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WinObsShow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -100,6 +114,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GeoFun.GNSS\GeoFun.GNSS.csproj">
+      <Project>{b8d64a98-4a98-4811-8e01-f9783209aaf0}</Project>
+      <Name>GeoFun.GNSS</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

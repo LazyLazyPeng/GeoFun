@@ -186,10 +186,13 @@ namespace GeoFun.MathUtils
                 for (int j = 0; j <= i; j++)
                 {
                     anm[i][j] = x[index];
+                    index++;
                     bnm[i][j] = 0d;
-                    if (j == 0) bnm[i][j] = x[index + 1];
-                    if (j == 0) index += 1;
-                    else index += 2;
+                    if (j != 0)
+                    {
+                        bnm[i][j] = x[index];
+                        index++;
+                    }
                 }
             }
 
@@ -198,12 +201,12 @@ namespace GeoFun.MathUtils
             {
                 spmFactor[i] = x[i];
             }
-            SphericalHarmonicIonoModel model = new SphericalHarmonicIonoModel();
-            model.Degree = degree;
-            model.Order = order;
-            model.Factor = spmFactor;
-            model.Anm = anm;
-            model.Bnm = bnm;
+            spm = new SphericalHarmonicIonoModel();
+            spm.Degree = degree;
+            spm.Order = order;
+            spm.Factor = spmFactor;
+            spm.Anm = anm;
+            spm.Bnm = bnm;
 
             Dictionary<string, double> receiverDCBRMS = new Dictionary<string, double>();
             Dictionary<string, double> satelliteDCBRMS = new Dictionary<string, double>();
@@ -381,10 +384,14 @@ namespace GeoFun.MathUtils
                 for (int j = 0; j <= i; j++)
                 {
                     anm[i][j] = x[index];
+                    index++;
                     bnm[i][j] = 0d;
-                    if (j == 0) bnm[i][j] = x[index + 1];
-                    if (j == 0) index += 1;
-                    else index += 2;
+
+                    if (j != 0)
+                    {
+                        bnm[i][j] = x[index];
+                        index++;
+                    }
                 }
             }
 
