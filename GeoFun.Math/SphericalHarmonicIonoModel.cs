@@ -91,7 +91,7 @@ namespace GeoFun.MathUtils
         /// </summary>
         /// <param name="lat">弧度</param>
         /// <param name="lon">弧度</param>
-        /// <returns></returns>
+        /// <returns>单位为米</returns>
         public double Calculate(double lat, double lon)
         {
             double result = 0d;

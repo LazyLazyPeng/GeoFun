@@ -87,16 +87,15 @@ namespace GeoFun.GNSS
             if (arc is null) return;
 
             // 利用相位观测值计算相对STEC信号
-            for (int i = 1; i < arc.Length - 1; i++)
+            for (int i = 1; i < arc.Length; i++)
             {
-                if (Math.Abs(arc[i - 1]["L4"]) < 1e-13 ||
-                    Math.Abs(arc[i]["L4"]) < 1e-13 ||
+                if (Math.Abs(arc[i]["L4"]) < 1e-13 ||
                     Math.Abs(arc[i + 1]["L4"]) < 1e-13)
                 {
                     continue;
                 }
 
-                arc[i]["ltec"] = 9.52437 * (arc[i + 1]["L4"] - arc[i]["L4"]);
+                arc[i]["ltec"] = 9.52437 * (arc[i]["L4"] - arc[i-1]["L4"]);
             }
 
             int order = 9;

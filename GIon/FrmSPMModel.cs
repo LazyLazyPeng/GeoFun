@@ -60,7 +60,7 @@ namespace GIon
 
             SphericalHarmonicIonoModel spm = SphericalHarmonicIonoModel.Load(tbxOpen.Text);
 
-            int hour = 0;
+            int hour = 12;
             int minute = 0;
             int second = 0;
             double sgb, sgl;

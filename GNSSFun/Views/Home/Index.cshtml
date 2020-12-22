@@ -1,8 +1,13 @@
 ﻿@{
     ViewBag.Title = "Home Page";
 }
+<p>使用Html的Input标签上传</p>
+<form action="/Home/UploadFile" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" /><br />
+    <input type="submit" value="提交" />
+</form>
 <!-- 地图map-->
-<div id="main" style="width: 800px;height:600px;"></div>
+<div id="main" style="width: 1000px;height:600px;"></div>
 <script type="text/javascript">
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('main'));
@@ -25,54 +30,29 @@
             seriesIndex: 0,
             min: 0,
             max: 400
-        }, {
-            show: false,
-            type: 'continuous',
-            seriesIndex: 1,
-            dimension: 0,
-            min: 0,
-            max: dateList.length - 1
         }],
 
 
         title: [{
             left: 'center',
             text: 'Gradient along the y axis'
-        }, {
-            top: '55%',
-            left: 'center',
-            text: 'Gradient along the x axis'
         }],
         tooltip: {
             trigger: 'axis'
         },
         xAxis: [{
             data: dateList
-        }, {
-            data: dateList,
-            gridIndex: 1
         }],
         yAxis: [{
             splitLine: { show: false }
-        }, {
-            splitLine: { show: false },
-            gridIndex: 1
         }],
         grid: [{
             bottom: '60%'
-        }, {
-            top: '60%'
         }],
         series: [{
             type: 'line',
             showSymbol: false,
             data: valueList
-        }, {
-            type: 'line',
-            showSymbol: false,
-            data: valueList,
-            xAxisIndex: 1,
-            yAxisIndex: 1
         }]
     };;
 

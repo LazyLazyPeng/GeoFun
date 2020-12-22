@@ -74,6 +74,13 @@ namespace GeoFun.GNSS
                 return CommonT.SecondOfDay;
             }
         }
+        public double DOYTime
+        {
+            get
+            {
+                return DayOfYear + (double)(SecondsOfDay) / Time.SecondsPerDay;
+            }
+        }
 
         /// <summary>
         /// 一年之内的小数部分，单位：秒
@@ -155,7 +162,6 @@ namespace GeoFun.GNSS
                 return (double)commonT.second;
             }
         }
-
 
         public GPST(int year, int month, int day, int hour, int minute, double second)
         {
