@@ -6,42 +6,41 @@
         xmlns:local="clr-namespace:GNSSIon"
         mc:Ignorable="d"
         Title="电离层计算程序" Height="450" Width="800">
-    <Grid>
+    <StackPanel Orientation="Vertical">
         <WrapPanel >
             <Menu IsMainMenu="True">
                 <MenuItem Header="文件(_F) " IsCheckable="False" 
                    IsEnabled="True" ToolTip="文件相关的操作 ">
                     <!--Menuitem控件为子容器,IsCheckable=" "设置是否打勾,IsEnabled=" "表示文件菜单是否可用,ToolTip="  "显示快捷的文字提示-->
-                    <MenuItem Header="新建(_N)"></MenuItem >
-                    <MenuItem Header="打开(_O)"></MenuItem >
-                    <Separator ></Separator>
+                    <MenuItem Header="新建(_N)"/>
+                    <MenuItem Header="打开(_O)"/>
+                    <Separator />
                     <!--添加下划线,分组-->
-                    <MenuItem Header="添加(_D)"></MenuItem >
-                    <Separator ></Separator>
-                    <MenuItem Header="关闭(_C)"></MenuItem >
-                </MenuItem >
+                    <MenuItem Header="添加(_D)"/>
+                    <Separator />
+                    <MenuItem Header="关闭(_C)"/>
+                </MenuItem>
                 <MenuItem Header="编辑(_E)" IsCheckable="True">
-                    <MenuItem Header="MenuItem1"></MenuItem >
-                    <MenuItem Header="MenuItem2"></MenuItem >
-                </MenuItem >
+                    <MenuItem Header="MenuItem1"/>
+                    <MenuItem Header="MenuItem2"/>
+                </MenuItem>
                 <MenuItem Header="视图(_V)">
-                    <MenuItem Header="MenuItem3"></MenuItem >
-                    <MenuItem Header="MenuItem4"></MenuItem >
-                </MenuItem >
+                    <MenuItem Header="MenuItem3"/>
+                    <MenuItem Header="MenuItem4"/>
+                </MenuItem>
                 <MenuItem Header="下载(_D)">
-                    <MenuItem Name="btnDownload" Header="下载数据" Click="btnDownload_Click"></MenuItem >
-                    <MenuItem Header="MenuItem6"></MenuItem >
-                </MenuItem >
+                    <MenuItem x:Name="btnDownload" Header="下载数据" Click="btnDownload_Click"/>
+                    <MenuItem Header="MenuItem6"/>
+                </MenuItem>
                 <MenuItem Header="预处理">
-                    <MenuItem Header="P1C1改正"></MenuItem>
+                    <MenuItem Header="P1C1改正"/>
                 </MenuItem>
                 <MenuItem Header="观测值">
                     <MenuItem Header="提取观测值"
-                              Name="menuObsExtract"
-                              Click="menuObsExtract_Click">
-                    </MenuItem>
+                              x:Name="menuObsExtract"
+                              Click="menuObsExtract_Click"/>
                 </MenuItem>
-            </Menu >
+            </Menu>
             <WrapPanel.ContextMenu>
                 <ContextMenu >
                     <MenuItem Header=" 右键菜单1">
@@ -56,7 +55,8 @@
                 </ContextMenu>
             </WrapPanel.ContextMenu>
         </WrapPanel>
-    </Grid>
-
-
+        <DataGrid ItemsSource="{Binding}" AutoGenerateColumns="False">
+            <DataGridTextColumn Header="Code"></DataGridTextColumn>
+        </DataGrid>
+    </StackPanel>
 </Window>
