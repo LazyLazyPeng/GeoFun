@@ -20,6 +20,8 @@ namespace GNSSIon
     /// </summary>
     public partial class MainWindow : Window
     {
+        public int MaxTaskNum = 2;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -35,6 +37,13 @@ namespace GNSSIon
         {
             WinObsExtract win = new WinObsExtract();
             win.Show();
+
+            // 下载星历、dcb
+            // 读取文件
+            // 计算轨道、穿刺点
+            // 估计接收机dcb
+            // 计算STE/CVTEC
+            // 输出文件
         }
     }
 }
