@@ -6,8 +6,11 @@
         xmlns:local="clr-namespace:GNSSIon"
         mc:Ignorable="d"
         Title="电离层计算程序" Height="450" Width="800">
-    <StackPanel Orientation="Vertical">
-        <WrapPanel >
+    <Window.Resources>
+        <local:JobStatusConverter x:Key="jobStatusConverter"/>
+    </Window.Resources>
+    <DockPanel>
+        <WrapPanel DockPanel.Dock="Top">
             <Menu IsMainMenu="True">
                 <MenuItem Header="文件(_F) " IsCheckable="False" 
                    IsEnabled="True" ToolTip="文件相关的操作 ">
@@ -55,8 +58,67 @@
                 </ContextMenu>
             </WrapPanel.ContextMenu>
         </WrapPanel>
-        <DataGrid ItemsSource="{Binding}" AutoGenerateColumns="False">
-            <DataGridTextColumn Header="Code"></DataGridTextColumn>
-        </DataGrid>
-    </StackPanel>
+
+        <StatusBar DockPanel.Dock="Bottom"
+                   Height="25">
+        </StatusBar>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"></RowDefinition>
+                <RowDefinition Height="5"></RowDefinition>
+                <RowDefinition Height="1*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <DataGrid 
+                Grid.Row="0"
+                Name="dgJobs"
+                ItemsSource="{Binding}"
+                AutoGenerateColumns="False">
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="取消所有任务"></MenuItem>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+                <DataGrid.Columns>
+                    <DataGridCheckBoxColumn>
+                    </DataGridCheckBoxColumn>
+                    <DataGridTextColumn Binding="{Binding ID}" 
+                                    Header="编号"
+                                    Width="1*"></DataGridTextColumn>
+                    <DataGridTextColumn Binding="{Binding Path=Name}" 
+                                    Header="名称"
+                                    Width="1*"></DataGridTextColumn>
+                    <DataGridTextColumn Binding="{Binding Status,UpdateSourceTrigger=PropertyChanged, Converter={StaticResource jobStatusConverter}}"
+                                        Header="状态"
+                                        Width="1*">
+                    </DataGridTextColumn>
+                    <DataGridTemplateColumn Header="进度"
+                                            Width="2*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <ProgressBar>
+                                        <ProgressBar.Value>
+                                            <Binding Path="ProgressValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged"></Binding>
+                                        </ProgressBar.Value>
+                                        <ProgressBar.Maximum>
+                                            <Binding Path="MaxProgressValue" Mode="TwoWay"></Binding>
+                                        </ProgressBar.Maximum>
+                                    </ProgressBar>
+                                    <Label HorizontalAlignment="Center" 
+                                           VerticalAlignment="Center"
+                                           Content="{Binding Path=ProgressValue}"></Label>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Binding="{Binding Log}" 
+                                    Header="日志"
+                                    Width="3*"></DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch"></GridSplitter>
+            <TextBox Grid.Row="2"></TextBox>
+        </Grid>
+    </DockPanel>
 </Window>
