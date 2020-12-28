@@ -55,6 +55,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="IonJob.cs" />
+    <Compile Include="IonWorker.cs" />
+    <Compile Include="JobStatusConverter.cs" />
     <Compile Include="WinDownload.xaml.cs">
       <DependentUpon>WinDownload.xaml</DependentUpon>
     </Compile>
@@ -119,6 +122,10 @@
     <ProjectReference Include="..\GeoFun.GNSS\GeoFun.GNSS.csproj">
       <Project>{b8d64a98-4a98-4811-8e01-f9783209aaf0}</Project>
       <Name>GeoFun.GNSS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GeoFun.MultiThread\GeoFun.MultiThread.csproj">
+      <Project>{ab22af63-1640-40ea-9119-1384761ab464}</Project>
+      <Name>GeoFun.MultiThread</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
