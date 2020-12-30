@@ -9,5 +9,9 @@ namespace GNSSIon
 {
     public class IonJob:Job
     {
+        /// <summary>
+        /// 根目录
+        /// </summary>
+        public string RootFolder { get; set; } = "";
     }
 }

@@ -71,5 +71,7 @@ namespace GeoFun.GNSS
         /// 二维电离层建模
         /// </summary>
         public enumIonoModel IonoModel = enumIonoModel.SphericalHarmonic;
+        public int IonoModelOrder = 9;
+        public int IonoModelDegree = 9;
     }
 }

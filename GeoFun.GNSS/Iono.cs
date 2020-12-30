@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-
+using System.Threading;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
 
@@ -110,6 +110,10 @@ namespace GeoFun.GNSS
         {
         }
 
-
+        public static void Resolve()
+        {
+            Random rand = new Random();
+            Thread.Sleep(rand.Next(3, 10)*1000);
+        }
     }
 }
