@@ -79,6 +79,12 @@
     <Compile Include="FrmMain.Designer.cs">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmObsExtrator.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmObsExtrator.Designer.cs">
+      <DependentUpon>FrmObsExtrator.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmSPMModel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -142,6 +148,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmObsExtrator.resx">
+      <DependentUpon>FrmObsExtrator.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmSPMModel.resx">
       <DependentUpon>FrmSPMModel.cs</DependentUpon>
