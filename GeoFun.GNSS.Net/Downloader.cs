@@ -12,6 +12,25 @@ using System.Runtime.CompilerServices;
 
 namespace GeoFun.GNSS.Net
 {
+    /// <summary>
+    /// GNSS数据下载类
+    /// 使用前需要先将curl路径加入系统环境变量Path
+    /// 然后新建文件_netrc
+    /// 内容为machine urs.earthdata.nasa.gov login <username> password <password>
+    ///（其中<username> 和<password>EarthData网站注册的用户名和密码！！！）
+    /// 然后新建变量HOME 值设置为_netrc所在目录
+    /// 参考 https://navrs.wh.sdu.edu.cn/info/1621/1487.htm
+    /// 官方说明主页：
+    /// https://cddis.nasa.gov/Data_and_Derived_Products/CDDIS_Archive_Access.html
+    /// CDDIS用户注册地址：
+    /// https://urs.earthdata.nasa.gov/
+    /// IGS-CDDIS数据地址（注册后才能访问）：
+    /// https://cddis.nasa.gov/archive/
+    /// 创建_netrc文件方法：
+    /// https://cddis.nasa.gov/Data_and_Derived_Products/CreateNetrcFile.html
+    /// CURL下载数据使用方法
+    /// 参考 https://cddis.nasa.gov/About/CDDIS_File_Download_Documentation.html
+    /// </summary>
     public class Downloader
     {
         /// <summary>

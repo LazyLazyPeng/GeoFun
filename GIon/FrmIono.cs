@@ -21,6 +21,16 @@ namespace GIon
         public FrmIono()
         {
             InitializeComponent();
+
+            InitView();
+        }
+
+        private void InitView()
+        {
+            for(int i = 0; i < chkListBoxOutput.Items.Count; i++)
+            {
+                chkListBoxOutput.SetItemChecked(i, true);
+            }
         }
 
         private void btnOK_Click(object sender, EventArgs e)
@@ -139,6 +149,22 @@ namespace GIon
 
                 statusLabel.Text = string.Format("{0}/{1}",progressBar.Value,progressBar.Maximum);
             }));
+        }
+
+        private void btnSelAll_Click(object sender, EventArgs e)
+        {
+            for(int i =0; i < chkListBoxOutput.Items.Count; i++)
+            {
+                chkListBoxOutput.SetItemChecked(i, true);
+            }
+        }
+
+        private void btnSelOthers_Click(object sender, EventArgs e)
+        {
+            for(int i =0; i < chkListBoxOutput.Items.Count; i++)
+            {
+                chkListBoxOutput.SetItemChecked(i, !chkListBoxOutput.GetItemChecked(i));
+            }
         }
     }
 }
