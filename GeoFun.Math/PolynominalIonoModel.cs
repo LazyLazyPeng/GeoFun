@@ -27,7 +27,7 @@ namespace GeoFun.MathUtils
         private void initFactor()
         {
             if (XOrder <= 0 || YOrder <= 0) return;
-            Factor = new double[XOrder, YOrder];
+            Factor = new double[XOrder+1, YOrder+1];
         }
 
         public PolynominalIonoModel(int xOrder = 2, int yOrder = 4)
@@ -60,9 +60,9 @@ namespace GeoFun.MathUtils
             for (int i = 0; i < obsNum; i++)
             {
                 paraInd = 0;
-                for (int j = 0; j < XOrder + 1; j++)
+                for (int j = 0; j <= XOrder; j++)
                 {
-                    for (int k = 0; k < YOrder + 1; k++)
+                    for (int k = 0; k <= YOrder; k++)
                     {
                         b[i, paraInd] = Math.Pow(bb[i], j) * Math.Pow(s[i], k);
                         paraInd++;
@@ -71,9 +71,9 @@ namespace GeoFun.MathUtils
             }
 
             Vector<double> r = (b.Transpose() * b).Inverse() * (b.Transpose() * l);
-            for (int i = 0; i < XOrder; i++)
+            for (int i = 0; i <= XOrder; i++)
             {
-                for (int j = 0; j < YOrder; j++)
+                for (int j = 0; j <= YOrder; j++)
                 {
                     int index = i * (YOrder + 1) + j;
                     Factor[i, j] = r[index];

@@ -17,6 +17,24 @@ namespace GeoFun.MathUtils
 
         }
 
+        public static bool CalPolynomialModel(
+            int degree, int order,
+            List<string> stations,
+            List<LinkedList<int>> prn,
+            List<LinkedList<double>> lat,
+            List<LinkedList<double>> lon,
+            List<LinkedList<double>> sp4,
+            List<LinkedList<double>> ele,
+            Dictionary<string, double> satelliteDCB,
+            out PolynominalIonoModel pm,
+            out Dictionary<string, double> receiverDCB
+            )
+        {
+            pm = new PolynominalIonoModel(2, 4);
+            receiverDCB = new Dictionary<string, double>();
+            return true;
+        }
+
         /// <summary>
         /// 计算球谐函数模型,同时估计测站和接收机DCB
         /// </summary>
