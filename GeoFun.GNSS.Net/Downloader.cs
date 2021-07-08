@@ -42,6 +42,9 @@ namespace GeoFun.GNSS.Net
         /// </summary>
         public static string ANONY_PSSD = "landwill@163.com";
 
+        public static string USER_EARTHDATA = "lazypeng";
+        public static string PSSD_EARTHDATA = "Willearthdata123";
+
         public static bool DownloadSp3(int week, int day, string outPath = "temp", string center = "IGS", bool overwrite = false)
         {
             string productName = center + "_EPH";
@@ -55,7 +58,7 @@ namespace GeoFun.GNSS.Net
             // ftp主机名和相对路径
             string host = UrlHelper.GetHost(remoteFullPath);
             string remoteRelPath = UrlHelper.GetRelPath(remoteFullPath);
-            if (string.IsNullOrWhiteSpace(remoteRelPath)) return false;
+            //if (string.IsNullOrWhiteSpace(remoteRelPath)) return false;
 
             /// 本地路径
             string name = UrlHelper.GetFileName(remoteFullPath);//string.Format("{0}{1}{2}.sp3.Z", center.ToLower(), week, day);
@@ -85,7 +88,14 @@ namespace GeoFun.GNSS.Net
                 //{
                 //    return false;
                 //}
-                cmd = string.Format("\"{0}\\wget.exe\" -P\"{1}\" \"{2}\" --ftp-user={3} --ftp-password={4} &exit", AppDomain.CurrentDomain.BaseDirectory, Path.GetDirectoryName(localTempPath), remoteFullPath, ANONY_USER, ANONY_PSSD); ;
+                //if (center == "IGS")
+                //{
+                //    cmd = string.Format("\"{0}\\wget.exe\" -P\"{1}\" \"{2}\" --auth-no-challenge &exit", AppDomain.CurrentDomain.BaseDirectory, Path.GetDirectoryName(localTempPath), remoteFullPath );
+                //}
+                //else
+                //{
+                    cmd = string.Format("\"{0}\\wget.exe\" -P\"{1}\" \"{2}\" --ftp-user={3} --ftp-password={4} &exit", AppDomain.CurrentDomain.BaseDirectory, Path.GetDirectoryName(localTempPath), remoteFullPath, ANONY_USER, ANONY_PSSD); ;
+                //}
                 cmdH = new CMDHelper();
                 cmdH.Execute(cmd);
             }
