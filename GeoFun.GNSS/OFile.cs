@@ -969,5 +969,10 @@ namespace GeoFun.GNSS
                 endIndex += segEpoNum;
             }
         }
+
+        public void GetMeas(string prn, string measType)
+        {
+
+        }
     }
 }
