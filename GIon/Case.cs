@@ -526,6 +526,17 @@ namespace GIon
             }
         }
 
+        public void ResolveMultiStationSingleDay()
+        {
+           //扫描文件
+           //下载星历
+           //读取文件
+           //弧段探测
+           //周跳探测
+           //DCB估计
+           //电离层模型
+        }
+
         /// <summary>
         /// 解算DCB
         /// </summary>

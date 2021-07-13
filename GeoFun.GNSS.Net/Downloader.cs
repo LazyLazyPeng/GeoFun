@@ -42,9 +42,6 @@ namespace GeoFun.GNSS.Net
         /// </summary>
         public static string ANONY_PSSD = "landwill@163.com";
 
-        public static string USER_EARTHDATA = "lazypeng";
-        public static string PSSD_EARTHDATA = "Willearthdata123";
-
         public static bool DownloadSp3(int week, int day, string outPath = "temp", string center = "IGS", bool overwrite = false)
         {
             string productName = center + "_EPH";
