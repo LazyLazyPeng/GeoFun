@@ -23,6 +23,11 @@ namespace GIon
         public Action<int> SetProgressMax { get; set; }
         public Action<int> SetProgressValue { get; set; }
 
+        /// <summary>
+        /// 调试的级别
+        /// </summary>
+        public int debugLevel = 0;
+
         public double lonMin = 70;
         public double lonMax = 140;
         public double latMin = 15;
@@ -825,11 +830,11 @@ namespace GIon
             string cmd;
 
             // 解压o文件
-            cmd = string.Format("7z.exe x \"{0}\\*.Z\" &exit", obsFolder);
+            cmd = string.Format("7z.exe x \"{0}\\*.Z\" -y &exit", obsFolder);
             CMDHelper.ExecuteThenWait(cmd);
 
             // 解压星历钟差等文件
-            cmd = string.Format("7z.exe x \"{0}\\*.Z\" &exit", orbFolder);
+            cmd = string.Format("7z.exe x \"{0}\\*.Z\" -y &exit", orbFolder);
             CMDHelper.ExecuteThenWait(cmd);
 
             // 解压d文件

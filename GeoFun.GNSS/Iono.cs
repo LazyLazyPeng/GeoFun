@@ -110,6 +110,40 @@ namespace GeoFun.GNSS
         {
         }
 
+        /// <summary>
+        /// 多项式模型
+        /// </summary>
+        /// <param name="frames"></param>
+        public static void PolynomialModel(List<OFrame> frames,int xOrder=2,int yOrder=4)
+        {
+            if (frames is null || frames.Count < 1) return;
 
+            // not all the satellites DCB will be estimated
+            // the index of receiver
+            Dictionary<string, int> recIndex = new Dictionary<string, int>();
+            // the index of satellite
+            Dictionary<string, int> satIndex = new Dictionary<string, int>();
+
+            int index = 0;
+            for(int i = 0; i < frames.Count; i++)
+            {
+                foreach(var arcs in frames[i].Arcs.Values)
+                {
+                    foreach(var arc in arcs)
+                    {
+                        if(!recIndex.ContainsKey(arc.Station.Name))
+                        {
+                            recIndex.Add(arc.Station.Name,index);
+                            index++;
+                        }
+                    }
+                }
+            }
+
+            // 多项式模型系数参数个数
+            int pmParaNum = (xOrder + 1) * (yOrder + 1);
+            int recDCBParaNum = 0;
+            int satDCBParaNum = 0;
+        }
     }
 }
