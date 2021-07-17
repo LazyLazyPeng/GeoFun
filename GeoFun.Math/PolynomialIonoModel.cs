@@ -8,7 +8,7 @@ using System.Xml.XPath;
 
 namespace GeoFun.MathUtils
 {
-    public class PolynominalIonoModel
+    public class PolynomialIonoModel
     {
         /// <summary>
         /// 次数
@@ -30,7 +30,7 @@ namespace GeoFun.MathUtils
             Factor = new double[XOrder+1, YOrder+1];
         }
 
-        public PolynominalIonoModel(int xOrder = 2, int yOrder = 4)
+        public PolynomialIonoModel(int xOrder = 2, int yOrder = 4)
         {
             XOrder = xOrder;
             YOrder = yOrder;

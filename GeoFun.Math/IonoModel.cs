@@ -26,11 +26,11 @@ namespace GeoFun.MathUtils
             List<LinkedList<double>> sp4,
             List<LinkedList<double>> ele,
             Dictionary<string, double> satelliteDCB,
-            out PolynominalIonoModel pm,
+            out PolynomialIonoModel pm,
             out Dictionary<string, double> receiverDCB
             )
         {
-            pm = new PolynominalIonoModel(2, 4);
+            pm = new PolynomialIonoModel(2, 4);
             receiverDCB = new Dictionary<string, double>();
             return true;
         }
