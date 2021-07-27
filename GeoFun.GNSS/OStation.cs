@@ -159,7 +159,7 @@ namespace GeoFun.GNSS
         /// </summary>
         /// <param name="folder"></param>
         /// <returns></returns>
-        public int SearchAllOFiles(string folder)
+        public int SearchAllOFiles(string folder, int startDOY = -1, int endDOY = -1)
         {
             if (string.IsNullOrEmpty(Name)) return 0;
             if (!Directory.Exists(folder)) return 0;
@@ -169,6 +169,15 @@ namespace GeoFun.GNSS
             string searchPattern = string.Format("{0}???*.??o", Name);
             foreach (var file in dir.GetFiles(searchPattern))
             {
+                string stationName;
+                int doy, year;
+                FileName.ParseRinex2(file.Name, out stationName, out doy, out year);
+                int d = year * 1000 + doy;
+                if (startDOY > 0 && endDOY > 0)
+                {
+                    if (d < startDOY || d > endDOY)
+                        continue;
+                }
                 OFiles.Add(new OFile(file.FullName));
                 fileCount++;
             }
@@ -857,7 +866,7 @@ namespace GeoFun.GNSS
                 format[i + 6] = ",{0:000.000}";
             }
 
-            for(int i = 0; i < EpochNum; i++)
+            for (int i = 0; i < EpochNum; i++)
             {
                 data[i, 0] = Epoches[i].Epoch.Year;
                 data[i, 1] = Epoches[i].Epoch.Month;
@@ -913,8 +922,8 @@ namespace GeoFun.GNSS
                 string filePathB = Path.Combine(folder, fileNameB);
                 string filePathL = Path.Combine(folder, fileNameL);
 
-                FileHelper.WriteMatrix(filePathB, dataB,format, ',');
-                FileHelper.WriteMatrix(filePathL, dataL,format, ',');
+                FileHelper.WriteMatrix(filePathB, dataB, format, ',');
+                FileHelper.WriteMatrix(filePathL, dataL, format, ',');
 
                 //List<MatlabMatrix> mats = new List<MatlabMatrix>
                 //{

@@ -61,11 +61,11 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 卫星dcb处理方式(默认从文件读取)
         /// </summary>
-        public enumDCBOption SatDCB = enumDCBOption.ReadFromFile;
+        public enumDCBOption SatDCB = enumDCBOption.FromFile;
         /// <summary>
         /// 接收机dcb的处理方式(默认作为未知数估计)
         /// </summary>
-        public enumDCBOption RecDCB = enumDCBOption.Estimation;
+        public enumDCBOption RecDCB = enumDCBOption.Estimate;
 
         /// <summary>
         /// 二维电离层建模

@@ -5,12 +5,12 @@
         /// <summary>
         /// 作为未知数估计
         /// </summary>
-        Estimation,
+        Estimate,
 
         /// <summary>
         /// 已经估计过，直接从文件读取
         /// </summary>
-        ReadFromFile,
+        FromFile,
 
         /// <summary>
         /// 忽略/估计
