@@ -19,7 +19,7 @@ namespace GeoFun.GNSS
 
         public static DCBOption Estimate = new DCBOption
         {
-            Option = enumDCBOption.Estimation,
+            Option = enumDCBOption.Estimate,
             DCBFilePath = "",
         };
     }

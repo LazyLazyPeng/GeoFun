@@ -28,6 +28,14 @@ namespace GeoFun.MathUtils
         {
             if (XOrder <= 0 || YOrder <= 0) return;
             Factor = new double[XOrder+1, YOrder+1];
+
+            for(int i =0; i <=XOrder; i++)
+            {
+                for(int j =0; j<=YOrder; j++)
+                {
+                    Factor[i, j] = 0;
+                }
+            }
         }
 
         public PolynomialIonoModel(int xOrder = 2, int yOrder = 4)
