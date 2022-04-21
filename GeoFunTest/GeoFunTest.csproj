@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GeoFunTest</RootNamespace>
     <AssemblyName>GeoFunTest</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">15.0</VisualStudioVersion>
@@ -54,6 +54,7 @@
     <Compile Include="DownloaderTests.cs" />
     <Compile Include="DOYTests.cs" />
     <Compile Include="FileNameTests.cs" />
+    <Compile Include="FourParaTests.cs" />
     <Compile Include="LegendreTests.cs" />
     <Compile Include="MathHelperTests.cs" />
     <Compile Include="MathTests.cs" />
@@ -71,7 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GeoFun.GNSS.Net\GeoFun.GNSS.Net.csproj">
-      <Project>{5406F13B-7702-4CCE-A05B-0B00396E7495}</Project>
+      <Project>{5406f13b-7702-4cce-a05b-0b00396e7495}</Project>
       <Name>GeoFun.GNSS.Net</Name>
     </ProjectReference>
     <ProjectReference Include="..\GeoFun.GNSS\GeoFun.GNSS.csproj">
@@ -79,7 +80,7 @@
       <Name>GeoFun.GNSS</Name>
     </ProjectReference>
     <ProjectReference Include="..\GeoFun.Math\GeoFun.MathUtils.csproj">
-      <Project>{3D465CB9-2115-4401-A3F2-C7D7A8ABA846}</Project>
+      <Project>{3d465cb9-2115-4401-a3f2-c7d7a8aba846}</Project>
       <Name>GeoFun.MathUtils</Name>
     </ProjectReference>
     <ProjectReference Include="..\GeoFun.Spatial\GeoFun.Spatial.csproj">

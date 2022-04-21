@@ -5,8 +5,8 @@ using System.Collections.Specialized;
 
 using GeoFun;
 using GeoFun.GNSS;
-using GeoFun.Spatial;
 using System.IO;
+using GeoFun.Spatial;
 
 namespace GeoFunTest
 {
