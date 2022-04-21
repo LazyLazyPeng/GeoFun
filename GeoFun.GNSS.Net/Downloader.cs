@@ -324,6 +324,11 @@ namespace GeoFun.GNSS.Net
             int year2 = 0;
             int year4 = 0;
 
+            if(!string.IsNullOrWhiteSpace(station))
+            {
+                station = station.ToLower();
+            }
+
             if (year < 50)
             {
                 year2 = year;
@@ -346,7 +351,7 @@ namespace GeoFun.GNSS.Net
             // ftp全路径
             string remoteFullPath;
             if (!Common.URL.TryGetValue(productName, out remoteFullPath)) return false;
-            remoteFullPath = remoteFullPath.Replace("%Y", "{0}").Replace("%n", "{1}").Replace("%y", "{2:D2}").Replace("%s", station);
+            remoteFullPath = remoteFullPath.Replace("%Y", "{0}").Replace("%n", "{1:000}").Replace("%y", "{2:D2}").Replace("%s", station);
             remoteFullPath = string.Format(remoteFullPath, year4, doy, year2);
 
             // ftp主机名和相对路径

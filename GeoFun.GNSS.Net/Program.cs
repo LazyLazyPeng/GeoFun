@@ -34,7 +34,15 @@ namespace GeoFun.GNSS.Net
             //Downloader.DownloadDCB(2015,7,"P1C1", @"C:\Users\Administrator\Desktop\soudelor211");
             //Downloader.DownloadDCB(2015,7,"P1P2", @"C:\Users\Administrator\Desktop\soudelor211");
 
-            string[] stationNames = { "WUHN", "TNML", "HKWS", "KMNM", "NCKU", "TCMS","TWTF"};
+            string[] stationNames = { "WARK", "WGTN", "DUND", "CHTI","GAMB"};
+            foreach (string stationName in stationNames)
+            {
+                for (int doy = 17; doy < 20;doy++)
+                {
+                    Console.Write("{0} {1}\n",stationName,doy);
+                    Downloader.DownloadO(2022, doy, stationName, @"C:\Users\niuni\Desktop\tj","WHU");
+                }
+            }
         }
     }
 }

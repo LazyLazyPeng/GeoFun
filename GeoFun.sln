@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28809.33
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoFun", "GeoFun\GeoFun.csproj", "{D208A3E9-5BF4-414E-9807-7605898102A0}"
 EndProject
@@ -52,6 +52,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GNSSIon", "GNSSIon\GNSSIon.csproj", "{603787F6-6012-467F-ABAA-7D66759D2078}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoFun.MultiThread", "GeoFun.MultiThread\GeoFun.MultiThread.csproj", "{AB22AF63-1640-40EA-9119-1384761AB464}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IGSDownloader", "IGSDownloader\IGSDownloader.csproj", "{D7F44CC9-4EC1-4AB2-8A0E-3C112DBCB381}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsFormsApp1", "WindowsFormsApp1\WindowsFormsApp1.csproj", "{D0580443-BFCA-4460-83CD-0106C03FD7B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -355,6 +359,30 @@ Global
 		{AB22AF63-1640-40EA-9119-1384761AB464}.Release|x64.Build.0 = Release|Any CPU
 		{AB22AF63-1640-40EA-9119-1384761AB464}.Release|x86.ActiveCfg = Release|Any CPU
 		{AB22AF63-1640-40EA-9119-1384761AB464}.Release|x86.Build.0 = Release|Any CPU
+		{D7F44CC9-4EC1-4AB2-8A0E-3C112DBCB381}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7F44CC9-4EC1-4AB2-8A0E-3C112DBCB381}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7F44CC9-4EC1-4AB2-8A0E-3C112DBCB381}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D7F44CC9-4EC1-4AB2-8A0E-3C112DBCB381}.Debug|x64.Build.0 = Debug|Any CPU
+		{D7F44CC9-4EC1-4AB2-8A0E-3C112DBCB381}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D7F44CC9-4EC1-4AB2-8A0E-3C112DBCB381}.Debug|x86.Build.0 = Debug|Any CPU
+		{D7F44CC9-4EC1-4AB2-8A0E-3C112DBCB381}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7F44CC9-4EC1-4AB2-8A0E-3C112DBCB381}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7F44CC9-4EC1-4AB2-8A0E-3C112DBCB381}.Release|x64.ActiveCfg = Release|Any CPU
+		{D7F44CC9-4EC1-4AB2-8A0E-3C112DBCB381}.Release|x64.Build.0 = Release|Any CPU
+		{D7F44CC9-4EC1-4AB2-8A0E-3C112DBCB381}.Release|x86.ActiveCfg = Release|Any CPU
+		{D7F44CC9-4EC1-4AB2-8A0E-3C112DBCB381}.Release|x86.Build.0 = Release|Any CPU
+		{D0580443-BFCA-4460-83CD-0106C03FD7B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0580443-BFCA-4460-83CD-0106C03FD7B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0580443-BFCA-4460-83CD-0106C03FD7B1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D0580443-BFCA-4460-83CD-0106C03FD7B1}.Debug|x64.Build.0 = Debug|Any CPU
+		{D0580443-BFCA-4460-83CD-0106C03FD7B1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D0580443-BFCA-4460-83CD-0106C03FD7B1}.Debug|x86.Build.0 = Debug|Any CPU
+		{D0580443-BFCA-4460-83CD-0106C03FD7B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0580443-BFCA-4460-83CD-0106C03FD7B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0580443-BFCA-4460-83CD-0106C03FD7B1}.Release|x64.ActiveCfg = Release|Any CPU
+		{D0580443-BFCA-4460-83CD-0106C03FD7B1}.Release|x64.Build.0 = Release|Any CPU
+		{D0580443-BFCA-4460-83CD-0106C03FD7B1}.Release|x86.ActiveCfg = Release|Any CPU
+		{D0580443-BFCA-4460-83CD-0106C03FD7B1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

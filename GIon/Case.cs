@@ -334,16 +334,22 @@ namespace GIon
                         continue;
                     }
 
-                    PrintWithTime("正在下载辅助文件...");
-                    if (!Download(sta.DOYs))
+                    if (!(FitType == enumFitType.DoubleDifference))
                     {
-                        PrintWithTime("错误！下载辅助文件失败");
+                        PrintWithTime("正在下载辅助文件...");
+                        if (!Download(sta.DOYs))
+                        {
+                            PrintWithTime("错误！下载辅助文件失败");
+                        }
                     }
 
-                    PrintWithTime("读取星历文件...");
-                    Orb = new Orbit(orbFolder);
-                    Orb.GetAllSp3Files(orbFolder, sta.StartDOY, sta.EndDOY);
-                    Orb.Read(orbFolder);
+                    if (!(FitType == enumFitType.DoubleDifference))
+                    {
+                        PrintWithTime("读取星历文件...");
+                        Orb = new Orbit(orbFolder);
+                        Orb.GetAllSp3Files(orbFolder, sta.StartDOY, sta.EndDOY);
+                        Orb.Read(orbFolder);
+                    }
 
                     PrintWithTime("读取观测文件...");
                     sta.ReadAllObs();
@@ -359,14 +365,18 @@ namespace GIon
                         return;
                     }
 
-                    PrintWithTime("计算卫星轨道...");
-                    for (int j = 0; j < sta.EpochNum; j++)
+
+                    if (!(FitType == enumFitType.DoubleDifference))
                     {
-                        OEpoch oepo = sta.Epoches[j];
-                        Orb.GetSatPos(ref oepo);
+                        PrintWithTime("计算卫星轨道...");
+                        for (int j = 0; j < sta.EpochNum; j++)
+                        {
+                            OEpoch oepo = sta.Epoches[j];
+                            Orb.GetSatPos(ref oepo);
+                        }
+                        PrintWithTime("\r\n穿刺点计算...");
+                        sta.CalAzElIPP();
                     }
-                    PrintWithTime("\r\n穿刺点计算...");
-                    sta.CalAzElIPP();
 
                     PrintWithTime("粗差探测...");
                     sta.DetectOutlier();

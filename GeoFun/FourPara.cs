@@ -509,15 +509,18 @@ namespace GeoFun
         public static void GetInv(string mode, double dx1, double dy1, double r1, double s1,
             out double dx2, out double dy2, out double r2, out double s2)
         {
+            // 平移-缩放-旋转
             if (mode.StartsWith("o"))
             {
                 s2 = (1d / (1 + s1 * 1e-6) - 1d) * 1e6;
                 r2 = -r1;
 
-                dx2 = -(1 + s1 * 1e-6) * (Math.Cos(r1) * dx1 + Math.Sin(r1) * dy1);
-                dy2 = -(1 + s1 * 1e-6) * (-Math.Sin(r1) * dx1 + Math.Cos(r1) * dy1);
+                dx2 = -dx1;
+                dy2 = -dy1;
 
             }
+
+            // 缩放-旋转-平移
             else if (mode.EndsWith("o"))
             {
                 r2 = -r1;
@@ -528,7 +531,7 @@ namespace GeoFun
             }
             else
             {
-                throw new Exception("无法识别的模型");
+                throw new Exception(String.Format("\"{0}\"为无法识别的四参数模型",mode));
             }
         }
 
@@ -565,7 +568,7 @@ namespace GeoFun
         /// <param name="y1"></param>
         /// <param name="x2"></param>
         /// <param name="y2"></param>
-        /// <param name="mode">默认是"ors",即o(ffset)-r(otate)-s(cale)</param>
+        /// <param name="mode">默认是"rso",即r(otate)-s(cale)-o(ffset)</param>
         /// <returns></returns>
         public static FourPara CalPara(List<double> x1, List<double> y1,
             List<double> x2, List<double> y2, string mode = "rso")
@@ -578,7 +581,7 @@ namespace GeoFun
             //// 模型,默认是 旋转-缩放-平移
             if (mode is null)
             {
-                mode = "ors";
+                mode = "rso";
             }
 
             #region 自己的算法
