@@ -98,6 +98,7 @@
     <Compile Include="PathHelper.cs" />
     <Compile Include="program.cs" />
     <Compile Include="Projection.cs" />
+    <Compile Include="ProjectionHelper.cs" />
     <Compile Include="SevenPara.cs" />
     <Compile Include="StringG.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
