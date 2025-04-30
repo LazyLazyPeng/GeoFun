@@ -172,7 +172,7 @@ namespace GIon
             //        {
             //            var epoch = oFile.AllEpoch[i].Epoch;
             //            var sunL0 = Coordinate.SunLon(epoch.CommonT.Hour,
-            //                epoch.CommonT.Minute, (double)epoch.CommonT.second, 8);
+            //                epoch.CommonT.Minutes, (double)epoch.CommonT.second, 8);
             //            var sat = item.Value;
             //            if (sat["SP4"] != 0 && sat["SP4"] > 0)
             //            {
@@ -196,7 +196,7 @@ namespace GIon
             //        {
             //            var epoch = oFile.AllEpoch[i].Epoch;
             //            var sunL0 = Coordinate.SunLon(epoch.CommonT.Hour,
-            //                epoch.CommonT.Minute, (double)epoch.CommonT.second, 8);
+            //                epoch.CommonT.Minutes, (double)epoch.CommonT.second, 8);
             //            var sat = item.Value;
             //            if (sat["SP4"] != 0)
             //            {

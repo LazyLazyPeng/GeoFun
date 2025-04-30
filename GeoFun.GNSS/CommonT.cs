@@ -56,7 +56,7 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 分
         /// </summary>
-        public int Minute
+        public int Minutes
         {
             get
             {
@@ -68,7 +68,7 @@ namespace GeoFun.GNSS
         /// <summary>
         /// 秒
         /// </summary>
-        public decimal Second
+        public decimal Seconds
         {
             get
             {
@@ -81,13 +81,13 @@ namespace GeoFun.GNSS
         }
 
         /// <summary>
-        /// 一天内的秒数
+        /// 在一天内的秒数
         /// </summary>
-        public decimal SecondOfDay
+        public decimal SecondsOfDay
         {
             get
             {
-                return Hour * 3600m + Minute * 60m + Second;
+                return Hour * 3600m + Minutes * 60m + Seconds;
             }
         }
 
@@ -105,13 +105,13 @@ namespace GeoFun.GNSS
         public CommonT(int year,int month,int day,int hour,int minute,decimal second)
         {
             dateT = new DateTime(year, month, day, hour, minute,0);
-            Second = second;
+            Seconds = second;
         }
 
         public CommonT(int year,int month,int day,int hour,int minute,double second)
         {
             dateT = new DateTime(year, month, day, hour, minute,0);
-            Second = (decimal)second;
+            Seconds = (decimal)second;
         }
     }
 }

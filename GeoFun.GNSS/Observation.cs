@@ -383,14 +383,14 @@ namespace GeoFun.GNSS
                         curStartTime.CommonT.Month,
                         curStartTime.CommonT.Day,
                         curStartTime.CommonT.Hour,
-                        curStartTime.CommonT.Minute,
-                        curStartTime.CommonT.Second,
+                        curStartTime.CommonT.Minutes,
+                        curStartTime.CommonT.Seconds,
                         curEndTime.CommonT.Year,
                         curEndTime.CommonT.Month,
                         curEndTime.CommonT.Day,
                         curEndTime.CommonT.Hour,
-                        curEndTime.CommonT.Minute,
-                        curEndTime.CommonT.Second
+                        curEndTime.CommonT.Minutes,
+                        curEndTime.CommonT.Seconds
                         );
 
                     string filePath = Path.Combine(outFolder, fileName);

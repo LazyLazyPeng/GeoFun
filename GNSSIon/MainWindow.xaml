@@ -43,6 +43,16 @@
                               x:Name="menuObsExtract"
                               Click="menuObsExtract_Click"/>
                 </MenuItem>
+                <MenuItem Header="电离层计算">
+                    <MenuItem Header="提取观测值"
+                              x:Name="menuIonoCal"
+                              Click="menuObsExtract_Click"/>
+                </MenuItem>
+                <MenuItem Header="定位计算">
+                    <MenuItem Header="单点定位"
+                              x:Name="menuSPPCal"
+                              Click="menuObsExtract_Click"/>
+                </MenuItem>
             </Menu>
             <WrapPanel.ContextMenu>
                 <ContextMenu >
@@ -60,9 +70,17 @@
         </WrapPanel>
 
         <StatusBar DockPanel.Dock="Bottom"
+                   HorizontalAlignment="Right"
                    Height="25">
+            <ProgressBar x:Name="pbar" HorizontalAlignment="Right" Width="150" Height="25"></ProgressBar>
         </StatusBar>
         <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="248*"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="171*"/>
+                <ColumnDefinition Width="377*"/>
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="3*"></RowDefinition>
                 <RowDefinition Height="5"></RowDefinition>
@@ -72,7 +90,7 @@
                 Grid.Row="0"
                 Name="dgJobs"
                 ItemsSource="{Binding}"
-                AutoGenerateColumns="False">
+                AutoGenerateColumns="False" Grid.ColumnSpan="4" Margin="0,0,0,5" Grid.RowSpan="2">
                 <DataGrid.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="取消所有任务"></MenuItem>
@@ -106,7 +124,7 @@
                                     </ProgressBar>
                                     <Label HorizontalAlignment="Center" 
                                            VerticalAlignment="Center"
-                                           Content="{Binding Path=ProgressValue}"></Label>
+                                           Content="{Binding Path=ProgressValue, Mode=TwoWay}"></Label>
                                 </Grid>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -117,8 +135,8 @@
                 </DataGrid.Columns>
             </DataGrid>
 
-            <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch"></GridSplitter>
-            <TextBox Grid.Row="2"></TextBox>
+            <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" Grid.ColumnSpan="4" Margin="0,0,0,97" Grid.RowSpan="2"></GridSplitter>
+            <TextBox Grid.Row="2" Grid.ColumnSpan="4"></TextBox>
         </Grid>
     </DockPanel>
 </Window>

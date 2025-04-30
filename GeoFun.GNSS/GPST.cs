@@ -71,7 +71,7 @@ namespace GeoFun.GNSS
         {
             get
             {
-                return CommonT.SecondOfDay;
+                return CommonT.SecondsOfDay;
             }
         }
         public double DOYTime
@@ -152,7 +152,7 @@ namespace GeoFun.GNSS
         {
             get
             {
-                return commonT.Minute;
+                return commonT.Minutes;
             }
         }
         public double Second
@@ -237,7 +237,7 @@ namespace GeoFun.GNSS
             {
                 int year = CommonT.Year > 2000 ? CommonT.Year - 2000 : CommonT.Year - 1900;
                 return string.Format("{0} {1,2} {2,2} {3,2} {4,2} {5,11:f7}", year, CommonT.Month, CommonT.Day,
-                    CommonT.Hour, CommonT.Minute, commonT.second);
+                    CommonT.Hour, CommonT.Minutes, commonT.second);
             }
             return "";
         }
@@ -266,7 +266,7 @@ namespace GeoFun.GNSS
         override
         public string ToString()
         {
-            return string.Format("{0}-{1:0#}-{2:0#} {3:0#}:{4:0#}:{5:00.000}", commonT.Year, commonT.Month, commonT.Day, commonT.Hour, commonT.Minute, commonT.second);
+            return string.Format("{0}-{1:0#}-{2:0#} {3:0#}:{4:0#}:{5:00.000}", commonT.Year, commonT.Month, commonT.Day, commonT.Hour, commonT.Minutes, commonT.second);
         }
 
         public static bool operator <(GPST t1, GPST t2)

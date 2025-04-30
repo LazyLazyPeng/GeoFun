@@ -663,14 +663,14 @@ namespace GeoFun.GNSS
                     st.CommonT.Month,
                     st.CommonT.Day,
                     st.CommonT.Hour,
-                    st.CommonT.Minute,
-                    st.CommonT.Second,
+                    st.CommonT.Minutes,
+                    st.CommonT.Seconds,
                     et.CommonT.Year,
                     et.CommonT.Month,
                     et.CommonT.Day,
                     et.CommonT.Hour,
-                    et.CommonT.Minute,
-                    et.CommonT.Second
+                    et.CommonT.Minutes,
+                    et.CommonT.Seconds
                     );
                 string filePath = Path.Combine(folder, fileName);
                 FileHelper.WriteLines(filePath, lines, ',');
@@ -764,24 +764,24 @@ namespace GeoFun.GNSS
                 line[1] = Epoches[i].Epoch.CommonT.Month.ToString("0#");
                 line[2] = Epoches[i].Epoch.CommonT.Day.ToString("0#");
                 line[3] = Epoches[i].Epoch.CommonT.Hour.ToString("0#");
-                line[4] = Epoches[i].Epoch.CommonT.Minute.ToString("0#");
-                line[5] = Epoches[i].Epoch.CommonT.Second.ToString("0#.##########");
+                line[4] = Epoches[i].Epoch.CommonT.Minutes.ToString("0#");
+                line[5] = Epoches[i].Epoch.CommonT.Seconds.ToString("0#.##########");
                 line[6] = Epoches[i].Epoch.DOYTime.ToString("00#.##########");
 
                 lineb[0] = Epoches[i].Epoch.CommonT.Year.ToString();
                 lineb[1] = Epoches[i].Epoch.CommonT.Month.ToString("0#");
                 lineb[2] = Epoches[i].Epoch.CommonT.Day.ToString("0#");
                 lineb[3] = Epoches[i].Epoch.CommonT.Hour.ToString("0#");
-                lineb[4] = Epoches[i].Epoch.CommonT.Minute.ToString("0#");
-                lineb[5] = Epoches[i].Epoch.CommonT.Second.ToString("0#.##########");
+                lineb[4] = Epoches[i].Epoch.CommonT.Minutes.ToString("0#");
+                lineb[5] = Epoches[i].Epoch.CommonT.Seconds.ToString("0#.##########");
                 lineb[6] = Epoches[i].Epoch.DOYTime.ToString("00#.##########");
 
                 linel[0] = Epoches[i].Epoch.CommonT.Year.ToString();
                 linel[1] = Epoches[i].Epoch.CommonT.Month.ToString("0#");
                 linel[2] = Epoches[i].Epoch.CommonT.Day.ToString("0#");
                 linel[3] = Epoches[i].Epoch.CommonT.Hour.ToString("0#");
-                linel[4] = Epoches[i].Epoch.CommonT.Minute.ToString("0#");
-                linel[5] = Epoches[i].Epoch.CommonT.Second.ToString("0#.##########");
+                linel[4] = Epoches[i].Epoch.CommonT.Minutes.ToString("0#");
+                linel[5] = Epoches[i].Epoch.CommonT.Seconds.ToString("0#.##########");
                 linel[6] = Epoches[i].Epoch.DOYTime.ToString("00#.##########");
 
                 lines.Add(line);

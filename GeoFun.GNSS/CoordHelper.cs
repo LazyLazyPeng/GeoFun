@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GeoFun.GNSS
 {
-    public class Coord
+    public class CoordHelper
     {
         /// <summary>
         /// 计算测站的法向向量

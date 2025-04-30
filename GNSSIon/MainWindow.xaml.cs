@@ -33,33 +33,33 @@ namespace GNSSIon
         {
             InitializeComponent();
 
-            for(int i = 0; i < 5; i++)
-            {
-                IonJob job = new IonJob();
-                job.ID = i;
-                job.Name = i.ToString();
-                job.Status = GeoFun.MultiThread.enumJobStatus.New;
-                job.MaxProgressValue = 100;
-                job.ProgressValue = i*20;
-                job.Log = i.ToString();
+            //for(int i = 0; i < 5; i++)
+            //{
+            //    IonJob job = new IonJob();
+            //    job.ID = i;
+            //    job.Name = i.ToString();
+            //    job.Status = GeoFun.MultiThread.enumJobStatus.New;
+            //    job.MaxProgressValue = 100;
+            //    job.ProgressValue = i*20;
+            //    job.Log = i.ToString();
 
-                JobList.Add(job);
-            }
+            //    JobList.Add(job);
+            //}
 
-            dgJobs.ItemsSource = JobList;
+            //dgJobs.ItemsSource = JobList;
 
-            ThreadStart st = new ThreadStart(() => {
-                Thread.Sleep(2000);
-                for (int i = 0; i < 20; i++)
-                {
-                    JobList[0].ProgressValue = i*5+5;
-                    Thread.Sleep(1000);
-                }
-                JobList[0].Status = enumJobStatus.Finished;
-            });
+            //ThreadStart st = new ThreadStart(() => {
+            //    Thread.Sleep(2000);
+            //    for (int i = 0; i < 20; i++)
+            //    {
+            //        JobList[0].ProgressValue = i*5+5;
+            //        Thread.Sleep(1000);
+            //    }
+            //    JobList[0].Status = enumJobStatus.Finished;
+            //});
 
-            Thread th = new Thread(st);
-            th.Start();
+            //Thread th = new Thread(st);
+            //th.Start();
         }
 
         private void btnDownload_Click(object sender, RoutedEventArgs e)

@@ -78,7 +78,7 @@ namespace GeoFun.GNSS
 
             mjd.Days = temp;
 
-            mjd.Seconds = dt.Hour * 3600 + dt.Minute * 60 + (double)dt.Second;
+            mjd.Seconds = dt.Hour * 3600 + dt.Minutes * 60 + (double)dt.Seconds;
 
             return mjd;
         }

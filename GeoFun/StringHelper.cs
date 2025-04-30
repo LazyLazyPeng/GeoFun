@@ -21,20 +21,6 @@ namespace GeoFun
             return line;
         }
 
-        /// <summary>
-        /// 将文本按行分割,换行符\n
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        public static string[] SplitLines(string str)
-        {
-            if (string.IsNullOrWhiteSpace(str))
-            {
-                return new string[] { };
-            }
-
-            return str.Split('\n');
-        }
 
         public static string[] SplitFields(string line, char spliter = ' ')
         {
