@@ -6,14 +6,61 @@
         xmlns:local="clr-namespace:GNSSIon"
         mc:Ignorable="d"
         Title="下载数据" Height="600" Width="900">
-    <StackPanel FlowDirection="LeftToRight">
-        <GroupBox>
-            <StackPanel>
-                <Label>下载数据类型</Label>
-                <CheckBox>sp3</CheckBox>
-                <CheckBox>p1c1</CheckBox>
-                <CheckBox>p1p2</CheckBox>
-            </StackPanel>
-        </GroupBox>
-    </StackPanel>
+    <TabControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <!-- 自定义Tab头部样式 -->
+        <TabControl.Resources>
+            <Style TargetType="TabItem">
+                <Setter Property="HeaderTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/Resources/satellite_icon.png" Width="16" Height="16"/>
+                                <TextBlock Text="{Binding}" Margin="5,0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="FontWeight" Value="Bold"/>
+            </Style>
+        </TabControl.Resources>
+
+        <!-- 观测数据下载页 -->
+        <TabItem Header="GNSS观测数据">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- 参数选择 -->
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,10">
+                    <DatePicker x:Name="StartDate" Header="开始时间" Width="150"/>
+                    <DatePicker x:Name="EndDate" Header="结束时间" Width="150" Margin="20,0"/>
+                    <ComboBox x:Name="DataType" Header="数据类型" ItemsSource="{Binding DataTypes}" Width="200" Margin="20,0"/>
+                </StackPanel>
+
+                <!-- 下载控制 -->
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="选择保存路径" Command="{Binding SelectPathCommand}" Margin="5"/>
+                    <Button Content="开始下载" Command="{Binding DownloadObsCommand}" Margin="5" Background="#FF4CAF50"/>
+                </StackPanel>
+
+                <!-- 进度显示 -->
+                <ProgressBar Grid.Row="2" Height="20" Value="{Binding Progress}" Margin="0,10"/>
+                <TextBlock Grid.Row="3" Text="{Binding Status}" Foreground="Gray"/>
+            </Grid>
+        </TabItem>
+
+        <!-- 轨道数据下载页（类似结构） -->
+        <TabItem Header="轨道数据">
+            <!-- 包含卫星系统选择（GPS/BDS等）、产品类型（SP3/CLK）参数 -->
+        </TabItem>
+
+        <!-- 其它产品下载页 -->
+        <TabItem Header="其它产品">
+            <!-- 包含电离层/对流层产品、地球自转参数等选项 -->
+        </TabItem>
+    </TabControl>
 </Window>
