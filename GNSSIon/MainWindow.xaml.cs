@@ -33,6 +33,9 @@ namespace GNSSIon
         {
             InitializeComponent();
 
+            WinMapViewer mapViewer = new WinMapViewer();
+            mapViewer.Show();
+
             //for(int i = 0; i < 5; i++)
             //{
             //    IonJob job = new IonJob();
