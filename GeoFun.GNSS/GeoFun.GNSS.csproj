@@ -72,6 +72,8 @@
     <Compile Include="GPST.cs" />
     <Compile Include="IMessageBox.cs" />
     <Compile Include="Iono.cs" />
+    <Compile Include="Rinex3Name.cs" />
+    <Compile Include="RinexName.cs" />
     <Compile Include="NEpoch.cs" />
     <Compile Include="NFile.cs" />
     <Compile Include="NHeader.cs" />
@@ -89,6 +91,8 @@
     <Compile Include="OStation.cs" />
     <Compile Include="PRNCode.cs" />
     <Compile Include="program.cs" />
+    <Compile Include="Rinex2Name.cs" />
+    <Compile Include="RinexHelper.cs" />
     <Compile Include="Satellite.cs" />
     <Compile Include="Smoother.cs" />
     <Compile Include="SP3Epoch.cs" />

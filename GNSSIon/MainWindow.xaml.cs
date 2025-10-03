@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -33,8 +34,10 @@ namespace GNSSIon
         {
             InitializeComponent();
 
-            WinMapViewer mapViewer = new WinMapViewer();
-            mapViewer.Show();
+            FileInfo fin = new FileInfo("c:\\WUH200CHN_R_20200750000_01D_30S_MO.crx.gz");
+
+            //WinMapViewer mapViewer = new WinMapViewer();
+            //mapViewer.Show();
 
             //for(int i = 0; i < 5; i++)
             //{

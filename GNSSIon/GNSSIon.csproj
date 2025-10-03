@@ -40,9 +40,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Maps.MapControl.WPF, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Maps.MapControl.WPF.1.0.0.3\lib\net40-Client\Microsoft.Maps.MapControl.WPF.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.3485.44, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Web.WebView2.1.0.3485.44\lib\net462\Microsoft.Web.WebView2.Core.dll</HintPath>
     </Reference>
@@ -78,6 +75,9 @@
     <Compile Include="WinDownload.xaml.cs">
       <DependentUpon>WinDownload.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WinFileSearch.xaml.cs">
+      <DependentUpon>WinFileSearch.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WinIonSetting.xaml.cs">
       <DependentUpon>WinIonSetting.xaml</DependentUpon>
     </Compile>
@@ -103,6 +103,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="WinDownload.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WinFileSearch.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

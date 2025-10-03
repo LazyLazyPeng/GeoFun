@@ -698,7 +698,10 @@ namespace GeoFun.GNSS
             // 测站概略坐标错误，需要估计
             if (Math.Abs(ApproxPos[0]) < 1e-1
              || Math.Abs(ApproxPos[1]) < 1e-1
-             || Math.Abs(ApproxPos[2]) < 1e-1) return;
+             || Math.Abs(ApproxPos[2]) < 1e-1)
+            {
+                throw new Exception("测站概略坐标错误，无法计算IPP");
+            }
 
             double recb, recl, rech;
             Coordinate.XYZ2BLH(ApproxPos, out recb, out recl, out rech, Ellipsoid.ELLIP_WGS84);

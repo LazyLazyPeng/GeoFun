@@ -1,0 +1,55 @@
+﻿<Window x:Class="GNSSIon.WinFileSearch"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GNSSIon"
+        mc:Ignorable="d"
+        Title="文件查找" Height="607" Width="953">
+    <Window.Resources>
+        <Style TargetType="StackPanel">
+            <Setter Property="Margin" Value="3"></Setter>
+        </Style>
+        <Style x:Key="button1" TargetType="Button">
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Width" Value="80"/>
+            <Setter Property="Background" Value="DarkSalmon"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="9*"></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical">
+            <Label HorizontalAlignment="Center" Background="Beige">观测文件</Label>
+            <ListBox MinHeight="100" ></ListBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
+            <Label HorizontalAlignment="Center" Background="Beige">星历</Label>
+            <ListBox MinHeight="100" ></ListBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Vertical">
+            <Label HorizontalAlignment="Center" Background="Beige">DCB</Label>
+            <ListBox MinHeight="100" ></ListBox>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Height="40"
+                    Grid.Row="1" Grid.Column="2"
+                    HorizontalAlignment="Center">
+            <Button Style="{StaticResource button1}">确定</Button>
+            <Button Style="{StaticResource button1}">取消</Button>
+        </StackPanel>
+
+    </Grid>
+</Window>

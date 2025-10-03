@@ -5,8 +5,5 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GNSSIon"
         mc:Ignorable="d"
-        Title="电离层解算设置" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="电离层解算设置" Height="704" Width="1136">
 </Window>
