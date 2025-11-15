@@ -51,6 +51,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -70,13 +71,20 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="IonJob.cs" />
+    <Compile Include="IonoOptionViewModel.cs" />
     <Compile Include="IonWorker.cs" />
     <Compile Include="JobStatusConverter.cs" />
+    <Compile Include="OFileInfo.xaml.cs">
+      <DependentUpon>OFileInfo.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WinDownload.xaml.cs">
       <DependentUpon>WinDownload.xaml</DependentUpon>
     </Compile>
     <Compile Include="WinFileSearch.xaml.cs">
       <DependentUpon>WinFileSearch.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WinIonoOption.xaml.cs">
+      <DependentUpon>WinIonoOption.xaml</DependentUpon>
     </Compile>
     <Compile Include="WinIonSetting.xaml.cs">
       <DependentUpon>WinIonSetting.xaml</DependentUpon>
@@ -102,11 +110,19 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="OFileInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="WinDownload.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="WinFileSearch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WinIonoOption.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

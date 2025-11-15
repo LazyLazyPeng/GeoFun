@@ -4,6 +4,12 @@ using System.Text.RegularExpressions;
 
 namespace GeoFun.GNSS
 {
+    /// <summary>
+    /// Represents the metadata extracted from a RINEX (Receiver Independent Exchange Format) file name.
+    /// </summary>
+    /// <remarks>The <see cref="RinexName"/> class provides properties to access key components of a RINEX
+    /// file name,  such as the version, file type, station name, year, and day-of-year (DOY) information.  It also
+    /// includes a method to decode and parse a RINEX file name into its constituent parts.</remarks>
     public class RinexName
     {
         /// <summary>

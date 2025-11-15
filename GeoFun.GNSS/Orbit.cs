@@ -164,6 +164,10 @@ namespace GeoFun.GNSS
             GetAllSp3Files(folder, DOY.FromInt(start), DOY.FromInt(end));
         }
 
+        /// <summary>
+        /// 检查星历是否连续
+        /// </summary>
+        /// <returns></returns>
         public bool CheckConsist()
         {
             if (Files.Count == 1) return true;

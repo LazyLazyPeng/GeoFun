@@ -39,33 +39,37 @@ namespace GNSSIon
             //WinMapViewer mapViewer = new WinMapViewer();
             //mapViewer.Show();
 
-            //for(int i = 0; i < 5; i++)
-            //{
-            //    IonJob job = new IonJob();
-            //    job.ID = i;
-            //    job.Name = i.ToString();
-            //    job.Status = GeoFun.MultiThread.enumJobStatus.New;
-            //    job.MaxProgressValue = 100;
-            //    job.ProgressValue = i*20;
-            //    job.Log = i.ToString();
+            //WinIonoOption winiono = new WinIonoOption();
+            //winiono.Show();
 
-            //    JobList.Add(job);
-            //}
+            for (int i = 0; i < 5; i++)
+            {
+                IonJob job = new IonJob();
+                job.ID = i;
+                job.Name = i.ToString();
+                job.Status = GeoFun.MultiThread.enumJobStatus.New;
+                job.MaxProgressValue = 100;
+                job.ProgressValue = i * 20;
+                job.Log = i.ToString();
 
-            //dgJobs.ItemsSource = JobList;
+                JobList.Add(job);
+            }
 
-            //ThreadStart st = new ThreadStart(() => {
-            //    Thread.Sleep(2000);
-            //    for (int i = 0; i < 20; i++)
-            //    {
-            //        JobList[0].ProgressValue = i*5+5;
-            //        Thread.Sleep(1000);
-            //    }
-            //    JobList[0].Status = enumJobStatus.Finished;
-            //});
+            dgJobs.ItemsSource = JobList;
 
-            //Thread th = new Thread(st);
-            //th.Start();
+            ThreadStart st = new ThreadStart(() =>
+            {
+                Thread.Sleep(2000);
+                for (int i = 0; i < 20; i++)
+                {
+                    JobList[0].ProgressValue = i * 5 + 5;
+                    Thread.Sleep(1000);
+                }
+                JobList[0].Status = enumJobStatus.Finished;
+            });
+
+            Thread th = new Thread(st);
+            th.Start();
         }
 
         private void btnDownload_Click(object sender, RoutedEventArgs e)
@@ -85,6 +89,15 @@ namespace GNSSIon
             // 估计接收机dcb
             // 计算STE/CVTEC
             // 输出文件
+        }
+
+        private void menuIonoCal_Click(object sender, RoutedEventArgs e)
+        {
+            WinIonoOption win = new WinIonoOption();
+            if(win.ShowDialog() == true)
+            {
+                IonoOption option = win.Option;
+            }
         }
     }
 }

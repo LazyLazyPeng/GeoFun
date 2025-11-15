@@ -16,6 +16,11 @@ namespace GeoFun.GNSS
     public class OFile : IComparable<OFile>
     {
         /// <summary>
+        /// 文件信息
+        /// </summary>
+        public FileInfo FileInf { get; set; }
+
+        /// <summary>
         /// 测站名称
         /// </summary>
         public string StationName { get; set; }
@@ -186,6 +191,7 @@ namespace GeoFun.GNSS
 
             return line;
         }
+
         /// <summary>
         /// 读取观测值
         /// </summary>
@@ -197,7 +203,6 @@ namespace GeoFun.GNSS
         {
             if (!File.Exists(Path))
             {
-                InitEpoches();
                 return false;
             }
 
@@ -780,6 +785,13 @@ namespace GeoFun.GNSS
 
         }
 
+        /// <summary>
+        /// 多项式拟合
+        /// 20个历元一段，二阶多项式
+        /// </summary>
+        /// <param name="arc"></param>
+        /// <param name="length"></param>
+        /// <param name="order"></param>
         public void Fit(ref OArc arc, int length, int order)
         {
             int si = 0;
@@ -848,6 +860,9 @@ namespace GeoFun.GNSS
             }
         }
 
+        /// <summary>
+        /// 相位平滑伪距
+        /// </summary>
         public void Smooth()
         {
             foreach (var prn in Arcs.Keys)

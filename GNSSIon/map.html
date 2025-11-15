@@ -24,13 +24,13 @@
     <script>
         // 全局变量，用于存储 Cesium 实例
         let viewer;
-        
+
         // 初始化 Cesium 三维地球
         function initCesium() {
             try {
                 // 配置 Cesium 的访问令牌（如果需要）
                 Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIyYmZjMzc5NS0xZWRjLTQ5OWMtYjY2ZC01ZjIyZWRiNTFiMGUiLCJpZCI6MjI0OTk3LCJpYXQiOjE3MTk0ODY0MjV9.4pWnSxCw6SnRdkeI_jaO1605Nj604f93UrRJuHIpdHc';
-                
+
                 // 创建 Cesium 查看器
                 viewer = new Cesium.Viewer('cesiumContainer', {
                     // 配置选项
@@ -47,7 +47,7 @@
                     navigationHelpButton: true,
                     infoBox: true
                 });
-                
+
                 // 设置默认视角
                 viewer.camera.setView({
                     destination: Cesium.Cartesian3.fromDegrees(104.06, 30.67, 10000000),
@@ -57,7 +57,7 @@
                         roll: 0.0
                     }
                 });
-                
+
                 // 通知 C# 初始化完成
                 notifyCSharp({
                     type: 'initCompleted',
@@ -73,7 +73,7 @@
                 });
             }
         }
-        
+
         // 缩放至指定位置
         function flyToLocation(latitude, longitude, height = 1000000) {
             try {
@@ -86,14 +86,14 @@
                     },
                     duration: 2.0
                 });
-                
+
                 return true;
             } catch (error) {
                 console.error('缩放至位置失败:', error);
                 return false;
             }
         }
-        
+
         // 添加点标记
         function addMarker(latitude, longitude, height = 0, properties = {}) {
             try {
@@ -104,21 +104,31 @@
                         color: Cesium.Color.fromCssColorString(properties.color || '#ff0000'),
                         outlineColor: Cesium.Color.WHITE,
                         outlineWidth: 2
+                    },
+                    label: {
+                        text: properties.name || '',
+                        font: '14pt sans-serif',
+                        fillColor: Cesium.Color.fromCssColorString(properties.labelColor || '#ffffff'),
+                        outlineColor: Cesium.Color.BLACK,
+                        outlineWidth: 2,
+                        style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                        pixelOffset: new Cesium.Cartesian2(0, -15)
                     }
                 });
-                
+
                 // 如果提供了 ID，则设置实体 ID
                 if (properties.id) {
                     entity.id = properties.id;
                 }
-                
+
                 return { success: true, id: entity.id };
             } catch (error) {
                 console.error('添加标记失败:', error);
                 return { success: false, error: error.message };
             }
         }
-        
+
         // 删除标记
         function removeMarker(id) {
             try {
@@ -129,7 +139,7 @@
                 return { success: false, error: error.message };
             }
         }
-        
+
         // 清除所有标记
         function clearAllMarkers() {
             try {
@@ -140,14 +150,14 @@
                 return { success: false, error: error.message };
             }
         }
-        
+
         // 添加多边形
         function addPolygon(coordinates, properties = {}) {
             try {
-                const positions = coordinates.map(coord => 
+                const positions = coordinates.map(coord =>
                     Cesium.Cartesian3.fromDegrees(coord.longitude, coord.latitude, coord.height || 0)
                 );
-                
+
                 const entity = viewer.entities.add({
                     polygon: {
                         hierarchy: new Cesium.PolygonHierarchy(positions),
@@ -156,25 +166,25 @@
                         outlineColor: Cesium.Color.fromCssColorString(properties.outlineColor || '#ffffff')
                     }
                 });
-                
+
                 if (properties.id) {
                     entity.id = properties.id;
                 }
-                
+
                 return { success: true, id: entity.id };
             } catch (error) {
                 console.error('添加多边形失败:', error);
                 return { success: false, error: error.message };
             }
         }
-        
+
         // 添加线
         function addLine(coordinates, properties = {}) {
             try {
-                const positions = coordinates.map(coord => 
+                const positions = coordinates.map(coord =>
                     Cesium.Cartesian3.fromDegrees(coord.longitude, coord.latitude, coord.height || 0)
                 );
-                
+
                 const entity = viewer.entities.add({
                     polyline: {
                         positions: positions,
@@ -182,24 +192,24 @@
                         material: Cesium.Color.fromCssColorString(properties.color || '#ff0000')
                     }
                 });
-                
+
                 if (properties.id) {
                     entity.id = properties.id;
                 }
-                
+
                 return { success: true, id: entity.id };
             } catch (error) {
                 console.error('添加线失败:', error);
                 return { success: false, error: error.message };
             }
         }
-        
+
         // 设置基础地图图层
         function setBaseMap(mapType) {
             try {
                 // 先清除现有的影像图层
                 viewer.imageryLayers.removeAll();
-                
+
                 // 根据地图类型设置新的影像图层
                 switch (mapType.toLowerCase()) {
                     case 'satellite':
@@ -229,14 +239,14 @@
                             })
                         );
                 }
-                
+
                 return { success: true };
             } catch (error) {
                 console.error('设置基础地图失败:', error);
                 return { success: false, error: error.message };
             }
         }
-        
+
         // 启用/禁用地形
         function enableTerrain(enable) {
             try {
@@ -251,7 +261,7 @@
                 return { success: false, error: error.message };
             }
         }
-        
+
         // 获取当前视角信息
         function getCurrentView() {
             try {
@@ -260,7 +270,7 @@
                 const longitude = Cesium.Math.toDegrees(cartographic.longitude);
                 const latitude = Cesium.Math.toDegrees(cartographic.latitude);
                 const height = cartographic.height;
-                
+
                 return {
                     success: true,
                     longitude: longitude,
@@ -275,7 +285,7 @@
                 return { success: false, error: error.message };
             }
         }
-        
+
         // 通知 C#（WebView2）的函数
         function notifyCSharp(message) {
             try {
@@ -285,12 +295,12 @@
                 console.warn('无法发送消息到 C#:', error);
             }
         }
-        
+
         // 测试 addMarker 方法
         function testAddMarker() {
             try {
                 console.log('开始测试 addMarker 方法...');
-                
+
                 // 测试点 1: 北京
                 const result1 = CesiumMapAPI.addMarker(39.9042, 116.4074, 0, {
                     id: 'beijing',
@@ -299,7 +309,7 @@
                     color: '#ff0000'
                 });
                 console.log('北京标记添加结果:', result1);
-                
+
                 // 测试点 2: 上海
                 const result2 = CesiumMapAPI.addMarker(31.2304, 121.4737, 0, {
                     id: 'shanghai',
@@ -308,7 +318,7 @@
                     color: '#00ff00'
                 });
                 console.log('上海标记添加结果:', result2);
-                
+
                 // 测试点 3: 广州
                 const result3 = CesiumMapAPI.addMarker(23.1291, 113.2644, 0, {
                     id: 'guangzhou',
@@ -317,16 +327,16 @@
                     color: '#0000ff'
                 });
                 console.log('广州标记添加结果:', result3);
-                
+
                 // 测试缩放到北京区域，以便更好地查看标记
                 CesiumMapAPI.flyToLocation(39.9042, 116.4074, 1000000);
-                
+
                 notifyCSharp({
                     type: 'testCompleted',
                     success: true,
                     message: 'addMarker 方法测试完成，已添加 3 个测试标记点'
                 });
-                
+
             } catch (error) {
                 console.error('addMarker 方法测试失败:', error);
                 notifyCSharp({
@@ -336,24 +346,24 @@
                 });
             }
         }
-        
+
         // 页面加载完成后初始化 Cesium
-        window.onload = function() {
+        window.onload = function () {
             initCesium();
         };
-        
+
         // 从JSON数据添加多个标记
         function addMarkersFromJson(jsonData) {
             try {
                 // 解析JSON数据
                 const points = JSON.parse(jsonData);
                 const results = [];
-                
+
                 // 遍历所有点
                 for (const point of points) {
                     // 检查必要的字段
-                    if (!point.hasOwnProperty('name') || 
-                        !point.hasOwnProperty('latitude') || 
+                    if (!point.hasOwnProperty('name') ||
+                        !point.hasOwnProperty('latitude') ||
                         !point.hasOwnProperty('longitude')) {
                         results.push({
                             success: false,
@@ -362,14 +372,14 @@
                         });
                         continue;
                     }
-                    
+
                     // 设置简单圆点样式的标记属性
                     const markerProperties = {
                         id: point.id || point.name,
                         pixelSize: point.pixelSize || 8,
                         color: point.color || '#ff0000' // 默认红色
                     };
-                    
+
                     // 添加标记
                     const result = addMarker(
                         point.latitude,
@@ -377,7 +387,7 @@
                         point.height || 0,
                         markerProperties
                     );
-                    
+
                     // 记录结果
                     results.push({
                         success: result.success,
@@ -386,14 +396,14 @@
                         error: result.error
                     });
                 }
-                
+
                 return { success: true, results: results };
             } catch (error) {
                 console.error('从JSON添加标记失败:', error);
                 return { success: false, error: error.message };
             }
         }
-        
+
         // 暴露给 C# 调用的 API 接口
         window.CesiumMapAPI = {
             flyToLocation: flyToLocation,

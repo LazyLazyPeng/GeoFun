@@ -25,6 +25,14 @@ namespace GNSSIon
             await AddMarker("beijing", "北京", 39.9042, 116.4074); 
         }
 
+        /// <summary>
+        /// 在cesium上添加站点符号
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="name"></param>
+        /// <param name="lat"></param>
+        /// <param name="lon"></param>
+        /// <returns></returns>
         private async Task<bool> AddMarker(string id, string name,double lat, double lon)
         {
             string script2 = $"CesiumMapAPI.addMarker({lat}, {lon}, 0, {{id: '{id}', name: '{name}',pixelSize: 10,color: '#ff0000'}});";

@@ -48,6 +48,9 @@ namespace GNSSIon
         /// </summary>
         public enumIonoModel ModelType { get; set; } = enumIonoModel.Polinomial;
 
+        public IonJob()
+        { }
+
         public IonJob(string rootFolder)
         {
             RootFolder = rootFolder;

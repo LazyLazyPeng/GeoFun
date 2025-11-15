@@ -60,5 +60,8 @@ namespace GNSSIon
             return ofiles;
         }
 
+        private void ListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+        }
     }
 }

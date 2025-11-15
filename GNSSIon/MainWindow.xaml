@@ -44,9 +44,9 @@
                               Click="menuObsExtract_Click"/>
                 </MenuItem>
                 <MenuItem Header="电离层计算">
-                    <MenuItem Header="提取观测值"
+                    <MenuItem Header="电离层计算"
                               x:Name="menuIonoCal"
-                              Click="menuObsExtract_Click"/>
+                              Click="menuIonoCal_Click"/>
                 </MenuItem>
                 <MenuItem Header="定位计算">
                     <MenuItem Header="单点定位"

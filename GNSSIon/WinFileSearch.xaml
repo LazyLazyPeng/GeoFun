@@ -31,7 +31,7 @@
 
         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical">
             <Label HorizontalAlignment="Center" Background="Beige">观测文件</Label>
-            <ListBox MinHeight="100" ></ListBox>
+            <ListBox Name="lbObsFiles" MinHeight="100" MouseDoubleClick="ListBox_MouseDoubleClick" ></ListBox>
         </StackPanel>
 
         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">

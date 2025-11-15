@@ -57,6 +57,7 @@
     <Compile Include="DCBHelper.cs" />
     <Compile Include="enumIonoModel.cs" />
     <Compile Include="enumIonoSingleLayerModel.cs" />
+    <Compile Include="enumSolType.cs" />
     <Compile Include="FileName.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="CommonT.cs" />
@@ -72,6 +73,8 @@
     <Compile Include="GPST.cs" />
     <Compile Include="IMessageBox.cs" />
     <Compile Include="Iono.cs" />
+    <Compile Include="IonoOption.cs" />
+    <Compile Include="Parser.cs" />
     <Compile Include="Rinex3Name.cs" />
     <Compile Include="RinexName.cs" />
     <Compile Include="NEpoch.cs" />
