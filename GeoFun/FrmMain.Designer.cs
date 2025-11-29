@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.四参数ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.七参数ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.高斯投影ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -39,6 +38,9 @@
             this.椭球ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.椭球膨胀ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.高程ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.成都ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.参数计算ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -50,22 +52,14 @@
             this.高斯投影ToolStripMenuItem,
             this.大地主题解算ToolStripMenuItem,
             this.椭球ToolStripMenuItem,
-            this.高程ToolStripMenuItem});
+            this.高程ToolStripMenuItem,
+            this.成都ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
             this.menuStrip1.Size = new System.Drawing.Size(933, 25);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 503);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(933, 22);
-            this.statusStrip1.TabIndex = 1;
-            this.statusStrip1.Text = "statusStrip1";
             // 
             // 四参数ToolStripMenuItem
             // 
@@ -97,13 +91,13 @@
             // 大地主题正算ToolStripMenuItem
             // 
             this.大地主题正算ToolStripMenuItem.Name = "大地主题正算ToolStripMenuItem";
-            this.大地主题正算ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.大地主题正算ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.大地主题正算ToolStripMenuItem.Text = "大地主题正算";
             // 
             // 大地主题反算ToolStripMenuItem
             // 
             this.大地主题反算ToolStripMenuItem.Name = "大地主题反算ToolStripMenuItem";
-            this.大地主题反算ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.大地主题反算ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.大地主题反算ToolStripMenuItem.Text = "大地主题反算";
             // 
             // 椭球ToolStripMenuItem
@@ -117,7 +111,7 @@
             // 椭球膨胀ToolStripMenuItem
             // 
             this.椭球膨胀ToolStripMenuItem.Name = "椭球膨胀ToolStripMenuItem";
-            this.椭球膨胀ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.椭球膨胀ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.椭球膨胀ToolStripMenuItem.Text = "椭球膨胀";
             // 
             // 高程ToolStripMenuItem
@@ -125,6 +119,30 @@
             this.高程ToolStripMenuItem.Name = "高程ToolStripMenuItem";
             this.高程ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.高程ToolStripMenuItem.Text = "高程";
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Location = new System.Drawing.Point(0, 503);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 16, 0);
+            this.statusStrip1.Size = new System.Drawing.Size(933, 22);
+            this.statusStrip1.TabIndex = 1;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // 成都ToolStripMenuItem
+            // 
+            this.成都ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.参数计算ToolStripMenuItem});
+            this.成都ToolStripMenuItem.Name = "成都ToolStripMenuItem";
+            this.成都ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
+            this.成都ToolStripMenuItem.Text = "成都";
+            // 
+            // 参数计算ToolStripMenuItem
+            // 
+            this.参数计算ToolStripMenuItem.Name = "参数计算ToolStripMenuItem";
+            this.参数计算ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.参数计算ToolStripMenuItem.Text = "参数计算";
+            this.参数计算ToolStripMenuItem.Click += new System.EventHandler(this.参数计算ToolStripMenuItem_Click);
             // 
             // FrmMain
             // 
@@ -135,7 +153,7 @@
             this.Controls.Add(this.menuStrip1);
             this.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FrmMain";
             this.Text = "坐标工具箱";
             this.menuStrip1.ResumeLayout(false);
@@ -158,5 +176,7 @@
         private System.Windows.Forms.ToolStripMenuItem 椭球ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 椭球膨胀ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 高程ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 成都ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 参数计算ToolStripMenuItem;
     }
 }

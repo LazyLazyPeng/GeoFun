@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ComponentModel;
 using System.Xml.Schema;
+using System.Windows;
+using System.Windows.Forms;
 
 namespace GeoFun.MultiThread
 {
@@ -15,17 +15,13 @@ namespace GeoFun.MultiThread
         /// </summary>
         public int ID
         {
-            get
-            {
-                return id;
-            }
+            get => id;
             set
             {
                 if (id != value)
                 {
                     id = value;
-
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ID"));
+                    OnPropertyChanged(nameof(ID));
                 }
             }
         }
@@ -36,20 +32,13 @@ namespace GeoFun.MultiThread
         /// </summary>
         public string Name
         {
-            get
-            {
-                return name;
-            }
+            get => name;
             set
             {
                 if (name != value)
                 {
                     name = value;
-
-                    if (PropertyChanged != null)
-                    {
-                        PropertyChanged(this, new PropertyChangedEventArgs("Name"));
-                    }
+                    OnPropertyChanged(nameof(Name));
                 }
             }
         }
@@ -60,17 +49,13 @@ namespace GeoFun.MultiThread
         /// </summary>
         public enumJobStatus Status
         {
-            get
-            {
-                return status;
-            }
+            get => status;
             set
             {
                 if (status != value)
                 {
                     status = value;
-
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Status"));
+                    OnPropertyChanged(nameof(Status));
                 }
             }
         }
@@ -83,37 +68,29 @@ namespace GeoFun.MultiThread
         private int maxProgressValue = 100;
         public int MaxProgressValue
         {
-            get
-            {
-                return maxProgressValue;
-            }
+            get => maxProgressValue;
             set
             {
                 if (maxProgressValue != value && value >= 0)
                 {
                     maxProgressValue = value;
-
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("MaxProgressValue"));
+                    OnPropertyChanged(nameof(MaxProgressValue));
                 }
             }
         }
         private int progressValue = 0;
         public int ProgressValue
         {
-            get
-            {
-                return progressValue;
-            }
+            get => progressValue;
             set
             {
-                int value1 = value;
-                if (value1 < 0) value1 = 0;
-                if (value1 > maxProgressValue) value1 = maxProgressValue;
-                if (progressValue != value1)
+                int v = value;
+                if (v < 0) v = 0;
+                if (v > maxProgressValue) v = maxProgressValue;
+                if (progressValue != v)
                 {
-                    progressValue = value1;
-
-                    PropertyChanged?.Invoke("ProgressValue", new PropertyChangedEventArgs("ProgressValue"));
+                    progressValue = v;
+                    OnPropertyChanged(nameof(ProgressValue));
                 }
             }
         }
@@ -121,21 +98,54 @@ namespace GeoFun.MultiThread
         private string log;
         public string Log
         {
-            get
-            {
-                return log;
-            }
+            get => log;
             set
             {
                 if (log != value)
                 {
                     log = value;
-
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Log"));
+                    OnPropertyChanged(nameof(Log));
                 }
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// 统一的触发 PropertyChanged 的方法：
+        /// - 在 WPF UI 线程上触发（如果可用），否则直接触发。
+        /// </summary>
+        protected void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler == null) return;
+
+            // 修复：CS0117 错误，Application.Current 只在 WPF 项目中可用
+            // 检查是否为 WPF 环境
+#if NETCOREAPP || NETFRAMEWORK
+            // 如果引用了 WPF（PresentationFramework），则可以使用 Application.Current
+            if (Type.GetType("System.Windows.Application") != null)
+            {
+                var appType = Type.GetType("System.Windows.Application");
+                var currentProp = appType?.GetProperty("Current");
+                var currentApp = currentProp?.GetValue(null, null);
+                var dispatcherProp = currentApp?.GetType().GetProperty("Dispatcher");
+                var dispatcher = dispatcherProp?.GetValue(currentApp, null);
+                var checkAccessMethod = dispatcher?.GetType().GetMethod("CheckAccess");
+                var invokeMethod = dispatcher?.GetType().GetMethod("Invoke", new[] { typeof(Action) });
+                if (dispatcher != null && checkAccessMethod != null && invokeMethod != null)
+                {
+                    bool hasAccess = (bool)checkAccessMethod.Invoke(dispatcher, null);
+                    if (!hasAccess)
+                    {
+                        invokeMethod.Invoke(dispatcher, new object[] { new Action(() => handler(this, new PropertyChangedEventArgs(propertyName))) });
+                        return;
+                    }
+                }
+            }
+#endif
+            // 如果没有 WPF 环境（Application.Current 为 null），直接调用
+            handler(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
